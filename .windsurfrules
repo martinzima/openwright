@@ -1,0 +1,17 @@
+1. The user is developing a frontend app OpenWright for viewing automated Playwright test results.
+2. We are using Angular 19 framework with AnalogJS framework.
+3. We are using Nx monorepo. Run the app accordingly. The app is named openwright-app in the Nx monorepo. To run "nx", use "npx nx".
+3. Preferrably use UI components that you can find in libs/ui folder. These are components coming from spartan/ui and loosely resemble shadcn/ui. Before using them, take a look at the docs at
+https://www.spartan.ng/components how to use them. On the website, there is a list of available components with links to them.
+Visually and functionally, the components resemble shadcn/ui, so you can use their design as you would use shadcn/ui. The spartan-ng UI is using Tailwind 3 as its base, so you can utilize that too.
+4. The app should be using standalone components, Angular signals, animations, shadows and have sleek design.
+5. For the state management, every page should have a separate .store.ts file with store implemented as a signal-based service. You can also use rxMethod from Ngrx (@ngrx/signals/rxjs-interop package) for reactive methods and Rxjs-based streams.
+6. API services should be defined in separate folder. For now, let them return mock data.
+7. The USER prefers using AnalogJS file-based routing for the OpenWright application. This means routes should be defined using the AnalogJS file naming conventions (e.g., (home).page.ts for the home route, dashboard.page.ts for the /dashboard route) rather than explicit route configurations.
+8. Running the app:
+   - To run the app in development mode: `npx nx serve openwright-app`
+   - To build the app: `npx nx build openwright-app`
+   - To test the app: `npx nx test openwright-app`
+   - The development server runs on http://localhost:4200 by default
+   - Hot Module Replacement (HMR) is enabled in development mode
+   - You don't need to restart the development server to apply changes.s

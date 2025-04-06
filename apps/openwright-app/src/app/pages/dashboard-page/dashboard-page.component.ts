@@ -6,7 +6,7 @@ import { PassRateChartComponent } from './pass-rate-chart/pass-rate-chart.compon
 import { DashboardStore } from './dashboard-store.service';
 import { TimePeriod } from '@openwright/data-access';
 import { StatsWidgetComponent } from '../../components/stats-widget/stats-widget.component';
-import { PageLayoutComponent } from '../../components/page-layout/page-layout.component';
+import { PageLayoutComponent } from '@openwright/ui-common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';

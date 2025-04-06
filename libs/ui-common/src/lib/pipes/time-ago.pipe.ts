@@ -1,9 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-/**
- * Pipe to display a date as "X time ago".
- * Basic implementation, consider a library like date-fns for i18n and edge cases.
- */
 @Pipe({
   name: 'timeAgo',
   standalone: true
@@ -27,7 +23,7 @@ export class TimeAgoPipe implements PipeTransform {
     const minutes = Math.round(seconds / 60);
     const hours = Math.round(minutes / 60);
     const days = Math.round(hours / 24);
-    const months = Math.round(days / 30.416); // Average month length
+    const months = Math.round(days / 30.416);
     const years = Math.round(days / 365);
 
     if (seconds < 60) return `${seconds}s ago`;

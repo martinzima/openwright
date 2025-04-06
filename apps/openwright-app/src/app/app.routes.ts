@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { MainLayoutComponent } from '@openwright/ui-common';
 
 export const appRoutes: Route[] = [
   {

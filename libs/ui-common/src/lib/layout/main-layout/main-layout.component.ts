@@ -55,4 +55,4 @@ export class MainLayoutComponent {
   onWorkspaceChange(event: { value: Workspace | null }): void {
     console.log('Workspace changed:', event.value);
   }
-}
+} 

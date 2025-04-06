@@ -1,5 +1,3 @@
-export * from './lib/data-access/data-access.component';
-
 export * from './lib/api/test-run-api.service';
 export * from './lib/api/test-stats-api.service';
 

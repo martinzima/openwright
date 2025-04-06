@@ -1,11 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { resource } from '@angular/core';
 import {
-  TestRun,
-  TestStats,
   TimePeriod,
-  PassRateBySuite,
-  TestStatValue,
   TestRunApiService,
   TestStatsApiService,
 } from '@openwright/data-access';

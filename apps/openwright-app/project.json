@@ -5,6 +5,7 @@
   "prefix": "ow",
   "sourceRoot": "apps/openwright-app/src",
   "tags": [],
+  "implicitDependencies": ["ui-common"],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",

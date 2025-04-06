@@ -34,3 +34,6 @@ export class AppComponent {
 14. If Angular component has no content inside of its tags, use self-closing tag.
 15. You don't need to specify standalone: true components as it is default.
 16. Use input() signal based API instead of @Input decorator, or model(), output(), contentChild() and similar.
+17. When creating new Nx monorepo libs, prefer buildable libraries. Don't forget to remove the default created component if not needed. Also don't forget that the library name is not a positional argument in current Nx version and you have to specify it like --name example-name.
+18. When exporting components in Nx monorepo libraries, you don't need to export the using e.g. export const UI_COMPONENT = [FooComponent]; 
+Just export FooComponent

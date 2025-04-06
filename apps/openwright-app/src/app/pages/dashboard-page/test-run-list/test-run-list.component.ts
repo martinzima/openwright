@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DashboardStore } from '../dashboard-store.service';
 import { TestRun } from '@openwright/data-access';
-import { TimeAgoPipe } from '../../../pipes/time-ago.pipe';
+import { TimeAgoPipe } from '@openwright/ui-common';
 import { LucideAngularModule, GitCommitHorizontal, GitPullRequest, CheckCircle, XCircle, SkipForward, HelpCircle, Eye } from 'lucide-angular';
 
 function formatRunDuration(totalSeconds: number | undefined): string {

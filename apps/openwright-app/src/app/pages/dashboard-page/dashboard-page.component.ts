@@ -6,6 +6,7 @@ import { PassRateChartComponent } from './pass-rate-chart/pass-rate-chart.compon
 import { DashboardStore } from './dashboard-store.service';
 import { TimePeriod } from '@openwright/data-access';
 import { StatsWidgetComponent } from '../../components/stats-widget/stats-widget.component';
+import { PageLayoutComponent } from '../../components/page-layout/page-layout.component';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
@@ -32,35 +33,33 @@ function formatDuration(totalSeconds: number | undefined): string {
     TestStatsChartComponent,
     PassRateChartComponent,
     StatsWidgetComponent,
+    PageLayoutComponent,
     SkeletonModule,
     SelectModule,
     ButtonModule,
     TooltipModule,
   ],
   template: `
-    <div class="space-y-6 p-4 md:p-6 lg:p-8">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h2 class="text-3xl font-semibold text-gray-800">Dashboard</h2>
-        <div class="flex items-center gap-2">
-          <p-select 
-            [options]="timePeriodOptions" 
-            [(ngModel)]="selectedTimePeriod" 
-            (onChange)="onPeriodChange($event.value)"
-            optionLabel="label" 
-            optionValue="value"
-            [style]="{ minWidth: '150px' }"
-            styleClass="p-inputtext-sm" 
-          />
-          <button 
-            pButton 
-            icon="pi pi-refresh" 
-            (click)="refresh()" 
-            pTooltip="Refresh Data" 
-            tooltipPosition="bottom"
-            [loading]="store.isLoading()"
-            class="p-button-outlined p-button-sm">
-          </button>
-        </div>
+    <ow-page-layout title="Dashboard">
+      <div actions>
+        <p-select 
+          [options]="timePeriodOptions" 
+          [(ngModel)]="selectedTimePeriod" 
+          (onChange)="onPeriodChange($event.value)"
+          optionLabel="label" 
+          optionValue="value"
+          [style]="{ minWidth: '150px' }"
+          styleClass="p-inputtext-sm" 
+        />
+        <button 
+          pButton 
+          icon="pi pi-refresh" 
+          (click)="refresh()" 
+          pTooltip="Refresh Data" 
+          tooltipPosition="bottom"
+          [loading]="isLoading()"
+          class="p-button-outlined p-button-sm">
+        </button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -102,7 +101,7 @@ function formatDuration(totalSeconds: number | undefined): string {
       <div>
         <ow-test-run-list />
       </div>
-    </div>
+    </ow-page-layout>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DashboardStore]

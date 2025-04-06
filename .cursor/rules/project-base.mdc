@@ -32,3 +32,5 @@ export class AppComponent {
 12. Don't write code comments.
 13. Don't use JavaScript private fields starting with #. Instead, use TypeScript private modified if needed.
 14. If Angular component has no content inside of its tags, use self-closing tag.
+15. You don't need to specify standalone: true components as it is default.
+16. Use input() signal based API instead of @Input decorator, or model(), output(), contentChild() and similar.

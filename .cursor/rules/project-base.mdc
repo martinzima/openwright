@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+1. We are developing a frontend app OpenWright for viewing automated Playwright test results.
+2. We are using Angular 19 framework.
+3. We are using Nx monorepo. Run the app accordingly. The app is named openwright-app in the Nx monorepo. To run "nx", use "npx nx".
+3. Use PrimeNG components for the UI preferrably. You can also use Tailwind 3 a its common patterns and blocks. Aim for modern and sleek design, Apple-like, with animations, shadows, etc.
+4. The app should be using standalone components and Angular signals.
+5. For the state management, every page should have a separate .store.ts file with store implemented as a signal-based service. Generally, the state should be represented as one state signal, optionally
+exposing further computed signals. For fetching data and other async operations, use the new resource (@angular/core) API from Angular 18+/19+ for fetching async data. Take care of debouncing user inputs and aborting requests. Load data in parallel if possible.
+Don't use signalStore from Ngrx. You can however use deepComputed, signalState or rxMethod from Ngrx if needed. Generally, a simpler solution is mostly preferred.
+6. API services should be defined in separate folder. For now, let them return mock data.
+8. The prefix for Angular component and directive selectors is "ow".
+9. Use the new Angular template control flow blocks (e.g. @if instead of *ngIf).
+10. You can use ngxtension signal utilities to simplify working with Angular signals, RxJS, Observables and state management.
+11. For icons, use Lucide icons (lucide-angular). Always import icons statically in the components where needed, e.g.:
+
+import { LucideAngularModule, FileIcon } from 'lucide-angular';
+
+@Component({
+  ...
+  imports: [LucideAngularModule]
+})
+export class AppComponent {
+  readonly FileIcon = FileIcon;
+}
+
+<lucide-icon [img]="FileIcon" />
+
+12. Don't write code comments.
+13. Don't use JavaScript private fields starting with #. Instead, use TypeScript private modified if needed.
+14. If Angular component has no content inside of its tags, use self-closing tag.

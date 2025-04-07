@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
+import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { TimePeriod } from '@openwright/data-access';
+import { PageLayoutComponent } from '@openwright/ui-common';
+import { CheckCircle, Hash, Timer, XCircle } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
+import { StatsWidgetComponent } from '../../components/stats-widget/stats-widget.component';
+import { DashboardStore } from './dashboard-store.service';
+import { PassRateChartComponent } from './pass-rate-chart/pass-rate-chart.component';
 import { TestRunListComponent } from './test-run-list/test-run-list.component';
 import { TestStatsChartComponent } from './test-stats-chart/test-stats-chart.component';
-import { PassRateChartComponent } from './pass-rate-chart/pass-rate-chart.component';
-import { DashboardStore } from './dashboard-store.service';
-import { TimePeriod } from '@openwright/data-access';
-import { StatsWidgetComponent } from '../../components/stats-widget/stats-widget.component';
-import { PageLayoutComponent } from '@openwright/ui-common';
-import { SkeletonModule } from 'primeng/skeleton';
-import { SelectModule } from 'primeng/select';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
-import { FormsModule } from '@angular/forms';
-import { Hash, CheckCircle, XCircle, Timer } from 'lucide-angular';
-import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 function formatDuration(totalSeconds: number | undefined): string {
   if (totalSeconds === undefined || totalSeconds === null || totalSeconds < 0) {
@@ -42,7 +42,7 @@ function formatDuration(totalSeconds: number | undefined): string {
   ],
   template: `
     <ow-page-layout title="Dashboard">
-      <div actions>
+      <ng-container actions>
         <p-select 
           [options]="timePeriodOptions" 
           [(ngModel)]="selectedTimePeriod" 
@@ -52,80 +52,72 @@ function formatDuration(totalSeconds: number | undefined): string {
           [style]="{ minWidth: '150px' }"
           styleClass="p-inputtext-sm" 
         />
-        <button 
-          pButton 
+        <p-button
           icon="pi pi-refresh" 
           (click)="refresh()" 
           pTooltip="Refresh Data" 
           tooltipPosition="bottom"
-          [loading]="isLoading()"
-          class="p-button-outlined p-button-sm">
-        </button>
-      </div>
+          [loading]="isLoading()">
+        </p-button>
+      </ng-container>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-        @widgetsAnimation>
-        <ow-stats-widget 
-          title="Total Tests" 
-          [statValue]="testStats()?.total" 
-          [icon]="HashIcon"
-          iconColorClass="text-blue-500" 
-          [loading]="store.isLoadingStats()" />
-        <ow-stats-widget 
-          title="Passing Tests" 
-          [statValue]="testStats()?.passed" 
-          [icon]="CheckCircleIcon" 
-          iconColorClass="text-green-500" 
-          [loading]="store.isLoadingStats()" />
-        <ow-stats-widget 
-          title="Failing Tests" 
-          [statValue]="testStats()?.failed" 
-          [icon]="XCircleIcon" 
-          iconColorClass="text-red-500" 
-          [loading]="store.isLoadingStats()" />
-        <ow-stats-widget 
-          title="Avg. Duration" 
-          [statValue]="avgDurationFormatted()" 
-          [icon]="TimerIcon" 
-          iconColorClass="text-purple-500" 
-          [loading]="store.isLoadingStats()" />
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" @chartsAnimation>
-        <div>
-          <ow-test-stats-chart />
+      <ng-template>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+          @widgetsAnimation>
+          <ow-stats-widget
+            class="widget"	
+            title="Total Tests" 
+            [statValue]="testStats()?.total" 
+            [icon]="HashIcon"
+            iconColorClass="text-blue-500" 
+            [loading]="store.isLoadingStats()" />
+          <ow-stats-widget 
+            class="widget"
+            title="Passing Tests" 
+            [statValue]="testStats()?.passed" 
+            [icon]="CheckCircleIcon" 
+            iconColorClass="text-green-500" 
+            [loading]="store.isLoadingStats()" />
+          <ow-stats-widget 
+            class="widget"
+            title="Failing Tests" 
+            [statValue]="testStats()?.failed" 
+            [icon]="XCircleIcon" 
+            iconColorClass="text-red-500" 
+            [loading]="store.isLoadingStats()" />
+          <ow-stats-widget 
+            class="widget"
+            title="Avg. Duration" 
+            [statValue]="avgDurationFormatted()" 
+            [icon]="TimerIcon" 
+            iconColorClass="text-purple-500" 
+            [loading]="store.isLoadingStats()" />
         </div>
-        <div>
-          <ow-pass-rate-chart />
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <ow-test-stats-chart class="widget" />
+          </div>
+          <div>
+            <ow-pass-rate-chart class="widget" />
+          </div>
         </div>
-      </div>
 
-      <div @listAnimation>
-        <ow-test-run-list />
-      </div>
+        <div>
+          <ow-test-run-list class="widget" />
+        </div>
+      </ng-template>
     </ow-page-layout>
   `,
   animations: [
     trigger('widgetsAnimation', [
       transition(':enter', [
-        query('ow-stats-widget', [
+        query('.widget', [
           style({ opacity: 0, transform: 'translateY(20px)' }),
           stagger(100, [
             animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
           ])
-        ])
-      ])
-    ]),
-    trigger('chartsAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('500ms 300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ]),
-    trigger('listAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('500ms 600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        ], { optional: true })
       ])
     ])
   ],
@@ -145,19 +137,21 @@ export class DashboardPageComponent {
   readonly XCircleIcon = XCircle;
   readonly TimerIcon = Timer;
 
+  open = signal(true);
+
   readonly timePeriodOptions = [
     { label: 'Last 7 days', value: '7d' as TimePeriod },
     { label: 'Last 30 days', value: '30d' as TimePeriod },
     { label: 'Last 90 days', value: '90d' as TimePeriod },
     { label: 'All time', value: 'all' as TimePeriod }
   ];
-  
+
   selectedTimePeriod: TimePeriod = this.selectedPeriod();
 
   onPeriodChange(newPeriod: TimePeriod | null) {
-    if (newPeriod) { 
-        this.store.setPeriod(newPeriod);
-        this.selectedTimePeriod = this.selectedPeriod(); 
+    if (newPeriod) {
+      this.store.setPeriod(newPeriod);
+      this.selectedTimePeriod = this.selectedPeriod();
     }
   }
 
@@ -168,9 +162,9 @@ export class DashboardPageComponent {
   readonly avgDurationFormatted = computed(() => {
     const stat = this.testStats()?.avgDurationSec;
     if (!stat) return undefined;
-    return { 
-      value: formatDuration(stat.value), 
-      changePercent: stat.changePercent 
+    return {
+      value: formatDuration(stat.value),
+      changePercent: stat.changePercent
     };
   });
 }

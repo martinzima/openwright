@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { LucideAngularModule, Minus, ArrowUp, ArrowDown } from 'lucide-angular';
-import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 interface TestStatValue {
   value: number | string;
@@ -19,7 +18,8 @@ interface TestStatValue {
     LucideAngularModule
   ],
   template: `
-    <p-card [styleClass]="'shadow-md hover:shadow-lg transition-shadow duration-300 border-round'" @widgetAnimation>
+    <p-card [styleClass]="'shadow-md hover:shadow-lg transition-shadow duration-300 border-round'"
+    >
       <ng-template pTemplate="title">
         <div class="flex items-center" [class]="iconColorClass()">
           @if (icon()) {
@@ -55,12 +55,7 @@ interface TestStatValue {
   `,
   ],
   animations: [
-    trigger('widgetAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
+
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

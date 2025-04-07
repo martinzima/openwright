@@ -1,5 +1,6 @@
 <div class="flex flex-col min-h-screen bg-gray-100">
-  <header class="app-header sticky top-0 z-10 shadow-md bg-white border-b border-gray-200">
+  <header class="app-header sticky top-0 z-10 shadow-md bg-white border-b border-gray-200"
+    @headerAnimation>
     <div class="header-content flex items-center justify-between px-6 h-20">
       <div class="logo-container flex items-center pr-4">
         <span class="logo text-xl font-bold text-primary-600">OpenWright</span>
@@ -10,7 +11,7 @@
                [options]="workspaceOptions"
                [(ngModel)]="selectedWorkspace"
                optionLabel="name" 
-               placeholder="Select Workspace"
+              placeholder="Select Workspace"
                (onChange)="onWorkspaceChange($event)" 
                [style]="{ minWidth: '200px' }"
                styleClass="p-inputtext-sm"
@@ -59,6 +60,6 @@
     <router-outlet></router-outlet> 
   </main>
   <footer class="bg-gray-200 text-gray-600 text-center py-3 text-xs">
-    OpenWright &copy; {{ currentYear }}
+    OpenWright &copy; {{ currentYear }} | <a href="https://openwright.io" target="_blank">openwright.io</a>
   </footer>
 </div> 

@@ -5,14 +5,13 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { CardModule } from 'primeng/card';
 import { DashboardStore } from '../dashboard-store.service';
 import { PassRateBySuite } from '@openwright/data-access';
-import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'ow-pass-rate-chart',
   standalone: true,
   imports: [CommonModule, ChartModule, SkeletonModule, CardModule],
   template: `
-    <p-card styleClass="shadow-md" @chartAnimation>
+    <p-card styleClass="shadow-md">
       <ng-template pTemplate="title">
         <span class="font-semibold text-gray-700">Pass Rate by Suite</span>
       </ng-template>
@@ -60,14 +59,6 @@ import { trigger, transition, style, animate } from '@angular/animations';
       height: 100%;
     }
   `,
-  ],
-  animations: [
-    trigger('chartAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

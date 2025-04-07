@@ -6,8 +6,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     RouterModule
   ],
-  selector: 'app-root',
-  template: `<router-outlet></router-outlet>`,
+  selector: 'ow-root',
+  template: `<router-outlet></router-outlet>`
 })
 export class AppComponent {
 }

@@ -5,7 +5,7 @@
   "prefix": "ow",
   "sourceRoot": "apps/openwright-app/src",
   "tags": [],
-  "implicitDependencies": ["ui-common"],
+  "implicitDependencies": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:application",
@@ -26,12 +26,12 @@
         "styles": [
           "apps/openwright-app/src/styles.scss"
         ],
-        "scripts": [],
+        "scripts": []/*,
         "server": "apps/openwright-app/src/main.server.ts",
         "ssr": {
           "entry": "apps/openwright-app/src/server.ts"
         },
-        "outputMode": "server"
+        "outputMode": "server"*/
       },
       "configurations": {
         "production": {

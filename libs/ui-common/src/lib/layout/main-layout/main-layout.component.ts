@@ -1,15 +1,12 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
-
-import { ButtonModule } from 'primeng/button';
-import { AvatarModule } from 'primeng/avatar';
-import { MenuItem } from 'primeng/api';
-import { TooltipModule } from 'primeng/tooltip';
-import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-
-import { LucideAngularModule, Bell, HelpCircle, Settings, LayoutDashboard, GanttChartSquare, FolderKanban } from 'lucide-angular';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Bell, FolderKanban, GanttChartSquare, HelpCircle, LayoutDashboard, LucideAngularModule, Settings } from 'lucide-angular';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface Workspace {
   id: string;
@@ -20,8 +17,8 @@ interface Workspace {
   selector: 'ow-main-layout',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
+    RouterLink,
+    RouterLinkActive,
     RouterOutlet,
     ButtonModule,
     AvatarModule,
@@ -32,6 +29,14 @@ interface Workspace {
   ],
   templateUrl: './main-layout.component.html',
   styles: [],
+  animations: [
+    trigger('headerAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        animate('300ms 100ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainLayoutComponent {

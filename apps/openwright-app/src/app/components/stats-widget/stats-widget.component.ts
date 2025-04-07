@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
 import { LucideAngularModule, Minus, ArrowUp, ArrowDown } from 'lucide-angular';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 interface TestStatValue {
   value: number | string;
@@ -11,7 +12,6 @@ interface TestStatValue {
 
 @Component({
   selector: 'ow-stats-widget',
-  standalone: true,
   imports: [
     CommonModule,
     CardModule,
@@ -19,7 +19,7 @@ interface TestStatValue {
     LucideAngularModule
   ],
   template: `
-    <p-card [styleClass]="'shadow-md hover:shadow-lg transition-shadow duration-300 border-round'">
+    <p-card [styleClass]="'shadow-md hover:shadow-lg transition-shadow duration-300 border-round'" @widgetAnimation>
       <ng-template pTemplate="title">
         <div class="flex items-center" [class]="iconColorClass()">
           @if (icon()) {
@@ -49,10 +49,18 @@ interface TestStatValue {
     :host {
       display: block;
     }
-    .text-positive { color: var(--green-600); }
+    .text-positive { color: var(--greden-600); }
     .text-negative { color: var(--red-600); }
     .text-neutral { color: var(--gray-500); }
   `,
+  ],
+  animations: [
+    trigger('widgetAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

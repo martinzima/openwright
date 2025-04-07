@@ -4,13 +4,14 @@ import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CardModule } from 'primeng/card';
 import { DashboardStore } from '../dashboard-store.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'ow-test-stats-chart',
   standalone: true,
   imports: [CommonModule, ChartModule, SkeletonModule, CardModule],
   template: `
-    <p-card styleClass="shadow-md">
+    <p-card styleClass="shadow-md" @chartAnimation>
       <ng-template pTemplate="title">
         <span class="font-semibold text-gray-700">Test Run History</span>
       </ng-template>
@@ -37,6 +38,14 @@ import { DashboardStore } from '../dashboard-store.service';
       padding-top: 0.5rem; 
     }
   `,
+  ],
+  animations: [
+    trigger('chartAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

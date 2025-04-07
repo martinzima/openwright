@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
 import { Hash, CheckCircle, XCircle, Timer } from 'lucide-angular';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 function formatDuration(totalSeconds: number | undefined): string {
   if (totalSeconds === undefined || totalSeconds === null || totalSeconds < 0) {
@@ -37,7 +38,7 @@ function formatDuration(totalSeconds: number | undefined): string {
     SkeletonModule,
     SelectModule,
     ButtonModule,
-    TooltipModule,
+    TooltipModule
   ],
   template: `
     <ow-page-layout title="Dashboard">
@@ -62,11 +63,12 @@ function formatDuration(totalSeconds: number | undefined): string {
         </button>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+        @widgetsAnimation>
         <ow-stats-widget 
           title="Total Tests" 
           [statValue]="testStats()?.total" 
-          [icon]="HashIcon" 
+          [icon]="HashIcon"
           iconColorClass="text-blue-500" 
           [loading]="store.isLoadingStats()" />
         <ow-stats-widget 
@@ -89,7 +91,7 @@ function formatDuration(totalSeconds: number | undefined): string {
           [loading]="store.isLoadingStats()" />
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" @chartsAnimation>
         <div>
           <ow-test-stats-chart />
         </div>
@@ -98,11 +100,35 @@ function formatDuration(totalSeconds: number | undefined): string {
         </div>
       </div>
 
-      <div>
+      <div @listAnimation>
         <ow-test-run-list />
       </div>
     </ow-page-layout>
   `,
+  animations: [
+    trigger('widgetsAnimation', [
+      transition(':enter', [
+        query('ow-stats-widget', [
+          style({ opacity: 0, transform: 'translateY(20px)' }),
+          stagger(100, [
+            animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+          ])
+        ])
+      ])
+    ]),
+    trigger('chartsAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('500ms 300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('listAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('500ms 600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [DashboardStore]
 })

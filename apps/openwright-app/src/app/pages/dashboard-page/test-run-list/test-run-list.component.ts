@@ -12,6 +12,7 @@ import { DashboardStore } from '../dashboard-store.service';
 import { TestRun } from '@openwright/data-access';
 import { TimeAgoPipe } from '@openwright/ui-common';
 import { LucideAngularModule, GitCommitHorizontal, GitPullRequest, CheckCircle, XCircle, SkipForward, HelpCircle, Eye } from 'lucide-angular';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 function formatRunDuration(totalSeconds: number | undefined): string {
   if (totalSeconds === undefined || totalSeconds === null || totalSeconds < 0) {
@@ -39,7 +40,7 @@ function formatRunDuration(totalSeconds: number | undefined): string {
     SkeletonModule
   ],
   template: `
-    <p-card styleClass="shadow-md">
+    <p-card styleClass="shadow-md" @listAnimation>
       <ng-template pTemplate="title">
          <div class="flex justify-between items-center">
            <span class="font-semibold text-gray-700">Recent Test Runs</span>
@@ -170,6 +171,14 @@ function formatRunDuration(totalSeconds: number | undefined): string {
           cursor: default;
       }
   `],
+  animations: [
+    trigger('listAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TestRunListComponent {

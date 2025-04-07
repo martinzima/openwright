@@ -37,3 +37,4 @@ export class AppComponent {
 17. When creating new Nx monorepo libs, prefer buildable libraries. Don't forget to remove the default created component if not needed. Also don't forget that the library name is not a positional argument in current Nx version and you have to specify it like --name example-name.
 18. When exporting components in Nx monorepo libraries, you don't need to export the using e.g. export const UI_COMPONENT = [FooComponent]; 
 Just export FooComponent
+19. Always only change what you are explicitly asked to. Leave everything else as it was.

@@ -4,19 +4,24 @@ import { ChangeDetectionStrategy, Component, contentChild, input, TemplateRef } 
 
 @Component({
   selector: 'ow-page-layout',
-  standalone: true,
   imports: [
     NgTemplateOutlet
   ],
   template: `
-    <div class="space-y-6 p-4 md:p-6 lg:p-8">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6" @headerAnimation>
-        <h2 class="text-4xl font-semibold text-gray-800">{{ title() }}</h2>
-        <div class="flex items-center gap-2">
-          <ng-content select="[actions]"></ng-content>
-        </div>
-      </div>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 p-6
+      md:p-8 lg:p-10 bg-slate-200 border-b border-gray-300">
+      <h2 class="text-4xl font-bold text-gray-700"
+        @headerAnimation>
+        {{title()}}
+      </h2>
 
+      <div class="flex items-center gap-2"
+        @headerAnimation>
+        <ng-content select="[actions]"></ng-content>
+      </div>
+    </div>
+
+    <div class="flex-grow p-4 md:p-6 lg:p-8">
       <ng-container *ngTemplateOutlet="contentTemplate()!"></ng-container>
     </div>
   `,

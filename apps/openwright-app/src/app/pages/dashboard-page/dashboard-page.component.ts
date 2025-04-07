@@ -62,49 +62,47 @@ function formatDuration(totalSeconds: number | undefined): string {
       </ng-container>
 
       <ng-template>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-          @widgetsAnimation>
-          <ow-stats-widget
-            class="widget"	
-            title="Total Tests" 
-            [statValue]="testStats()?.total" 
-            [icon]="HashIcon"
-            iconColorClass="text-blue-500" 
-            [loading]="store.isLoadingStats()" />
-          <ow-stats-widget 
-            class="widget"
-            title="Passing Tests" 
-            [statValue]="testStats()?.passed" 
-            [icon]="CheckCircleIcon" 
-            iconColorClass="text-green-500" 
-            [loading]="store.isLoadingStats()" />
-          <ow-stats-widget 
-            class="widget"
-            title="Failing Tests" 
-            [statValue]="testStats()?.failed" 
-            [icon]="XCircleIcon" 
-            iconColorClass="text-red-500" 
-            [loading]="store.isLoadingStats()" />
-          <ow-stats-widget 
-            class="widget"
-            title="Avg. Duration" 
-            [statValue]="avgDurationFormatted()" 
-            [icon]="TimerIcon" 
-            iconColorClass="text-purple-500" 
-            [loading]="store.isLoadingStats()" />
-        </div>
-        
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <ow-test-stats-chart class="widget" />
+        <div class="flex flex-col gap-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+            @widgetsAnimation>
+            <ow-stats-widget
+              class="widget"	
+              title="Total Tests" 
+              [statValue]="testStats()?.total" 
+              [icon]="HashIcon"
+              iconColorClass="text-blue-500" 
+              [loading]="store.isLoadingStats()" />
+            <ow-stats-widget 
+              class="widget"
+              title="Passing Tests" 
+              [statValue]="testStats()?.passed" 
+              [icon]="CheckCircleIcon" 
+              iconColorClass="text-green-500" 
+              [loading]="store.isLoadingStats()" />
+            <ow-stats-widget 
+              class="widget"
+              title="Failing Tests" 
+              [statValue]="testStats()?.failed" 
+              [icon]="XCircleIcon" 
+              iconColorClass="text-red-500" 
+              [loading]="store.isLoadingStats()" />
+            <ow-stats-widget 
+              class="widget"
+              title="Avg. Duration" 
+              [statValue]="avgDurationFormatted()" 
+              [icon]="TimerIcon" 
+              iconColorClass="text-purple-500" 
+              [loading]="store.isLoadingStats()" />
           </div>
-          <div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ow-test-stats-chart class="widget" />
             <ow-pass-rate-chart class="widget" />
           </div>
-        </div>
 
-        <div>
-          <ow-test-run-list class="widget" />
+          <div>
+            <ow-test-run-list class="widget" />
+          </div>
         </div>
       </ng-template>
     </ow-page-layout>

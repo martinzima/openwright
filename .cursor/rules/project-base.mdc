@@ -39,3 +39,4 @@ After creating a lib with nx, you don't need to manually modify any workspace js
 18. When exporting components in Nx monorepo libraries, you don't need to export the using e.g. export const UI_COMPONENT = [FooComponent]; 
 Just export FooComponent
 19. Always only change what you are explicitly asked to. Leave everything else as it was.
+20. When importing symbols (e.g. component types) from libraries in the monorepo, don't use relative imports, but instead import from their barrel file like e.g. @openwright/ui-common.

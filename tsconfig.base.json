@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@openwright/data-access": ["libs/data-access/src/index.ts"],
-      "@openwright/ui-common": ["libs/ui-common/src/index.ts"]
+      "@openwright/ui-common": ["libs/ui-common/src/index.ts"],
+      "@openwright/svg/*": ["apps/openwright-app/svg/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

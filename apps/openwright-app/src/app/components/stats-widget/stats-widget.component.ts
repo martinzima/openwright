@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ArrowDown, ArrowUp, LucideAngularModule, Minus } from 'lucide-angular';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
-import { LucideAngularModule, Minus, ArrowUp, ArrowDown } from 'lucide-angular';
 
 interface TestStatValue {
   value: number | string;
@@ -18,14 +18,13 @@ interface TestStatValue {
     LucideAngularModule
   ],
   template: `
-    <p-card [styleClass]="'shadow-md hover:shadow-lg transition-shadow duration-300 border-round'"
-    >
+    <p-card [styleClass]="'shadow-md border-round'">
       <ng-template pTemplate="title">
         <div class="flex items-center" [class]="iconColorClass()">
           @if (icon()) {
             <lucide-icon [img]="icon()" [size]="18" class="mr-2"></lucide-icon>
           }
-          <span class="font-medium">{{ title() }}</span>
+          <span class="font-semibold">{{ title() }}</span>
         </div>
       </ng-template>
       <ng-template pTemplate="content" class="pt-2">
@@ -33,9 +32,9 @@ interface TestStatValue {
           <p-skeleton height="2rem" styleClass="mb-1"></p-skeleton>
           <p-skeleton height="1rem" width="50%"></p-skeleton>
         } @else {
-          <div class="text-3xl font-semibold text-gray-800 mb-1">{{ displayValue() }}</div>
+          <div class="text-3xl font-semibold text-surface-700 mb-1">{{ displayValue() }}</div>
           @if (changeText()) {
-            <div class="text-sm flex items-center" [ngClass]="changeClass()">
+            <div class="text-sm flex items-center text-surface-500">
               <lucide-icon [img]="changeIcon()" [size]="14" class="mr-1"></lucide-icon>
               <span>{{ changeText() }} vs last period</span>
             </div>
@@ -49,9 +48,6 @@ interface TestStatValue {
     :host {
       display: block;
     }
-    .text-positive { color: var(--greden-600); }
-    .text-negative { color: var(--red-600); }
-    .text-neutral { color: var(--gray-500); }
   `,
   ],
   animations: [
@@ -98,11 +94,5 @@ export class StatsWidgetComponent {
     const change = this.changePercent();
     if (change === undefined || change === null || change === 0) return this.MinusIcon;
     return change > 0 ? this.ArrowUpIcon : this.ArrowDownIcon;
-  });
-
-  readonly changeClass = computed(() => {
-    const change = this.changePercent();
-    if (change === undefined || change === null || change === 0) return 'text-neutral';
-    return change > 0 ? 'text-positive' : 'text-negative';
   });
 }

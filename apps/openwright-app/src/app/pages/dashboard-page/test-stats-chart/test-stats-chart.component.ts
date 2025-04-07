@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, computed, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CardModule } from 'primeng/card';
 import { DashboardStore } from '../dashboard-store.service';
 
 @Component({
@@ -33,8 +33,9 @@ import { DashboardStore } from '../dashboard-store.service';
     :host {
         display: block;
     }
-    :host ::ng-deep .p-card .p-card-content {
-      padding-top: 0.5rem; 
+
+    p-chart {
+      height: 100%;
     }
   `,
   ],

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, computed, PLATFORM_ID } from '@angular/core';
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { PassRateBySuite } from '@openwright/data-access';
+import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
-import { CardModule } from 'primeng/card';
 import { DashboardStore } from '../dashboard-store.service';
-import { PassRateBySuite } from '@openwright/data-access';
 
 @Component({
   selector: 'ow-pass-rate-chart',
@@ -35,26 +35,8 @@ import { PassRateBySuite } from '@openwright/data-access';
     `
     :host {
         display: block;
-        height: 100%;
     }
-        
-    :host ::ng-deep .p-card {
-       display: flex;
-       flex-direction: column;
-       height: 100%;
-     }
-
-     :host ::ng-deep .p-card .p-card-body {
-      flex-grow: 1;
-
-      .p-card-content {
-        padding: 0.5rem;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-
+    
     p-chart {
       height: 100%;
     }

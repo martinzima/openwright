@@ -1,10 +1,11 @@
-import { ApplicationConfig, provideExperimentalZonelessChangeDetection, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { ApplicationConfig, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { provideSvgIcons } from '@ngneat/svg-icon';
+import { logoIcon } from '@openwright/svg/logo';
+import { OpenwrightPrimengPreset } from '@openwright/ui-common';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,8 +15,9 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     providePrimeNG({
       theme: {
-        preset: Aura
+        preset: OpenwrightPrimengPreset
       }
-    })
+    }),
+    provideSvgIcons([logoIcon])
   ],
 };

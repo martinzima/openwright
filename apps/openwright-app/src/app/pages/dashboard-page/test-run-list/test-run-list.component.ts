@@ -1,18 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { CardModule } from 'primeng/card';
-import { MeterGroupModule, MeterItem } from 'primeng/metergroup';
-import { TooltipModule } from 'primeng/tooltip';
-import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
-import { DashboardStore } from '../dashboard-store.service';
 import { TestRun } from '@openwright/data-access';
 import { TimeAgoPipe } from '@openwright/ui-common';
-import { LucideAngularModule, GitCommitHorizontal, GitPullRequest, CheckCircle, XCircle, SkipForward, HelpCircle, Eye } from 'lucide-angular';
-import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { ArrowRightIcon, CheckCircle, GitCommitHorizontal, GitPullRequest, HelpCircle, LucideAngularModule, SkipForward, XCircle } from 'lucide-angular';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { MeterGroupModule, MeterItem } from 'primeng/metergroup';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { DashboardStore } from '../dashboard-store.service';
 
 function formatRunDuration(totalSeconds: number | undefined): string {
   if (totalSeconds === undefined || totalSeconds === null || totalSeconds < 0) {
@@ -54,7 +54,8 @@ function formatRunDuration(totalSeconds: number | undefined): string {
           responsiveLayout="scroll"
           styleClass="p-datatable-sm" 
           [scrollable]="true" 
-          scrollHeight="400px" >
+          scrollHeight="400px"
+          [stripedRows]="true">
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 35%">Test Suite / Run</th>
@@ -68,12 +69,12 @@ function formatRunDuration(totalSeconds: number | undefined): string {
           <ng-template pTemplate="body" let-run>
             <tr> 
               <td>
-                <div class="font-medium text-gray-800 mb-1">{{ run.name }}</div>
-                <div class="flex items-center space-x-3 text-xs">
+                <div class="font-medium mb-1">{{ run.name }}</div>
+                <div class="flex items-center space-x-3 text-xs text-surface-500">
                   @if(run.commitHash) {
                     <a [href]="'https://github.com/commits/' + run.commitHash" 
                         target="_blank" 
-                        class="flex items-center text-gray-500 hover:text-blue-600" 
+                        class="flex items-center" 
                         (click)="$event.stopPropagation()"
                         pTooltip="Commit: {{run.commitHash}}"
                         tooltipPosition="top">
@@ -84,11 +85,11 @@ function formatRunDuration(totalSeconds: number | undefined): string {
                   @if(run.prNumber) {
                     <a [href]="'https://github.com/pull/' + run.prNumber" 
                         target="_blank" 
-                        class="flex items-center text-gray-500 hover:text-blue-600"
+                        class="flex items-center"
                         (click)="$event.stopPropagation()"
                         pTooltip="PR: #{{run.prNumber}}"
                         tooltipPosition="top"> 
-                        <lucide-icon [img]="GitPullRequestIcon" size="14" class="mr-1"></lucide-icon> 
+                        <lucide-icon [img]="GitPullRequestIcon" size="14" class="mr-1" />
                         <span>#{{ run.prNumber }}</span>
                     </a>
                   }
@@ -97,15 +98,16 @@ function formatRunDuration(totalSeconds: number | undefined): string {
               <td>
                  <p-tag [severity]="getSeverity(run.status)">
                      <div class="flex items-center">
-                        <lucide-icon [img]="getStatusIcon(run.status)" [size]="12" class="mr-1"></lucide-icon>
+                        <lucide-icon [img]="getStatusIcon(run.status)" [size]="12" class="mr-1" />
                         <span>{{run.status}}</span>
                     </div>
                  </p-tag>
               </td>
-              <td pTooltip="{{ run.startTime | date: 'medium' }}" tooltipPosition="top">
+              <td pTooltip="{{ run.startTime | date: 'medium' }}" tooltipPosition="top"
+                class="text-surface-500">
                   {{ run.startTime | timeAgo }}
               </td>
-              <td>{{ formatDuration(run.duration) }}</td>
+              <td class="text-surface-500">{{ formatDuration(run.duration) }}</td>
               <td>
                 @if(run.passedCount !== undefined && run.totalCount !== undefined && run.totalCount > 0) {
                   <p-meterGroup 
@@ -124,7 +126,7 @@ function formatRunDuration(totalSeconds: number | undefined): string {
                     pTooltip="View Details" 
                     tooltipPosition="left"
                     class="p-button-text p-button-sm p-button-rounded">
-                    <lucide-icon [img]="EyeIcon" size="16"></lucide-icon>
+                    <lucide-icon [img]="ArrowRightIcon" size="16"></lucide-icon>
                 </button>
               </td>
             </tr>
@@ -191,7 +193,7 @@ export class TestRunListComponent {
   readonly XCircleIcon = XCircle;
   readonly SkipForwardIcon = SkipForward;
   readonly HelpCircleIcon = HelpCircle;
-  readonly EyeIcon = Eye;
+  readonly ArrowRightIcon = ArrowRightIcon;
 
   getSeverity(status: string): 'success' | 'danger' | 'warn' | 'info' {
     switch (status) {
@@ -222,13 +224,13 @@ export class TestRunListComponent {
 
     const data = [];
     if (skippedCount > 0) {
-      data.push({ label: `Skipped: ${skippedCount}`, color: 'var(--p-yellow-500)', value: skippedCount });
+      data.push({ label: `Skipped: ${skippedCount}`, color: 'var(--p-yellow-400)', value: skippedCount });
     }
     if (failedCount > 0) {
-      data.push({ label: `Failed: ${failedCount}`, color: 'var(--p-red-500)', value: failedCount });
+      data.push({ label: `Failed: ${failedCount}`, color: 'var(--p-red-400)', value: failedCount });
     }
     if (passed > 0) {
-      data.push({ label: `Passed: ${passed}`, color: 'var(--p-green-500)', value: passed });
+      data.push({ label: `Passed: ${passed}`, color: 'var(--p-green-400)', value: passed });
     }
 
     return data;

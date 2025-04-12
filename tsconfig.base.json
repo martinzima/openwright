@@ -16,8 +16,13 @@
     "baseUrl": ".",
     "paths": {
       "@openwright/data-access": ["libs/data-access/src/index.ts"],
-      "@openwright/ui-common": ["libs/ui-common/src/index.ts"],
-      "@openwright/svg/*": ["apps/openwright-app/svg/*"]
+      "@openwright/playwright-reporter": [
+        "libs/playwright-reporter/src/index.ts"
+      ],
+      "@openwright/reporting-api": ["libs/reporting-api/src/index.ts"],
+      "@openwright/shared-utils": ["libs/shared-utils/src/index.ts"],
+      "@openwright/svg/*": ["apps/openwright-app/svg/*"],
+      "@openwright/ui-common": ["libs/ui-common/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

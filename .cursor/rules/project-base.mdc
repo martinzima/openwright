@@ -34,9 +34,24 @@ export class AppComponent {
 14. If Angular component has no content inside of its tags, use self-closing tag.
 15. You don't need to specify standalone: true components as it is default.
 16. Use input() signal based API instead of @Input decorator, or model(), output(), contentChild() and similar.
-17. When creating new Nx monorepo libs, prefer buildable libraries. Don't forget to remove the default created component if not needed. Also don't forget that the library name is not a positional argument in current Nx version and you have to specify it like --name example-name.
+17. When creating new Nx monorepo libs, prefer buildable libraries. Also don't forget that the library name is not a positional argument in current Nx version and you have to specify it like --name example-name.
+Don't forget to specify the prefix="ow". We don't want a unitTestRunner by default.
+Example or valid nx command:
+```
+npx nx generate @nx/angular:library --directory=libs/data-access --standalone --simpleName --prefix=ow --unitTestRunner none --buildable true --name data-access
+```
+
+After running the generate command, don't forget to remove the default created component and all its files (*.html/ts/css/scss) by removing the directory with same name as the library, inside src/lib relative to the library root path. Use terminal command to do the deletion.
+
 After creating a lib with nx, you don't need to manually modify any workspace jsons.
+
+If creating non-angular publishable or buildable library, don't forget to also specify bundler=tsc and linter=eslint and unitTestRunner=vitest.
 18. When exporting components in Nx monorepo libraries, you don't need to export the using e.g. export const UI_COMPONENT = [FooComponent]; 
 Just export FooComponent
 19. Always only change what you are explicitly asked to. Leave everything else as it was.
 20. When importing symbols (e.g. component types) from libraries in the monorepo, don't use relative imports, but instead import from their barrel file like e.g. @openwright/ui-common.
+However, don't import from the library import path (like @openwright/ui-common) or relatively from its barrel when importing from inside the library.
+TypeScript imports from one path should always be non-wrapped on one line.
+21. Model files (types returned from API, API payloads, etc.) should typically be placed in directory called model and each type should have its own file. The model types should all be exported in the barrel file. Model file names should respect the name of the type itself with no suffixes.
+22. API services should also each have its own file and be named *ApiService. The file will have then *-api.service.ts suffix.
+23. When issuing terminal commands, always remember we are on Windows and we are using PowerShell, not Windows Command Prompt.

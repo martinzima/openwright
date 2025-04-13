@@ -1,4 +1,4 @@
-import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuite, RunReportingApi, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload } from '@openwright/reporting-api';
+import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuitePayload, RunReportingApi, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload } from '@openwright/reporting-api';
 import { generateUuidV4 } from '@openwright/shared-utils';
 import type { FullConfig, FullResult, Location, TestError as PlaywrightTestError, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 
@@ -19,7 +19,7 @@ export class OpenWrightReporter implements Reporter {
   private readonly apiService: RunReportingApi;
 
   private queueIntervalId: NodeJS.Timeout | null = null;
-  private runId: string | undefined;
+  private runId: string | null = null;
   private testIdToCaseIdMap: Record<string, string> = {};
   private testIdToExecutionIdMap: Record<string, string> = {};
   private pendingExecutionUpserts: Record<string, UpsertCaseExecutionPayload> = {};
@@ -57,15 +57,15 @@ export class OpenWrightReporter implements Reporter {
 
     this.testIdToCaseIdMap = {};
     this.testIdToExecutionIdMap = {};
-    this.pendingExecutionUpserts = {};
+    this.pendingExecutionUpserts = {}; 
 
-    const rootSuitePayload = this.mapSuiteToApi(suite, null);
+    const rootSuite = this.mapSuiteToApi(suite, null);
 
     const payload: CreateRunPayload = {
       id: this.runId,
       projectId: this.config.projectId,
       startDate: new Date().toISOString(),
-      rootSuite: rootSuitePayload,
+      suites: rootSuite.suites ?? []
     };
 
     try {
@@ -94,8 +94,7 @@ export class OpenWrightReporter implements Reporter {
     const initialUpsertPayload: UpsertCaseExecutionPayload = {
       id: executionId,
       startDate: result.startTime.toISOString(),
-      retry: result.retry,
-      status: this.mapPlaywrightStatusToApi(result.status) // TODO what is the status here?
+      retry: result.retry
     };
 
     this.pendingExecutionUpserts[executionId] = initialUpsertPayload;
@@ -225,7 +224,7 @@ export class OpenWrightReporter implements Reporter {
     this.debugLog("✅ OpenWright Reporter: Execution upsert queue drained.");
   }
 
-  private formatLocation(location?: Location): TestLocation | undefined {
+  private formatLocation = (location?: Location): TestLocation | undefined => {
     if (!location) {
       return undefined;
     }
@@ -237,7 +236,7 @@ export class OpenWrightReporter implements Reporter {
     };
   }
 
-  private mapPlaywrightStatusToApi(status: TestResult['status']): TestStatus {
+  private mapPlaywrightStatusToApi = (status: TestResult['status']): TestStatus => {
     switch (status) {
       case 'passed':
         return TestStatus.Passed;
@@ -255,7 +254,7 @@ export class OpenWrightReporter implements Reporter {
     }
   }
 
-  private formatPlaywrightErrorToApi(error: PlaywrightTestError): ApiTestError {
+  private formatPlaywrightErrorToApi = (error: PlaywrightTestError): ApiTestError => {
     return {
       message: error.message,
       stack: error.stack,
@@ -264,13 +263,13 @@ export class OpenWrightReporter implements Reporter {
     };
   }
 
-  private mapSuiteToApi = (suite: Suite, runGroup: string | null): CreateRunSuite => {
+  private mapSuiteToApi = (suite: Suite, runGroup: string | null): CreateRunSuitePayload => {
     let currentRunGroup = runGroup;
     if (suite.type === 'project') {
       currentRunGroup = suite.title;
     }
     
-    const suites: CreateRunSuite[] = [];
+    const suites: CreateRunSuitePayload[] = [];
     const cases: CreateRunCasePayload[] = suite.tests.map(this.mapTestCaseToApi);
     
     for (const childSuite of suite.suites) {
@@ -283,13 +282,28 @@ export class OpenWrightReporter implements Reporter {
       }
     }
 
-    return {
-      title: suite.title,
-      location: this.formatLocation(suite.location),
-      suites: suites.length > 0 ? suites : undefined,
-      cases: cases.length > 0 ? cases : undefined,
-      runGroup: currentRunGroup ?? undefined
-    };
+    if (suite.type === 'root') {
+      if (cases.length > 0) {
+        // we don't actually send the root suite, so we need a new aux suite to contain the cases
+        suites.push({
+          title: null,
+          cases: cases
+        });
+      }
+
+      return {
+        title: null,
+        suites: suites
+      };
+    } else {
+      return {
+        title: suite.title,
+        location: this.formatLocation(suite.location),
+        suites: suites.length > 0 ? suites : undefined,
+        cases: cases.length > 0 ? cases : undefined,
+        runGroup: currentRunGroup ?? undefined
+      };
+    }
   }
 
   private mapTestCaseToApi = (test: TestCase): CreateRunCasePayload => {

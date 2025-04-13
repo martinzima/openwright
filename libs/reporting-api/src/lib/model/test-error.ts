@@ -5,4 +5,4 @@ export interface TestError {
   stack?: string;
   location?: TestLocation;
   snippet?: string;
-} 
+}

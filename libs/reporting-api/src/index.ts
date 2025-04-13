@@ -1,6 +1,6 @@
 export * from './lib/model/create-run-case-payload';
 export * from './lib/model/create-run-payload';
-export * from './lib/model/create-run-suite';
+export * from './lib/model/create-run-suite-payload';
 export * from './lib/model/test-error';
 export * from './lib/model/test-location';
 export * from './lib/model/test-status';

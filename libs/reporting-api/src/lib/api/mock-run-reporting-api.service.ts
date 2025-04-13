@@ -16,12 +16,10 @@ export class MockRunReportingApiService implements RunReportingApi {
     await this.delay(200);
   }
 
-  async updateRunCaseExecutions(
-    runId: string,
-    payload: UpsertCaseExecutionsPayload,
-  ): Promise<void> {
-    console.log(`🧪 MockRunReportingApiService: Updating ${payload.length} executions for run ${runId}`);
-    
+  async updateRunCaseExecutions(runId: string,
+    payload: UpsertCaseExecutionsPayload): Promise<void> {
+    console.log(`🧪 MockRunReportingApiService: Updating ${payload.length} executions for run ${runId},\npayload:`, JSON.stringify(payload, null, 2));
+
     // Simulate network delay
     await this.delay(200);
   }

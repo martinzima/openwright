@@ -1,6 +1,6 @@
 import { ActorInfo } from './actor-info';
 import { CommitInfo } from './commit-info';
-import { CreateRunSuite } from './create-run-suite';
+import { CreateRunSuitePayload } from './create-run-suite-payload';
 
 export interface CreateRunPayload {
   id: string;
@@ -11,5 +11,5 @@ export interface CreateRunPayload {
   pullRequestNumber?: number;
   commit?: CommitInfo;
   actor?: ActorInfo;
-  rootSuite: CreateRunSuite;
+  suites: CreateRunSuitePayload[];
 } 

@@ -1,10 +1,10 @@
 import { CreateRunCasePayload } from './create-run-case-payload';
 import { TestLocation } from './test-location';
 
-export interface CreateRunSuite {
-  title?: string;
+export interface CreateRunSuitePayload {
+  title: string | null;
   location?: TestLocation;
-  runGroup?: string | null;
-  suites?: CreateRunSuite[];
+  runGroup?: string;
+  suites?: CreateRunSuitePayload[];
   cases?: CreateRunCasePayload[];
 }

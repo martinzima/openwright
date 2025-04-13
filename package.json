@@ -9,7 +9,7 @@
     "build": "npx nx build openwright-app",
     "serve": "npx nx serve openwright-app",
     "test": "npx nx test openwright-app",
-    "e2e": "npx nx run openwright-app-e2e:playwright"
+    "e2e": "npx nx run openwright-app-e2e:e2e"
   },
   "private": true,
   "dependencies": {

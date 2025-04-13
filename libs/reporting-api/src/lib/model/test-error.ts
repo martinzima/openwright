@@ -1,4 +1,8 @@
+import { TestLocation } from "./test-location";
+
 export interface TestError {
-  message: string;
+  message?: string;
   stack?: string;
+  location?: TestLocation;
+  snippet?: string;
 } 

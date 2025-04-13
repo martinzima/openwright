@@ -45,7 +45,7 @@ export class OpenWrightReporter implements Reporter {
     this.testIdToExecutionIdMap = {};
     this.pendingExecutionUpserts = {};
 
-    const rootSuitePayload = this.mapSuiteToApi(suite);
+    const rootSuitePayload = this.mapSuiteToApi(suite, null);
 
     const payload: CreateRunPayload = {
       id: this.runId,
@@ -207,7 +207,10 @@ export class OpenWrightReporter implements Reporter {
   }
 
   private formatLocation(location?: Location): TestLocation | undefined {
-    if (!location) return undefined;
+    if (!location) {
+      return undefined;
+    }
+
     return {
       file: location.file,
       line: location.line,
@@ -235,20 +238,38 @@ export class OpenWrightReporter implements Reporter {
 
   private formatPlaywrightErrorToApi(error: PlaywrightTestError): ApiTestError {
     return {
-      message: error.message ?? 'Error message unavailable',
+      message: error.message,
       stack: error.stack,
+      location: this.formatLocation(error.location),
+      snippet: error.snippet,
     };
   }
 
-  private mapSuiteToApi = (suite: Suite): CreateRunSuite => {
-    const nestedSuites: CreateRunSuite[] = suite.suites.map(this.mapSuiteToApi);
-    const nestedCases: CreateRunCasePayload[] = suite.tests.map(this.mapTestCaseToApi);
+  private mapSuiteToApi = (suite: Suite, runGroup: string | null): CreateRunSuite => {
+    let currentRunGroup = runGroup;
+    if (suite.type === 'project') {
+      currentRunGroup = suite.title;
+    }
+    
+    const suites: CreateRunSuite[] = [];
+    const cases: CreateRunCasePayload[] = suite.tests.map(this.mapTestCaseToApi);
+    
+    for (const childSuite of suite.suites) {
+      const createdSuite = this.mapSuiteToApi(childSuite, currentRunGroup);
+      if (childSuite.type === 'project' || childSuite.type === 'file') {
+        suites.push(...createdSuite.suites || []);
+        cases.push(...createdSuite.cases || []);
+      } else {
+        suites.push(createdSuite);
+      }
+    }
 
     return {
       title: suite.title,
       location: this.formatLocation(suite.location),
-      suites: nestedSuites.length > 0 ? nestedSuites : undefined,
-      cases: nestedCases.length > 0 ? nestedCases : undefined,
+      suites: suites.length > 0 ? suites : undefined,
+      cases: cases.length > 0 ? cases : undefined,
+      runGroup: currentRunGroup ?? undefined
     };
   }
 

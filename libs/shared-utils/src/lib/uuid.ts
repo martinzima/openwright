@@ -5,4 +5,4 @@ export function generateUuidV4(): string {
     const v = c === 'x' ? r : (r & 0x3) | 0x8; // y values are 8, 9, A, or B
     return v.toString(16);
   });
-} 
+}

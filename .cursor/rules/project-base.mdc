@@ -55,3 +55,7 @@ TypeScript imports from one path should always be non-wrapped on one line.
 21. Model files (types returned from API, API payloads, etc.) should typically be placed in directory called model and each type should have its own file. The model types should all be exported in the barrel file. Model file names should respect the name of the type itself with no suffixes.
 22. API services should also each have its own file and be named *ApiService. The file will have then *-api.service.ts suffix.
 23. When issuing terminal commands, always remember we are on Windows and we are using PowerShell, not Windows Command Prompt.
+24. TypeScript style:
+-Don't leave redundant trailing commas in parameters lists, arrays, etc.
+-All if clauses should be followed by full pair of braces { and }, each on its own line.
+

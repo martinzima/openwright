@@ -2,8 +2,9 @@ import axios, { AxiosInstance } from 'axios';
 import { RunReportingApiConfig } from '../config/run-reporting-api.config';
 import { CreateRunPayload } from '../model/create-run-payload';
 import { UpsertCaseExecutionsPayload } from '../model/upsert-case-execution-payload';
+import { RunReportingApi } from './run-reporting-api';
 
-export class RunReportingApiService {
+export class RunReportingApiService implements RunReportingApi {
   private readonly axiosInstance: AxiosInstance;
 
   constructor(config: RunReportingApiConfig) {
@@ -31,8 +32,7 @@ export class RunReportingApiService {
   // New bulk update method
   updateRunCaseExecutions(
     runId: string,
-    payload: UpsertCaseExecutionsPayload,
-  ): Promise<void> {
+    payload: UpsertCaseExecutionsPayload): Promise<void> {
     return this.axiosInstance.patch(`/runs/${runId}/executions/bulk`, payload);
   }
 } 

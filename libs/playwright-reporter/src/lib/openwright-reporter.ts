@@ -1,18 +1,25 @@
-import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuite, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload } from '@openwright/reporting-api';
+import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuite, RunReportingApi, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload } from '@openwright/reporting-api';
 import { generateUuidV4 } from '@openwright/shared-utils';
 import type { FullConfig, FullResult, Location, TestError as PlaywrightTestError, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 
 export interface OpenWrightReporterConfig extends RunReportingApiConfig {
   projectId: string;
-  updateIntervalMs?: number; // Default 5000ms
+  updateIntervalMs?: number;
+  apiService?: RunReportingApi;
+  debugLogging?: boolean;
+}
+
+interface OpenWrightReporterConfigFull extends OpenWrightReporterConfig {
+  updateIntervalMs: number;
+  debugLogging: boolean;
 }
 
 export class OpenWrightReporter implements Reporter {
+  private readonly config: OpenWrightReporterConfigFull;
+  private readonly apiService: RunReportingApi;
+
   private queueIntervalId: NodeJS.Timeout | null = null;
-  private readonly config: Required<Omit<OpenWrightReporterConfig, 'baseUrl' | 'reportingClientKey' | 'tenantId'> & RunReportingApiConfig>;
-  private readonly apiService: RunReportingApiService;
-  private runId!: string;
-  private startTime!: Date;
+  private runId: string | undefined;
   private testIdToCaseIdMap: Record<string, string> = {};
   private testIdToExecutionIdMap: Record<string, string> = {};
   private pendingExecutionUpserts: Record<string, UpsertCaseExecutionPayload> = {};
@@ -23,21 +30,28 @@ export class OpenWrightReporter implements Reporter {
     this.config = {
       ...options,
       updateIntervalMs: options.updateIntervalMs ?? 5000,
+      debugLogging: options.debugLogging ?? false
     };
-    this.apiService = new RunReportingApiService({
+    
+    this.apiService = options.apiService ?? new RunReportingApiService({
       baseUrl: this.config.baseUrl,
       reportingClientKey: this.config.reportingClientKey,
       tenantId: this.config.tenantId,
     });
   }
 
+  private debugLog(message: string, ...optionalParams: any[]): void {
+    if (this.config.debugLogging) {
+      console.debug(message, ...optionalParams);
+    }
+  }
+
   printsToStdio() {
-    return false; // We don't print to stdio, let Playwright use its default reporter
+    return false;
   }
 
   async onBegin(config: FullConfig, suite: Suite): Promise<void> {
     this.runId = generateUuidV4();
-    this.startTime = new Date();
     console.log(`🚀 OpenWright Reporter: Run ID ${this.runId}`);
     console.log(`🌎 Reporting to project ID: ${this.config.projectId}, instance URL: ${this.config.baseUrl}`);
 
@@ -50,21 +64,21 @@ export class OpenWrightReporter implements Reporter {
     const payload: CreateRunPayload = {
       id: this.runId,
       projectId: this.config.projectId,
-      startDate: this.startTime.toISOString(),
+      startDate: new Date().toISOString(),
       rootSuite: rootSuitePayload,
     };
 
     try {
       await this.apiService.createRun(payload);
-      console.debug(`✅ OpenWright Reporter: Run ${this.runId} created.`);
+      this.debugLog(`✅ OpenWright Reporter: Run ${this.runId} created.`);
       this.startQueueProcessing();
     } catch (error) {
-      console.debug(`❌ OpenWright Reporter: Failed to create run ${this.runId}`, error);
+      this.debugLog(`❌ OpenWright Reporter: Failed to create run ${this.runId}`, error);
     }
   }
 
   async onTestBegin(test: TestCase, result: TestResult): Promise<void> {
-    console.debug(`▶️ OpenWright Reporter: Test Begin - ${test.titlePath().join(' > ')}`);
+    this.debugLog(`▶️ OpenWright Reporter: Test Begin - ${test.titlePath().join(' > ')}`);
     const caseId = this.testIdToCaseIdMap[test.id];
 
     if (!caseId) {
@@ -75,7 +89,7 @@ export class OpenWrightReporter implements Reporter {
     const executionId = generateUuidV4();
     this.testIdToExecutionIdMap[test.id] = executionId;
 
-    console.debug(`➕ OpenWright Reporter: Queuing initial state for execution ${executionId} (case ${caseId})`);
+    this.debugLog(`➕ OpenWright Reporter: Queuing initial state for execution ${executionId} (case ${caseId})`);
 
     const initialUpsertPayload: UpsertCaseExecutionPayload = {
       id: executionId,
@@ -89,7 +103,7 @@ export class OpenWrightReporter implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult): void {
     const statusEmoji = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : result.status === 'timedOut' ? '⏱️' : result.status === 'skipped' ? '⏭️' : '❓';
-    console.debug(`${statusEmoji} OpenWright Reporter: Test End - ${test.titlePath().join(' > ')} - Status: ${result.status}`);
+    this.debugLog(`${statusEmoji} OpenWright Reporter: Test End - ${test.titlePath().join(' > ')} - Status: ${result.status}`);
 
     const caseId = this.testIdToCaseIdMap[test.id];
     const executionId = this.testIdToExecutionIdMap[test.id];
@@ -99,7 +113,7 @@ export class OpenWrightReporter implements Reporter {
       return;
     }
 
-    console.debug(`🔄 OpenWright Reporter: Queuing final state for execution ${executionId}`);
+    this.debugLog(`🔄 OpenWright Reporter: Queuing final state for execution ${executionId}`);
 
     const endUpsertPayload: UpsertCaseExecutionPayload = {
       id: executionId,
@@ -143,7 +157,7 @@ export class OpenWrightReporter implements Reporter {
       return;
     }
 
-    console.trace(`⏳ OpenWright Reporter: Starting update queue processing with interval ${this.config.updateIntervalMs}ms.`);
+    this.debugLog(`⏳ OpenWright Reporter: Starting update queue processing with interval ${this.config.updateIntervalMs}ms.`);
     
     this.queueIntervalId = setInterval(() => {
       void this.processUpdateQueue();
@@ -152,13 +166,17 @@ export class OpenWrightReporter implements Reporter {
 
   private stopQueueProcessing(): void {
     if (this.queueIntervalId) {
-      console.debug("🛑 OpenWright Reporter: Stopping update queue processing.");
+      this.debugLog("🛑 OpenWright Reporter: Stopping update queue processing.");
       clearInterval(this.queueIntervalId);
       this.queueIntervalId = null;
     }
   }
 
   private async processUpdateQueue(force?: boolean): Promise<void> {
+    if (!this.runId) {
+      throw new Error("⚠️ OpenWright Reporter: Run ID not set. Cannot process update queue.");
+    }
+
     const pendingKeys = Object.keys(this.pendingExecutionUpserts);
     if (this.isProcessingQueue || pendingKeys.length === 0) {
       return;
@@ -184,9 +202,9 @@ export class OpenWrightReporter implements Reporter {
       try {
         this.lastApiCallTime = Date.now();
         await this.apiService.updateRunCaseExecutions(this.runId, bulkPayload);
-        console.trace(`✅ OpenWright Reporter: Bulk upsert sent successfully for ${bulkPayload.length} execution(s).`);
+        this.debugLog(`✅ OpenWright Reporter: Bulk upsert sent successfully for ${bulkPayload.length} execution(s).`);
       } catch (error) {
-        console.trace(`❌ OpenWright Reporter: Failed to send bulk upsert.`, error);
+        this.debugLog(`❌ OpenWright Reporter: Failed to send bulk upsert.`, error);
       } finally {
         this.isProcessingQueue = false;
       }
@@ -196,14 +214,15 @@ export class OpenWrightReporter implements Reporter {
   }
 
   private async waitForQueueToDrain(): Promise<void> {
-    console.debug(`⏱️ OpenWright Reporter: Waiting for execution upsert queue to drain (${Object.keys(this.pendingExecutionUpserts).length} items remaining)...`);
+    this.debugLog(`⏱️ OpenWright Reporter: Waiting for execution upsert queue to drain (${Object.keys(this.pendingExecutionUpserts).length} items remaining)...`);
+    
     while (Object.keys(this.pendingExecutionUpserts).length > 0 || this.isProcessingQueue) {
       if (Object.keys(this.pendingExecutionUpserts).length > 0 && !this.isProcessingQueue) {
         await this.processUpdateQueue(true);
       }
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    console.debug("✅ OpenWright Reporter: Execution upsert queue drained.");
+    this.debugLog("✅ OpenWright Reporter: Execution upsert queue drained.");
   }
 
   private formatLocation(location?: Location): TestLocation | undefined {

@@ -1,0 +1,127 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="0.104.2" />
+    <PackageVersion Include="Dangl.Xunit.Extensions.Ordering" Version="2.1.0" />
+    <PackageVersion Include="Dapper" Version="2.1.35" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+    <PackageVersion Include="Docnet.Core" Version="2.6.0" />
+    <PackageVersion Include="EasyNetQ.Logging.Microsoft" Version="7.8.0" />
+    <PackageVersion Include="EasyNetQ.Serialization.NewtonsoftJson" Version="7.8.0" />
+    <PackageVersion Include="EntityFrameworkCore.Projectables" Version="3.0.4" />
+    <PackageVersion Include="FirebaseAdmin" Version="2.3.0" />
+    <PackageVersion Include="Google.Apis.Auth" Version="1.68.0" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.19.13" />
+    <PackageVersion Include="HtmlAgilityPack" Version="1.11.72" />
+    <PackageVersion Include="HtmlSanitizer" Version="8.1.870" />
+    <PackageVersion Include="IdentityModel" Version="6.2.0" />
+    <PackageVersion Include="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.2.0" />
+    <PackageVersion Include="IdentityServer4" Version="4.1.1" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.6" />
+    <PackageVersion Include="JsonSubTypes" Version="2.0.1" />
+    <PackageVersion Include="Lib.AspNetCore.Mvc.Ndjson.NewtonsoftJson" Version="4.0.0" />
+    <PackageVersion Include="LiteDB" Version="5.0.21" />
+    <PackageVersion Include="MailKit" Version="4.3.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.20" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.20" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Systemd" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Resilience" Version="8.6.0" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.7.2" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.7.2" />
+    <PackageVersion Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.7.2" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.57.0" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="6.33.0" />
+    <PackageVersion Include="Microsoft.OData.Core" Version="7.17.0" />
+    <PackageVersion Include="Microsoft.OData.Edm" Version="7.17.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageVersion Include="Microsoft.Spatial" Version="7.17.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Kubernetes.Tools.Targets" Version="1.1.0" />
+    <PackageVersion Include="Mjml.Net" Version="4.5.0" />
+    <PackageVersion Include="MQTTnet" Version="4.1.4.563" />
+    <PackageVersion Include="MudBlazor" Version="6.12.0" />
+    <PackageVersion Include="Ndjson.AsyncStreams.AspNetCore.Mvc" Version="1.3.0" />
+    <PackageVersion Include="Ndjson.AsyncStreams.AspNetCore.Mvc.NewtonsoftJson" Version="1.3.0" />
+    <PackageVersion Include="NetTopologySuite.IO.GeoJSON" Version="4.0.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="NModbus.Serial" Version="3.0.81" />
+    <PackageVersion Include="NodaTime" Version="3.1.13" />
+    <PackageVersion Include="NodaTime.Serialization.JsonNet" Version="3.1.0" />
+    <PackageVersion Include="NModbus" Version="3.0.81" />
+    <PackageVersion Include="Npgsql" Version="8.0.6" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="8.0.11" />
+    <PackageVersion Include="Ocelot" Version="19.0.4" />
+    <PackageVersion Include="Quartz" Version="3.6.3" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.6.3" />
+    <PackageVersion Include="Polly" Version="8.2.1" />
+    <PackageVersion Include="Portable.BouncyCastle" Version="1.8.10" />
+    <PackageVersion Include="prometheus-net" Version="8.2.1" />
+    <PackageVersion Include="prometheus-net.AspNetCore" Version="8.2.1" />
+    <PackageVersion Include="RestEase" Version="1.6.4" />
+    <PackageVersion Include="Revo.AspNetCore" Version="1.36.1" />
+    <PackageVersion Include="Revo.DataAccess" Version="1.36.1" />
+    <PackageVersion Include="Revo.Domain " Version="1.36.1" />
+    <PackageVersion Include="Revo.EasyNetQ" Version="1.36.1" />
+    <PackageVersion Include="Revo.EFCore" Version="1.36.1" />
+    <PackageVersion Include="Revo.Extensions.AutoMapper" Version="1.36.1" />
+    <PackageVersion Include="Revo.Extensions.Notifications" Version="1.36.1" />
+    <PackageVersion Include="Revo.Extensions.History" Version="1.36.1" />
+    <PackageVersion Include="Revo.Hangfire" Version="1.36.1" />
+    <PackageVersion Include="Revo.Infrastructure" Version="1.36.1" />
+    <PackageVersion Include="Revo.Testing" Version="1.36.1" />
+    <PackageVersion Include="Sentry.AspNetCore" Version="3.41.4" />
+    <PackageVersion Include="Sentry.Serilog" Version="3.41.4" />
+    <PackageVersion Include="Serilog" Version="3.1.1" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog.Enrichers.ClientInfo" Version="2.0.3" />
+    <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageVersion Include="Serilog.Exceptions.EntityFrameworkCore" Version="8.4.0" />
+    <PackageVersion Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.9" />
+    <PackageVersion Include="SourceLink.Copy.PdbFiles" Version="2.8.3" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageVersion Include="Syncfusion.Blazor" Version="19.4.0.56" />
+    <PackageVersion Include="Syncfusion.DocIORenderer.Net.Core" Version="23.1.44" />
+    <PackageVersion Include="Syncfusion.XlsIORenderer.Net.Core" Version="23.1.44" />
+    <PackageVersion Include="System.Interactive.Async" Version="6.0.1" />
+    <PackageVersion Include="System.IO.Ports" Version="7.0.0" />
+    <PackageVersion Include="System.Memory" Version="4.6.0" />
+    <PackageVersion Include="System.Net.Http" Version="4.3.4" />
+    <PackageVersion Include="System.Net.Http.WinHttpHandler" Version="4.7.0" />
+    <PackageVersion Include="System.Net.Http.Json" Version="7.0.1" />
+    <PackageVersion Include="System.Reactive" Version="6.0.1" />
+    <PackageVersion Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.5" />
+    <PackageVersion Include="Testcontainers" Version="3.8.0" />
+    <PackageVersion Include="Testcontainers.ClickHouse" Version="3.8.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="3.8.0" />
+    <PackageVersion Include="Xbim.Ifc" Version="6.0.493" />
+    <PackageVersion Include="xunit" Version="2.7.0" />
+    <PackageVersion Include="xunit.console" Version="2.7.1" />
+    <PackageVersion Include="Xunit.Extensions.TestDependency" Version="1.1.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageVersion>
+    <PackageVersion Include="Z.EntityFramework.Plus.EFCore" Version="8.103.7.1" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,6 @@
+﻿services:
+  openwright.backendservice:
+    image: openwright.backendservice
+    build:
+      context: .
+      dockerfile: OpenWright.BackendService/Dockerfile

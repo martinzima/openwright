@@ -1,0 +1,6 @@
+@OpenWright.BackendService_HostAddress = http://localhost:5218
+
+GET {{OpenWright.BackendService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

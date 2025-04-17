@@ -1,0 +1,17 @@
+<div class="login-container flex items-center justify-center p-6">
+  <p-card styleClass="w-full max-w-lg shadow-xl p-6" class="login-card">
+    <h1 class="login-title">Welcome Back</h1>
+    <p class="login-subtitle">Sign in to continue to OpenWright</p>
+
+    <div class="flex flex-col gap-3">
+      <p-button label="Login with Microsoft" icon="pi pi-microsoft" styleClass="w-full p-button-outlined p-button-lg text-lg"></p-button>
+      <p-button label="Login with Google" icon="pi pi-google" styleClass="w-full p-button-outlined p-button-lg text-lg"></p-button>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="text-center text-lg text-surface-500 mt-6">
+        Don't have an account?
+        <a routerLink="/signup" class="text-primary-500 hover:text-primary-700 font-medium">Sign up</a>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

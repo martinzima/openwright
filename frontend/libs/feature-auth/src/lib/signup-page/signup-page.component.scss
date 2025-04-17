@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  height: 100%; /* Ensure the host takes full height */
+}
+
+.signup-container {
+  min-height: calc(100vh - 64px - 57px); /* Adjust based on header/footer height */
+  background-color: var(--surface-ground);
+}
+
+/* Add any specific styles for the signup form */

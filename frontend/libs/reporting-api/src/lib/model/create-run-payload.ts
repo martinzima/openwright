@@ -6,10 +6,9 @@ export interface CreateRunPayload {
   id: string;
   projectId: string;
   startDate: string;
-  duration?: number;
+  suites: CreateRunSuitePayload[];
   description?: string;
   pullRequestNumber?: number;
   commit?: CommitInfo;
   actor?: ActorInfo;
-  suites: CreateRunSuitePayload[];
-} 
+}

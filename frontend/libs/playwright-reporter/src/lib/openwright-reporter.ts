@@ -65,7 +65,8 @@ export class OpenWrightReporter implements Reporter {
       id: this.runId,
       projectId: this.config.projectId,
       startDate: new Date().toISOString(),
-      suites: rootSuite.suites ?? []
+      suites: rootSuite.suites ?? [],
+      // TODO rest of info
     };
 
     try {
@@ -314,7 +315,11 @@ export class OpenWrightReporter implements Reporter {
       id: caseId,
       title: test.title,
       timeout: test.timeout,
-      expectedStatus: this.mapPlaywrightStatusToApi(test.expectedStatus)
+      expectedStatus: this.mapPlaywrightStatusToApi(test.expectedStatus),
+      location: this.formatLocation(test.location),
+      tags: test.tags,
+      retries: test.retries,
+      annotations: test.annotations
     };
   }
 }

@@ -13,8 +13,8 @@ export class RunReportingApiService implements RunReportingApi {
       headers: {
         'Content-Type': 'application/json',
         'OpenWright-Reporting-Client-Key': config.reportingClientKey,
-        'OpenWright-Tenant-Id': config.tenantId,
-      },
+        'OpenWright-Tenant-Id': config.tenantId
+      }
     });
   }
 
@@ -22,14 +22,6 @@ export class RunReportingApiService implements RunReportingApi {
     return this.axiosInstance.post('/runs', payload);
   }
 
-  /*createRunCase(
-    runId: string,
-    payload: CreateRunCasePayload,
-  ): Promise<void> {
-    return this.axiosInstance.post(`/runs/${runId}/cases`, payload);
-  }*/
-
-  // New bulk update method
   updateRunCaseExecutions(
     runId: string,
     payload: UpsertCaseExecutionsPayload): Promise<void> {

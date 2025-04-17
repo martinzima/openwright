@@ -1,0 +1,20 @@
+<div class="signup-container flex items-center justify-center p-4">
+  <p-card header="Sign up for OpenWright" styleClass="w-full max-w-md shadow-lg">
+    <div class="flex flex-col gap-4">
+      <div class="p-float-label">
+        <input pInputText id="email" class="w-full" />
+        <label for="email">Email</label>
+      </div>
+      <div class="p-float-label">
+        <p-password id="password" [feedback]="false" [toggleMask]="true" styleClass="w-full"></p-password>
+        <label for="password">Password</label>
+      </div>
+      <p-button label="Sign up" styleClass="w-full"></p-button>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="text-center text-sm text-surface-500 mt-4">
+        Already have an account? <a routerLink="/login" class="text-primary-500 hover:text-primary-700 font-medium">Login</a>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

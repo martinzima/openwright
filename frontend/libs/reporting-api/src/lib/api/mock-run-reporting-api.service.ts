@@ -12,7 +12,6 @@ export class MockRunReportingApiService implements RunReportingApi {
     console.log(`🧪 MockRunReportingApiService: Creating run with ID ${payload.id}`);
     console.log(`🧪 MockRunReportingApiService: Run payload:`, JSON.stringify(payload, null, 2));
     
-    // Simulate network delay
     await this.delay(200);
   }
 
@@ -20,7 +19,6 @@ export class MockRunReportingApiService implements RunReportingApi {
     payload: UpsertCaseExecutionsPayload): Promise<void> {
     console.log(`🧪 MockRunReportingApiService: Updating ${payload.length} executions for run ${runId},\npayload:`, JSON.stringify(payload, null, 2));
 
-    // Simulate network delay
     await this.delay(200);
   }
 

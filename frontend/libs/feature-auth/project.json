@@ -1,0 +1,29 @@
+{
+  "name": "feature-auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/feature-auth/src",
+  "prefix": "ow",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/feature-auth/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/feature-auth/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/feature-auth/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -13,18 +13,18 @@ import { DashboardStore } from '../dashboard-store.service';
   template: `
     <p-card styleClass="shadow-md">
       <ng-template pTemplate="title">
-        <span class="font-semibold text-gray-700">Pass Rate by Suite</span>
+        <span class="font-semibold">Pass Rate by Suite</span>
       </ng-template>
       <ng-template pTemplate="content" styleClass="flex flex-col">
         @if (store.isLoadingStats()) {
-          <p-skeleton height="200px" styleClass="flex-grow"></p-skeleton> 
+          <p-skeleton height="200px" styleClass="flex-grow"></p-skeleton>
         } @else if (chartData() && chartData()?.labels?.length) {
-          <div class="relative flex-grow h-full"> 
+          <div class="relative flex-grow h-full">
             <p-chart type="bar" [data]="chartData()" [options]="chartOptions()"
               height="200" />
           </div>
         } @else {
-          <div class="text-center text-gray-500 py-4 flex-grow flex items-center justify-center">
+          <div class="text-center text-muted-color py-4 flex-grow flex items-center justify-center">
             No suite data available for this period.
           </div>
         }
@@ -36,7 +36,7 @@ import { DashboardStore } from '../dashboard-store.service';
     :host {
         display: block;
     }
-    
+
     p-chart {
       height: 100%;
     }
@@ -46,7 +46,7 @@ import { DashboardStore } from '../dashboard-store.service';
 })
 export class PassRateChartComponent {
   private document = inject(DOCUMENT);
-  
+
   readonly store = inject(DashboardStore);
 
   readonly chartData = computed(() => {
@@ -80,7 +80,7 @@ export class PassRateChartComponent {
         indigoColor = documentStyle.getPropertyValue('--p-indigo-500') || indigoColor;
       }
     }
-    
+
     const chartColors = [
       blueColor,
       greenColor,

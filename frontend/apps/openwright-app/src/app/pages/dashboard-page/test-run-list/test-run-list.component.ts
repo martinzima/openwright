@@ -43,17 +43,17 @@ function formatRunDuration(totalSeconds: number | undefined): string {
     <p-card styleClass="shadow-md" @listAnimation>
       <ng-template pTemplate="title">
          <div class="flex justify-between items-center">
-           <span class="font-semibold text-gray-700">Recent Test Runs</span>
-           <a routerLink="/runs" class="text-sm text-blue-600 hover:underline">View all</a>
+           <span class="font-semibold">Recent Test Runs</span>
+           <a routerLink="/runs" class="text-sm hover:underline">View all</a>
          </div>
       </ng-template>
       <ng-template pTemplate="content">
-        <p-table 
-          [value]="store.latestRuns() || []" 
-          [loading]="store.isLoadingRuns()" 
+        <p-table
+          [value]="store.latestRuns() || []"
+          [loading]="store.isLoadingRuns()"
           responsiveLayout="scroll"
-          styleClass="p-datatable-sm" 
-          [scrollable]="true" 
+          styleClass="p-datatable-sm"
+          [scrollable]="true"
           scrollHeight="400px"
           [stripedRows]="true">
           <ng-template pTemplate="header">
@@ -62,33 +62,33 @@ function formatRunDuration(totalSeconds: number | undefined): string {
               <th style="width: 10%">Status</th>
               <th style="width: 15%">Run Date</th>
               <th style="width: 10%">Duration</th>
-              <th style="width: 20%">Tests</th> 
+              <th style="width: 20%">Tests</th>
               <th style="width: 10%">Actions</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-run>
-            <tr> 
+            <tr>
               <td>
                 <div class="font-medium mb-1">{{ run.name }}</div>
-                <div class="flex items-center space-x-3 text-xs text-surface-500">
+                <div class="flex items-center space-x-3 text-xs text-muted-color">
                   @if(run.commitHash) {
-                    <a [href]="'https://github.com/commits/' + run.commitHash" 
-                        target="_blank" 
-                        class="flex items-center" 
+                    <a [href]="'https://github.com/commits/' + run.commitHash"
+                        target="_blank"
+                        class="flex items-center"
                         (click)="$event.stopPropagation()"
                         pTooltip="Commit: {{run.commitHash}}"
                         tooltipPosition="top">
-                        <lucide-icon [img]="CommitIcon" size="14" class="mr-1"></lucide-icon> 
+                        <lucide-icon [img]="CommitIcon" size="14" class="mr-1"></lucide-icon>
                         <span>{{ run.commitHash.substring(0,7) }}</span>
                     </a>
                   }
                   @if(run.prNumber) {
-                    <a [href]="'https://github.com/pull/' + run.prNumber" 
-                        target="_blank" 
+                    <a [href]="'https://github.com/pull/' + run.prNumber"
+                        target="_blank"
                         class="flex items-center"
                         (click)="$event.stopPropagation()"
                         pTooltip="PR: #{{run.prNumber}}"
-                        tooltipPosition="top"> 
+                        tooltipPosition="top">
                         <lucide-icon [img]="GitPullRequestIcon" size="14" class="mr-1" />
                         <span>#{{ run.prNumber }}</span>
                     </a>
@@ -104,26 +104,26 @@ function formatRunDuration(totalSeconds: number | undefined): string {
                  </p-tag>
               </td>
               <td pTooltip="{{ run.startTime | date: 'medium' }}" tooltipPosition="top"
-                class="text-surface-500">
+                class="text-muted-color">
                   {{ run.startTime | timeAgo }}
               </td>
-              <td class="text-surface-500">{{ formatDuration(run.duration) }}</td>
+              <td class="text-muted-color">{{ formatDuration(run.duration) }}</td>
               <td>
                 @if(run.passedCount !== undefined && run.totalCount !== undefined && run.totalCount > 0) {
-                  <p-meterGroup 
+                  <p-meterGroup
                     [value]="calculateMeterData(run)"
-                    [style]="{ width: '100%' }" 
+                    [style]="{ width: '100%' }"
                    />
                 } @else {
                    <span class="text-gray-400">N/A</span>
                 }
               </td>
               <td class="text-center">
-                 <button 
-                    pButton 
+                 <button
+                    pButton
                     type="button"
-                    [routerLink]="['/runs', run.id]" 
-                    pTooltip="View Details" 
+                    [routerLink]="['/runs', run.id]"
+                    pTooltip="View Details"
                     tooltipPosition="left"
                     class="p-button-text p-button-sm p-button-rounded">
                     <lucide-icon [img]="ArrowRightIcon" size="16"></lucide-icon>

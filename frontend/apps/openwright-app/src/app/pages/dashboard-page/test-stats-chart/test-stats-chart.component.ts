@@ -12,7 +12,7 @@ import { DashboardStore } from '../dashboard-store.service';
   template: `
     <p-card styleClass="shadow-md">
       <ng-template pTemplate="title">
-        <span class="font-semibold text-gray-700">Test Run History</span>
+        <span class="font-semibold">Test Run History</span>
       </ng-template>
       <ng-template pTemplate="content">
         @if (store.isLoadingStats()) {
@@ -21,7 +21,7 @@ import { DashboardStore } from '../dashboard-store.service';
           <p-chart type="line" [data]="chartData()" [options]="chartOptions()"
             height="200" />
         } @else {
-          <div class="text-center text-gray-500 py-4">
+          <div class="text-center text-muted-color py-4">
             No historical data available for this period.
           </div>
         }

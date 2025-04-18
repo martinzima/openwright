@@ -1,10 +1,10 @@
-<header class="sticky top-0 z-10 bg-gradient-to-t from-slate-100 to-grey-200 border-b border-gray-300 text-white-50"
+<header class="sticky top-0 z-10 bg-gradient-to-t from-slate-100 to-grey-200 border-b border-gray-300 text-white-50 dark:from-surface-800 dark:to-surface-900 dark:border-surface-700"
     @headerAnimation>
     <div class="flex items-center justify-between px-6 h-20">
       <h1>
-        <a class="flex items-center pr-4 text-surface-800 hover:text-surface-800" [routerLink]="['/']">
+        <a class="flex items-center pr-4 text-surface-800 hover:text-surface-800 dark:text-surface-200 dark:hover:text-surface-100" [routerLink]="['/']">
             <svg-icon key="logo" class="mr-6" style="height: 48px; width: 48px;" />
-            <span class="text-3xl font-bold text-primary-700 hover:text-surface-800">OpenWright</span>
+            <span class="text-3xl font-bold text-primary-700 hover:text-surface-800 dark:text-primary-400 dark:hover:text-primary-300">OpenWright</span>
         </a>
       </h1>
       <div class="flex items-center">
@@ -23,33 +23,33 @@
            <a routerLink="/dashboard"
               routerLinkActive="active-menuitem"
               [routerLinkActiveOptions]="{exact: true}"
-              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md" >
+              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md dark:text-surface-300 dark:hover:text-primary-400" >
               <lucide-icon [img]="HouseIcon" class="menu-icon" [size]="18"></lucide-icon>
               <span class="font-medium hidden md:inline">Dashboard</span>
            </a>
            <a routerLink="/test-suites"
               routerLinkActive="active-menuitem"
-              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md">
+              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md dark:text-surface-300 dark:hover:text-primary-400">
               <lucide-icon [img]="LayersIcon" class="menu-icon" [size]="18"></lucide-icon>
               <span class="font-medium hidden md:inline">Test Suites</span>
            </a>
            <a routerLink="/test-runs"
               routerLinkActive="active-menuitem"
-              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md">
+              class="menu-item flex items-center p-3 space-x-2 hover:text-primary-600 text-gray-700 rounded-md dark:text-surface-300 dark:hover:text-primary-400">
               <lucide-icon [img]="ChartNoAxesColumnIcon" class="menu-icon" [size]="18"></lucide-icon>
               <span class="font-medium hidden md:inline">Test Runs</span>
            </a>
         </div>
-        <div class="header-actions flex items-center gap-1 pl-4 ml-4 border-l border-gray-200">
-            <button pButton class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600" pTooltip="Notifications">
+        <div class="header-actions flex items-center gap-1 pl-4 ml-4 border-l border-gray-200 dark:border-surface-700">
+            <button pButton class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400" pTooltip="Notifications">
               <lucide-icon [img]="BellIcon" size="20"></lucide-icon>
             </button>
-            <button pButton class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600" pTooltip="Help">
+            <button pButton class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400" pTooltip="Help">
               <lucide-icon [img]="HelpCircleIcon" size="20"></lucide-icon>
             </button>
             <button pButton
                     routerLink="/settings"
-                    class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600"
+                    class="p-button-rounded p-button-text p-button-plain text-gray-600 hover:text-primary-600 dark:text-surface-400 dark:hover:text-primary-400"
                     pTooltip="Settings">
               <lucide-icon [img]="SettingsIcon" size="20"></lucide-icon>
             </button>

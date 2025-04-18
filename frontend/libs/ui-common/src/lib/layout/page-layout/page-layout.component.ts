@@ -9,8 +9,8 @@ import { ChangeDetectionStrategy, Component, contentChild, input, TemplateRef } 
   ],
   template: `
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 p-6
-      md:p-8 lg:p-10 bg-slate-200 border-b border-gray-300">
-      <h2 class="text-4xl font-bold text-gray-700"
+      md:p-8 lg:p-10 bg-slate-200 border-b border-gray-300 dark:bg-surface-800 dark:border-surface-700">
+      <h2 class="text-4xl font-bold text-gray-700 dark:text-surface-200"
         @headerAnimation>
         {{title()}}
       </h2>
@@ -38,4 +38,4 @@ import { ChangeDetectionStrategy, Component, contentChild, input, TemplateRef } 
 export class PageLayoutComponent {
   title = input('');
   contentTemplate = contentChild(TemplateRef);
-} 
+}

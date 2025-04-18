@@ -2,7 +2,7 @@
 
 // PrimeNG Theme and Icons (Added back for clarity, resolved via project.json)
 // @import "primeng/resources/themes/lara-light-blue/theme.css";
-// @import "primeng/resources/primeng.css"; 
+// @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
 // Tailwind
@@ -15,10 +15,6 @@ html {
   font-family: Lato,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol;
   font-feature-settings: "cv02","cv03","cv04","cv11";
   line-height: 1.2;
-  
-  &:root {
-    --p-text-color: var(--p-surface-700);
-  }
 }
 
 a {

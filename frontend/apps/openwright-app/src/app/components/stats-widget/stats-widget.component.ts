@@ -32,9 +32,9 @@ interface TestStatValue {
           <p-skeleton height="2rem" styleClass="mb-1"></p-skeleton>
           <p-skeleton height="1rem" width="50%"></p-skeleton>
         } @else {
-          <div class="text-3xl font-semibold text-surface-700 mb-1">{{ displayValue() }}</div>
+          <div class="text-3xl font-semibold mb-1">{{ displayValue() }}</div>
           @if (changeText()) {
-            <div class="text-sm flex items-center text-surface-500">
+            <div class="text-sm flex items-center text-muted-color">
               <lucide-icon [img]="changeIcon()" [size]="14" class="mr-1"></lucide-icon>
               <span>{{ changeText() }} vs last period</span>
             </div>
@@ -75,7 +75,7 @@ export class StatsWidgetComponent {
       return val.value ?? '-';
     }
 
-    return val ?? '-'; 
+    return val ?? '-';
   });
 
   readonly changePercent = computed(() => {

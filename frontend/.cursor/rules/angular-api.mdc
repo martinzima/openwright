@@ -3,6 +3,11 @@ description:
 globs: 
 alwaysApply: true
 ---
+---
+description: 
+globs: 
+alwaysApply: true
+---
 Further details about APIs used:
 
 ## Angular Resource API (18+) Instructions

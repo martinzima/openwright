@@ -1,0 +1,50 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ ## PrimeNG 19 + Tailwind CSS Integration Guide
+
+This guide outlines how to effectively use PrimeNG components and Tailwind CSS utility classes within the OpenWright application, leveraging the Tailwind and PrimeNG integration plugin (already installed).
+
+### 1. Styling with Tailwind Utilities
+
+- **Semantic Colors (Preferred):** Use the semantic color utilities provided by the plugin. These automatically adapt to the chosen PrimeNG theme preset (our custom theme based on Aura theme). Avoid hardcoding specific Tailwind colors (like `bg-blue-500`) when a semantic equivalent exists.
+
+- **Extensions**
+The plugin extends the default configuration with a new set of utilities whose values are derived from the PrimeNG theme in use. All variants and breakpoints are supported e.g. dark:sm:hover:bg-primary.
+
+- **Color Palette**
+Class and description:
+
+primary-[50-950]	Primary color palette.
+surface-[0-950]	Surface color palette.
+primary	Default primary color.
+primary-contrast	Default primary contrast color.
+primary-emphasis	Default primary emphasis color.
+border-surface	Default primary emphasis color.
+bg-emphasis	Emphasis background e.g. hovered element.
+bg-highlight	Highlight background.
+bg-highlight-emphasis	Highlight background with emphasis.
+rounded-border	Border radius.
+text-color	Text color with emphasis.
+text-color-emphasis	Default primary emphasis color.
+text-muted-color	Secondary text color.
+text-muted-color-emphasis	Secondary text color with emphasis.
+
+- **Standard Utilities:** Use regular Tailwind classes for layout (`flex`, `grid`), spacing (`p-4`, `m-2`), typography (`text-lg`), borders (`rounded-md`), shadows (`shadow-lg`), etc.
+
+### 2. Animations
+
+- Leverage PrimeNG's built-in animation utility classes.
+- Examples: `animate-fadein`, `animate-duration-300`, `animate-delay-100`, `animate-infinite`, `animate-ease-in-out`.
+- Combine with Tailwind state variants: `hover:animate-pulse`.
+
+### 3. General Guidelines
+
+- Use PrimeNG components for complex UI elements (Tables, Dialogs, Picklists, etc.).
+- Apply Tailwind for layout, spacing, and fine-grained styling adjustments on components and custom elements.
+- Refer to the official documentation for specific component APIs and Tailwind utility classes.
+  - [PrimeNG Components](mdc:https:/primeng.org/components)
+  - [PrimeNG Tailwind Integration](mdc:https:/primeng.org/tailwind)
+  - [Tailwind CSS Documentation](mdc:https:/tailwindcss.com/docs) 

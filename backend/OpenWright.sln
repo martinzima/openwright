@@ -5,7 +5,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{14D3FB86-7590-46A0-8AA0-C141F06CBA19}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		.dockerignore = .dockerignore
+		.gitignore = .gitignore
+		Directory.Packages.props = Directory.Packages.props
+		Global.props = Global.props
+		GlobalDefault.props = GlobalDefault.props
+		NuGet.config = NuGet.config
+		Solution.props = Solution.props
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWright.Api", "OpenWright.Api\OpenWright.Api.csproj", "{6CBEFB93-F887-4AF0-8451-E549D54E9A61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWright.Platform", "OpenWright.Platform\OpenWright.Platform.csproj", "{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,5 +28,13 @@ Global
 		{91383C65-7A81-447B-9631-8B00630AA5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91383C65-7A81-447B-9631-8B00630AA5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91383C65-7A81-447B-9631-8B00630AA5AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CBEFB93-F887-4AF0-8451-E549D54E9A61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CBEFB93-F887-4AF0-8451-E549D54E9A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CBEFB93-F887-4AF0-8451-E549D54E9A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CBEFB93-F887-4AF0-8451-E549D54E9A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

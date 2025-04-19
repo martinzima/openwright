@@ -1,24 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Solution.props))\Solution.props" />
     
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2"/>
-        <PackageReference Include="Npgsql" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-        <PackageReference Include="Revo.Infrastructure" />
-    </ItemGroup>
-
     <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+      <Content Remove="logs\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Organizations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\OpenWright.Api\OpenWright.Api.csproj" />
+      <ProjectReference Include="..\OpenWright.Platform\OpenWright.Platform.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Sql\ow-create_baseline_pgsql.sql" />
+      <EmbeddedResource Include="Sql\ow-create_baseline_pgsql.sql" />
+      <EmbeddedResource Remove="logs\**" />
+      <None Remove="logs\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="logs\**" />
     </ItemGroup>
 
 </Project>

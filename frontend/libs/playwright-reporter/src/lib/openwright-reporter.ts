@@ -32,7 +32,7 @@ export class OpenWrightReporter implements Reporter {
       updateIntervalMs: options.updateIntervalMs ?? 5000,
       debugLogging: options.debugLogging ?? false
     };
-    
+
     this.apiService = options.apiService ?? new RunReportingApiService({
       baseUrl: this.config.baseUrl,
       reportingClientKey: this.config.reportingClientKey,
@@ -57,7 +57,7 @@ export class OpenWrightReporter implements Reporter {
 
     this.testIdToCaseIdMap = {};
     this.testIdToExecutionIdMap = {};
-    this.pendingExecutionUpserts = {}; 
+    this.pendingExecutionUpserts = {};
 
     const rootSuite = this.mapSuiteToApi(suite, null);
 
@@ -133,14 +133,14 @@ export class OpenWrightReporter implements Reporter {
     } else {
       executionUpsertPayload = endUpsertPayload;
     }
-    
+
     this.pendingExecutionUpserts[executionId] = executionUpsertPayload;
   }
 
   async onEnd(result: FullResult): Promise<void> {
     const finalStatusEmoji = result.status === 'passed' ? '🎉' : result.status === 'failed' ? '💥' : '⚠️';
     console.log(`${finalStatusEmoji} OpenWright Reporter: Run finished - status: ${result.status}`);
-    
+
     await this.waitForQueueToDrain();
     this.stopQueueProcessing();
 
@@ -158,7 +158,7 @@ export class OpenWrightReporter implements Reporter {
     }
 
     this.debugLog(`⏳ OpenWright Reporter: Starting update queue processing with interval ${this.config.updateIntervalMs}ms.`);
-    
+
     this.queueIntervalId = setInterval(() => {
       void this.processUpdateQueue();
     }, this.config.updateIntervalMs);
@@ -215,7 +215,7 @@ export class OpenWrightReporter implements Reporter {
 
   private async waitForQueueToDrain(): Promise<void> {
     this.debugLog(`⏱️ OpenWright Reporter: Waiting for execution upsert queue to drain (${Object.keys(this.pendingExecutionUpserts).length} items remaining)...`);
-    
+
     while (Object.keys(this.pendingExecutionUpserts).length > 0 || this.isProcessingQueue) {
       if (Object.keys(this.pendingExecutionUpserts).length > 0 && !this.isProcessingQueue) {
         await this.processUpdateQueue(true);
@@ -269,10 +269,10 @@ export class OpenWrightReporter implements Reporter {
     if (suite.type === 'project') {
       currentRunGroup = suite.title;
     }
-    
+
     const suites: CreateRunSuitePayload[] = [];
     const cases: CreateRunCasePayload[] = suite.tests.map(this.mapTestCaseToApi);
-    
+
     for (const childSuite of suite.suites) {
       const createdSuite = this.mapSuiteToApi(childSuite, currentRunGroup);
       if (childSuite.type === 'project' || childSuite.type === 'file') {
@@ -324,4 +324,4 @@ export class OpenWrightReporter implements Reporter {
   }
 }
 
-export default OpenWrightReporter; 
+export default OpenWrightReporter;

@@ -1,7 +1,7 @@
 import { workspaceRoot } from '@nx/devkit';
 import { nxE2EPreset } from '@nx/playwright/preset';
-import { MockRunReportingApiService } from '@openwright/reporting-api';
 import { defineConfig, devices } from '@playwright/test';
+import { OpenWrightReporterConfig } from '@openwright/reporting-api';
 
 // For CI, you may want to set BASE_URL to the deployed application.
 const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
@@ -38,16 +38,17 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['../../../libs/playwright-reporter/src/lib/openwright-reporter.ts', {
-      projectId: 'my-project',
-      baseUrl: 'http://api.openwright.local',
+      projectId: '851d6bcb-da9b-4b5f-9bd5-0f9b9aa142af',
+      baseUrl: 'http://localhost:5218',
       reportingClientKey: 'your-key',
-      tenantId: 'your-tenant',
-      apiService: new MockRunReportingApiService({
-        baseUrl: 'http://mock-api.openwright.local',
+      tenantId: 'f8c62189-8c03-4539-b6f8-690ecbac1682',
+      debugLogging: true,
+      /*apiService: new MockRunReportingApiService({
+        baseUrl: 'http://localhost:5218',
         reportingClientKey: 'mock-key',
-        tenantId: 'mock-tenant',
-      }),
-    }]
+        tenantId: 'f8c62189-8c03-4539-b6f8-690ecbac1682',
+      })*/
+    } satisfies OpenWrightReporterConfig]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {

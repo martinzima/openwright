@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using MoreLinq;
 using OpenWright.Platform.AspNetCore;
@@ -22,6 +23,11 @@ public class Startup : RevoStartup
         base.ConfigureServices(services);
 
         services.AddMvc()
+            .AddJsonOptions(opts =>
+            {
+                var enumConverter = new JsonStringEnumConverter();
+                opts.JsonSerializerOptions.Converters.Add(enumConverter);
+            })
             .ConfigureApplicationPartManager(partMgr =>
                 AppDomain.CurrentDomain.GetAssemblies()
                     .Select(x => new AssemblyPart(x))
@@ -66,6 +72,10 @@ public class Startup : RevoStartup
         bool? applyMigrationsUponStartup = Configuration.GetValue<bool?>("Deployment:ApplyMigrationsUponStartup");
 
         return new RevoConfiguration()
+            .ConfigureCore(cfg =>
+            {
+                //cfg.Security.UseNullSecurityModule = false;
+            })
             .ConfigureInfrastructure(cfg =>
             {
                 cfg.EnableSagas = false;
@@ -76,6 +86,7 @@ public class Startup : RevoStartup
                 };
 
                 cfg.DatabaseMigrations.ApplyMigrationsUponStartup = applyMigrationsUponStartup;
+                cfg.Tenancy.UseNullTenantContextResolver = false;
             })
             .UseAspNetCore()
             .UseEFCoreWithNpgsqlFromAppSettings(Configuration,

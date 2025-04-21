@@ -25,15 +25,16 @@ public class RunCase : BasicEntity
 
     public Run Run { get; private set; }
     public Guid CaseId { get; private set; }
+    public string? RunGroup { get; private set; }
     public Guid? SpecFileId { get; private set; }
     public FileLocation? FileLocation { get; private set; }
-    public int? Timeout { get; private set; }
+    public TimeSpan? Timeout { get; private set; }
     public int? Retries { get; private set; }
     public TestStatus? ExpectedStatus { get; private set; }
 
     public IReadOnlyCollection<Annotation> Annotations => annotations;
 
-    public void UpdateTimeout(int? timeout)
+    public void UpdateTimeout(TimeSpan? timeout)
     {
         Timeout = timeout;
     }
@@ -60,6 +61,11 @@ public class RunCase : BasicEntity
             SpecFileId = specFile?.Id;
             FileLocation = fileLocation;   
         }
+    }
+    
+    public void UpdateRunGroup(string? runGroup)
+    {
+        RunGroup = runGroup;
     }
 
     public void AddAnnotation(Annotation annotation)

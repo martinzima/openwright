@@ -8,7 +8,6 @@ namespace OpenWright.BackendService.Projects.Domain;
 public class Suite : OrganizationOwnedAggregateRoot
 {
     private readonly List<Case> cases = new();
-    private readonly List<Suite> suites = new();
 
     public Suite(Guid id, Project project, string? title)
         : base(id, project.TenantId)
@@ -17,10 +16,10 @@ public class Suite : OrganizationOwnedAggregateRoot
         Rename(title);
     }
     
-    protected Suite(Guid id, Suite parentSuite, string? title)
+    public Suite(Guid id, Suite parentSuite, string? title)
         : base(id, parentSuite.TenantId)
     {
-        ParentSuite = parentSuite ?? throw new ArgumentNullException(nameof(parentSuite));
+        ParentSuiteId = parentSuite?.Id ?? throw new ArgumentNullException(nameof(parentSuite));
         ProjectId = parentSuite.ProjectId;;
         Rename(title);
     }
@@ -30,32 +29,20 @@ public class Suite : OrganizationOwnedAggregateRoot
     }
 
     public Guid ProjectId { get; private set; }
-    public Suite? ParentSuite { get; private set; }
+    public Guid? ParentSuiteId { get; private set; }
     public string? Title { get; private set; }
-    public string? RunGroup { get; private set; }
     
     public IReadOnlyCollection<Case> Cases => cases;
-    public IReadOnlyCollection<Suite> Suites => suites;
 
     public void Rename(string? title)
     {
         Title = title?.NullIfWhitespaceTrimmed();
     }
-
-    public void UpdateRunGroup(string? runGroup)
-    {
-        RunGroup = runGroup;
-    }
     
-    public void AddCase(string title)
+    public Case AddCase(string title)
     {
         var @case = new Case(Guid.NewGuid(), this, title);
         cases.Add(@case);
-    }
-
-    public void AddSuite(string? title)
-    {
-        var suite = new Suite(Guid.NewGuid(), this, title);
-        suites.Add(suite);
+        return @case;
     }
 }

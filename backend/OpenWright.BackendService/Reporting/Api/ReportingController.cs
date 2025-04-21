@@ -5,7 +5,7 @@ using Revo.AspNetCore.Web;
 namespace OpenWright.BackendService.Reporting.Api;
 
 [ApiController]
-[Route("api/reporting")]
+[Route("reporting")]
 public class ReportingController : CommandApiController
 {
     [HttpPost("runs")]

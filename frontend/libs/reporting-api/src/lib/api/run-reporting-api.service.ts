@@ -13,18 +13,19 @@ export class RunReportingApiService implements RunReportingApi {
       headers: {
         'Content-Type': 'application/json',
         'OpenWright-Reporting-Client-Key': config.reportingClientKey,
-        'OpenWright-Tenant-Id': config.tenantId
+        'OpenWright-Organization-Id': config.tenantId
       }
     });
   }
 
   createRun(payload: CreateRunPayload): Promise<void> {
-    return this.axiosInstance.post('/runs', payload);
+    console.log('createRun', payload);
+    return this.axiosInstance.post('/reporting/runs', payload);
   }
 
   updateRunCaseExecutions(
     runId: string,
     payload: UpsertCaseExecutionsPayload): Promise<void> {
-    return this.axiosInstance.patch(`/runs/${runId}/executions/bulk`, payload);
+    return this.axiosInstance.patch(`/reporting/runs/${runId}/executions/bulk`, payload);
   }
-} 
+}

@@ -12,9 +12,6 @@ public class ModelDefinition : IEFCoreModelDefinition
         modelBuilder
             .Entity<Suite>(entity =>
             {
-                entity
-                    .HasMany(x => x.Suites)
-                    .WithOne(x => x.ParentSuite);
             });
         
         modelBuilder

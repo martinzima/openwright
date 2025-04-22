@@ -1,5 +1,4 @@
 using OpenWright.Api.Projects.ValueObjects;
-using OpenWright.Api.Reporting.Payloads;
 using OpenWright.Platform.Utils;
 using Revo.DataAccess.Entities;
 using Revo.Domain.Core;

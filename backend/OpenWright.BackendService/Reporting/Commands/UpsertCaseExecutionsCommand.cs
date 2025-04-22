@@ -1,7 +1,7 @@
 using OpenWright.Api.Reporting.Payloads;
 using Revo.Core.Commands;
 
-namespace OpenWright.BackendService.Reporting.Api;
+namespace OpenWright.BackendService.Reporting.Commands;
 
 public class UpsertCaseExecutionsCommand : ICommand
 {

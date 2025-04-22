@@ -1,12 +1,13 @@
 using OpenWright.Api.Projects.ValueObjects;
 using OpenWright.Api.Reporting.Payloads;
 using OpenWright.BackendService.Projects.Domain;
+using OpenWright.BackendService.Reporting.Commands;
 using OpenWright.BackendService.Runs.Domain;
 using Revo.Core.Commands;
 using Revo.Infrastructure.Repositories;
 using Revo.Infrastructure.Tenancy;
 
-namespace OpenWright.BackendService.Reporting.Api;
+namespace OpenWright.BackendService.Reporting.CommandHandlers;
 
 public class ReportingCommandHandler(
     ITenantContext tenantContext,
@@ -60,18 +61,26 @@ public class ReportingCommandHandler(
                 }
             }
 
-            var suite = await repository.FirstOrDefaultAsync<Suite>(s =>
-                s.ProjectId == project.Id
-                && s.Title == suitePayload.Title
-                && (parentSuite == null ? s.ParentSuiteId == null : s.ParentSuiteId == parentSuite.Id));
-
-            if (suite == null)
+            var suiteKey = GetSuiteKey(project.Id, parentSuite?.Id, suitePayload.Title);
+            
+            Suite suite;
+            if (!runEntities.Suites.TryGetValue(suiteKey, out suite))
             {
-                suite = parentSuite != null
-                    ? new Suite(Guid.NewGuid(), parentSuite, suitePayload.Title)
-                    : new Suite(Guid.NewGuid(), project, suitePayload.Title);
-
-                repository.Add(suite);
+                suite = await repository.FirstOrDefaultAsync<Suite>(s =>
+                    s.ProjectId == project.Id
+                    && s.Title == suitePayload.Title
+                    && (parentSuite == null ? s.ParentSuiteId == null : s.ParentSuiteId == parentSuite.Id));
+    
+                if (suite == null)
+                {
+                    suite = parentSuite != null
+                        ? new Suite(Guid.NewGuid(), parentSuite, suitePayload.Title)
+                        : new Suite(Guid.NewGuid(), project, suitePayload.Title);
+    
+                    repository.Add(suite);
+                }
+                
+                runEntities.Suites[suiteKey] = suite;
             }
 
             if (suitePayload.Cases != null)
@@ -102,7 +111,7 @@ public class ReportingCommandHandler(
                         }
                     }
 
-                    runEntities.Cases[casePayload.Id] = (caseEntity, casePayload, effectiveLocationPayload);
+                    runEntities.Cases[casePayload.Id] = new RunCaseInfo(caseEntity, casePayload, effectiveLocationPayload);
                 }
             }
 
@@ -125,31 +134,31 @@ public class ReportingCommandHandler(
         run.UpdateActor(payload.Actor);
         repository.Add(run);
 
-        foreach (var (caseEntity, casePayload, suiteLocationPayload) in runEntities.Cases.Values)
+        foreach (var runCaseInfo in runEntities.Cases.Values)
         {
-            var runCase = run.AddCase(caseEntity);
+            var runCase = run.AddCase(runCaseInfo.CaseEntity);
 
             SpecFile? specFile = null;
             FileLocation? fileLocation = null;
-            if (suiteLocationPayload?.File != null)
+            if (runCaseInfo.SuiteLocationPayload?.File != null)
             {
-                var filePath = suiteLocationPayload.File.Replace('\\', '/');
+                var filePath = runCaseInfo.SuiteLocationPayload.File.Replace('\\', '/');
                 if (runEntities.SpecFiles.TryGetValue(filePath, out specFile))
                 {
-                    fileLocation = new FileLocation(suiteLocationPayload.Line, suiteLocationPayload.Column);
+                    fileLocation = new FileLocation(runCaseInfo.SuiteLocationPayload.Line, runCaseInfo.SuiteLocationPayload.Column);
                 }
             }
 
             runCase.UpdateLocation(specFile, fileLocation);
-            runCase.UpdateTimeout(casePayload.Timeout != null
-                ? TimeSpan.FromSeconds((double) casePayload.Timeout)
+            runCase.UpdateTimeout(runCaseInfo.CasePayload.Timeout != null
+                ? TimeSpan.FromSeconds((double) runCaseInfo.CasePayload.Timeout)
                 : null);
-            runCase.UpdateRetries(casePayload.Retries);
-            runCase.UpdateExpectedStatus(casePayload.ExpectedStatus);
+            runCase.UpdateRetries(runCaseInfo.CasePayload.Retries);
+            runCase.UpdateExpectedStatus(runCaseInfo.CasePayload.ExpectedStatus);
 
-            if (casePayload.Annotations != null)
+            if (runCaseInfo.CasePayload.Annotations != null)
             {
-                foreach (var annotation in casePayload.Annotations)
+                foreach (var annotation in runCaseInfo.CasePayload.Annotations)
                 {
                     runCase.AddAnnotation(annotation);
                 }
@@ -164,9 +173,22 @@ public class ReportingCommandHandler(
         return Task.CompletedTask;
     }
 
+    private string GetSuiteKey(Guid projectId, Guid? parentSuiteId, string title)
+    {
+        return $"{projectId}:{parentSuiteId?.ToString() ?? "null"}:{title}";
+    }
+    
+    private class RunCaseInfo(Case caseEntity, CreateRunCasePayload casePayload, TestLocation? suiteLocationPayload)
+    {
+        public Case CaseEntity { get; } = caseEntity;
+        public CreateRunCasePayload CasePayload { get; } = casePayload;
+        public TestLocation? SuiteLocationPayload { get; } = suiteLocationPayload;
+    }
+
     private class RunEntities
     {
-        public Dictionary<Guid, (Case CaseEntity, CreateRunCasePayload CasePayload, TestLocation? SuiteLocationPayload)> Cases { get; } = new();
+        public Dictionary<Guid, RunCaseInfo> Cases { get; } = new();
         public Dictionary<string, SpecFile> SpecFiles { get; } = new();
+        public Dictionary<string, Suite> Suites { get; } = new();
     }
 }

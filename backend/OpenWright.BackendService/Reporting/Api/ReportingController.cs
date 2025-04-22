@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using OpenWright.Api.Reporting.Payloads;
+using OpenWright.BackendService.Reporting.Commands;
 using Revo.AspNetCore.Web;
 
 namespace OpenWright.BackendService.Reporting.Api;

@@ -71,6 +71,14 @@ CREATE TABLE ow_run (
     ow_run_actor jsonb
 );
 
+CREATE TYPE ow_test_status AS ENUM (
+    'Passed',
+    'Failed',
+    'Skipped',
+    'TimedOut',
+    'Interrupted'
+);
+
 CREATE TABLE ow_run_case (
     ow_rca_run_case_id uuid PRIMARY KEY,
     ow_rca_version int NOT NULL,
@@ -78,10 +86,11 @@ CREATE TABLE ow_run_case (
     ow_rca_case_id uuid NOT NULL REFERENCES ow_case ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
     ow_rca_spec_file_id uuid REFERENCES ow_spec_file DEFERRABLE INITIALLY DEFERRED,
     ow_rca_run_group text,
-    ow_cas_file_location jsonb,
+    ow_rca_file_location jsonb,
+    ow_rca_annotations jsonb NOT NULL,
     ow_rca_timeout interval,
     ow_rca_retries int,
-    ow_rca_expected_status jsonb
+    ow_rca_expected_status ow_test_status
 );
 
 CREATE UNIQUE INDEX ow_run_case_case_run_idx ON ow_run_case (ow_rca_case_id, ow_rca_run_id);
@@ -93,7 +102,7 @@ CREATE TABLE ow_case_execution (
     ow_cex_start_date timestamptz NOT NULL,
     ow_cex_duration interval,
     ow_cex_retry int,
-    ow_cex_status jsonb
+    ow_cex_status ow_test_status
 );
 
 CREATE UNIQUE INDEX ow_case_execution_run_case_retry_idx ON ow_case_execution (ow_cex_run_case_id, ow_cex_retry);

@@ -1,5 +1,6 @@
 using Npgsql;
 using Npgsql.NameTranslation;
+using OpenWright.Api.Runs.ValueObjects;
 using OpenWright.BackendService.Users.Domain;
 using OpenWright.Platform.PostgreSql;
 
@@ -11,5 +12,7 @@ public class NpgsqlDataSourceConfigurator : INpgsqlDataSourceConfigurator
     {
         dataSourceBuilder
             .MapEnum<UserRole>("ow_user_role", new NpgsqlNullNameTranslator());
+        dataSourceBuilder
+            .MapEnum<TestStatus>("ow_test_status", new NpgsqlNullNameTranslator());
     }
 }

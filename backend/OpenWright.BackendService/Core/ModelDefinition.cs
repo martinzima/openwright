@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using OpenWright.Api.Runs.ValueObjects;
 using OpenWright.BackendService.Projects.Domain;
 using OpenWright.BackendService.Runs.Domain;
+using OpenWright.BackendService.Runs.Reads.Model;
 using Revo.EFCore.DataAccess.Model;
 
 namespace OpenWright.BackendService.Core;
@@ -12,22 +14,33 @@ public class ModelDefinition : IEFCoreModelDefinition
         modelBuilder
             .Entity<Suite>(entity =>
             {
+                entity
+                    .Navigation(x => x.Cases)
+                    .AutoInclude();
             });
         
         modelBuilder
             .Entity<Case>(entity =>
             {
                 entity
+                    .Property(x => x.Tags)
+                    .HasColumnType("text[]");
+                
+                entity
                     .OwnsMany(x => x.Annotations, a =>
                     {
-                        a.ToJson();
-                    });
+                        a.ToJson("ow_cas_annotations");
+                    })
+                    .Navigation(x => x.Annotations)
+                    .AutoInclude();
 
                 entity
                     .OwnsOne(x => x.FileLocation, fL =>
                     {
-                        fL.ToJson();
-                    });
+                        fL.ToJson("ow_cas_file_location");
+                    })
+                    .Navigation(x => x.FileLocation)
+                    .AutoInclude();
             });
 
         modelBuilder
@@ -35,13 +48,35 @@ public class ModelDefinition : IEFCoreModelDefinition
             {
                 entity.OwnsOne(x => x.CommitInfo, cI =>
                 {
-                    cI.ToJson();
-                });
+                    cI.ToJson("ow_run_commit_info");
+                })
+                .Navigation(x => x.CommitInfo)
+                .AutoInclude();
 
                 entity.OwnsOne(x => x.Actor, a =>
                 {
-                    a.ToJson();
-                });
+                    a.ToJson("ow_run_actor");
+                })
+                .Navigation(x => x.Actor)
+                .AutoInclude();
+            });
+        
+        modelBuilder
+            .Entity<RunView>(entity =>
+            {
+                entity.OwnsOne(x => x.CommitInfo, cI =>
+                {
+                    cI.ToJson("ow_run_commit_info");
+                })
+                .Navigation(x => x.CommitInfo)
+                .AutoInclude();
+
+                entity.OwnsOne(x => x.Actor, a =>
+                {
+                    a.ToJson("ow_run_actor");
+                })
+                .Navigation(x => x.Actor)
+                .AutoInclude();
             });
         
         modelBuilder
@@ -49,13 +84,17 @@ public class ModelDefinition : IEFCoreModelDefinition
             {
                 entity.OwnsMany(x => x.Annotations, a =>
                 {
-                    a.ToJson();
-                });
+                    a.ToJson("ow_rca_annotations");
+                })
+                .Navigation(x => x.Annotations)
+                .AutoInclude();
 
                 entity.OwnsOne(x => x.FileLocation, fL =>
                 {
-                    fL.ToJson();
-                });
+                    fL.ToJson("ow_rca_file_location");
+                })
+                .Navigation(x => x.FileLocation)
+                .AutoInclude();
             });
         
         modelBuilder
@@ -63,8 +102,10 @@ public class ModelDefinition : IEFCoreModelDefinition
             {
                 entity.OwnsMany(x => x.Errors, e =>
                 {
-                    e.ToJson();
-                });
+                    e.ToJson("ow_cex_execution_errors");
+                })
+                .Navigation(x => x.Errors)
+                .AutoInclude();
             });
     }
 }

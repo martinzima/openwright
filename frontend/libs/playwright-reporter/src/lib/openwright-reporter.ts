@@ -1,5 +1,6 @@
-import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuitePayload, RunReportingApi, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload } from '@openwright/reporting-api';
+import { TestError as ApiTestError, CreateRunCasePayload, CreateRunPayload, CreateRunSuitePayload, RunReportingApi, RunReportingApiConfig, RunReportingApiService, TestLocation, TestStatus, UpsertCaseExecutionPayload, UpsertCaseExecutionsPayload, CommitInfo, ActorInfo } from '@openwright/reporting-api';
 import { generateUuidV4 } from '@openwright/shared-utils';
+import { getActorInfo, getCommitInfo } from '@openwright/reporter-common';
 import type { FullConfig, FullResult, Location, TestError as PlaywrightTestError, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 
 export interface OpenWrightReporterConfig extends RunReportingApiConfig {
@@ -60,13 +61,17 @@ export class OpenWrightReporter implements Reporter {
     this.pendingExecutionUpserts = {};
 
     const rootSuite = this.mapSuiteToApi(suite, null);
+    const commitInfo = getCommitInfo();
+    const actorInfo = getActorInfo();
 
     const payload: CreateRunPayload = {
       id: this.runId,
       projectId: this.config.projectId,
       startDate: new Date().toISOString(),
       suites: rootSuite.suites ?? [],
-      // TODO rest of info
+      commit: commitInfo,
+      actor: actorInfo,
+      // TODO: Add description, pullRequestNumber from env vars if available
     };
 
     try {

@@ -11,7 +11,7 @@ public class CaseExecution : BasicEntity
     private readonly List<string> stderr = new();
     private readonly List<TestError> errors = new();
 
-    public CaseExecution(Guid id, RunCase runCase, DateTime startDate)
+    public CaseExecution(Guid id, RunCase runCase, DateTimeOffset startDate)
         : base(id)
     {
         RunCase = runCase ?? throw new ArgumentNullException(nameof(runCase));
@@ -23,7 +23,7 @@ public class CaseExecution : BasicEntity
     }
 
     public RunCase RunCase { get; private set; }
-    public DateTime StartDate { get; private set; }
+    public DateTimeOffset StartDate { get; private set; }
     public TimeSpan? Duration { get; private set; }
     public int? Retry { get; private set; }
     public TestStatus? Status { get; private set; }

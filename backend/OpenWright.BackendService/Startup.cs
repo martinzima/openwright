@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using MoreLinq;
 using OpenWright.Api.Runs.ValueObjects;
+using OpenWright.BackendService.Users.Domain;
 using OpenWright.Platform.AspNetCore;
 using OpenWright.Platform.PostgreSql;
 using Revo.AspNetCore;
@@ -94,7 +95,9 @@ public class Startup : RevoStartup
             .UseEFCoreWithNpgsqlFromAppSettings(Configuration,
                 Kernel,
                 contextBuilder => { },
-                builder => builder.MapEnum<TestStatus>("ow_test_status"))
+                builder => builder
+                    .MapEnum<TestStatus>("ow_test_status")
+                    .MapEnum<UserRole>("ow_user_role"))
             .UseAllEFCoreInfrastructure()
             .UseAspNetCore();
     }

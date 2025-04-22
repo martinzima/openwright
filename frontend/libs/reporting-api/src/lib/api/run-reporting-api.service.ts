@@ -19,7 +19,6 @@ export class RunReportingApiService implements RunReportingApi {
   }
 
   createRun(payload: CreateRunPayload): Promise<void> {
-    console.log('createRun', payload);
     return this.axiosInstance.post('/reporting/runs', payload);
   }
 

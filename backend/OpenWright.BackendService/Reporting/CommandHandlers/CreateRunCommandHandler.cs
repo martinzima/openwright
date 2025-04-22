@@ -9,11 +9,10 @@ using Revo.Infrastructure.Tenancy;
 
 namespace OpenWright.BackendService.Reporting.CommandHandlers;
 
-public class ReportingCommandHandler(
+public class CreateRunCommandHandler(
     ITenantContext tenantContext,
     IRepository repository) :
-    ICommandHandler<CreateRunCommand>,
-    ICommandHandler<UpsertCaseExecutionsCommand>
+    ICommandHandler<CreateRunCommand>
 {
     public async Task HandleAsync(CreateRunCommand command, CancellationToken cancellationToken)
     {
@@ -166,11 +165,6 @@ public class ReportingCommandHandler(
         }
 
         return run;
-    }
-
-    public Task HandleAsync(UpsertCaseExecutionsCommand command, CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
     }
 
     private string GetSuiteKey(Guid projectId, Guid? parentSuiteId, string title)

@@ -10,6 +10,7 @@ namespace OpenWright.BackendService.Runs.Domain;
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "rca")]
 public class RunCase : BasicEntity
 {
+    private readonly List<CaseExecution> executions = new();
     private readonly List<Annotation> annotations = new();
 
     public RunCase(Guid id, Run run, Case @case)
@@ -31,6 +32,7 @@ public class RunCase : BasicEntity
     public TimeSpan? Timeout { get; private set; }
     public int? Retries { get; private set; }
     public TestStatus? ExpectedStatus { get; private set; }
+    public IReadOnlyCollection<CaseExecution> Executions => executions;
 
     public IReadOnlyCollection<Annotation> Annotations => annotations;
 
@@ -71,5 +73,12 @@ public class RunCase : BasicEntity
     public void AddAnnotation(Annotation annotation)
     {
         annotations.Add(annotation ?? throw new ArgumentNullException(nameof(annotation)));
+    }
+
+    public CaseExecution AddExecution(Guid id, DateTimeOffset startDate)
+    {
+        var execution = new CaseExecution(id, this, startDate);
+        executions.Add(execution);
+        return execution;
     }
 }

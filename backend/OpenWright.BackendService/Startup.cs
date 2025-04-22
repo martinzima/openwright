@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using MoreLinq;
 using OpenWright.Api.Runs.ValueObjects;
 using OpenWright.BackendService.Users.Domain;
+using OpenWright.Common.Json;
 using OpenWright.Platform.AspNetCore;
 using OpenWright.Platform.PostgreSql;
 using Revo.AspNetCore;
@@ -28,8 +29,8 @@ public class Startup : RevoStartup
         services.AddMvc()
             .AddJsonOptions(opts =>
             {
-                var enumConverter = new JsonStringEnumConverter();
-                opts.JsonSerializerOptions.Converters.Add(enumConverter);
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                opts.JsonSerializerOptions.Converters.Add(new OptionalConverterFactory());
             })
             .ConfigureApplicationPartManager(partMgr =>
                 AppDomain.CurrentDomain.GetAssemblies()

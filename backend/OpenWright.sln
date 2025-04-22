@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWright.Api", "OpenWrigh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWright.Platform", "OpenWright.Platform\OpenWright.Platform.csproj", "{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWright.Common", "OpenWright.Common\OpenWright.Common.csproj", "{F65DFA4E-F61E-485B-BD11-6F74A737AE16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE74368F-FA3D-43AF-BF94-854F1F0E35C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F65DFA4E-F61E-485B-BD11-6F74A737AE16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F65DFA4E-F61E-485B-BD11-6F74A737AE16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F65DFA4E-F61E-485B-BD11-6F74A737AE16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F65DFA4E-F61E-485B-BD11-6F74A737AE16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

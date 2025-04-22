@@ -25,6 +25,7 @@ export class RunReportingApiService implements RunReportingApi {
   updateRunCaseExecutions(
     runId: string,
     payload: UpsertCaseExecutionsPayload): Promise<void> {
+    console.log('updateRunCaseExecutions', payload);
     return this.axiosInstance.patch(`/reporting/runs/${runId}/executions/bulk`, payload);
   }
 }

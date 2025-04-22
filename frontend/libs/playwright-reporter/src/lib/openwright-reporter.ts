@@ -22,8 +22,8 @@ export class OpenWrightReporter implements Reporter {
   private queueIntervalId: NodeJS.Timeout | null = null;
   private runId: string | null = null;
   private testIdToCaseIdMap: Record<string, string> = {};
-  private testIdToExecutionIdMap: Record<string, string> = {};
-  private pendingExecutionUpserts: Record<string, UpsertCaseExecutionPayload> = {};
+  private testExecutionTracking: Map<string, { executionId: string }> = new Map();
+  private pendingExecutionUpserts: UpsertCaseExecutionPayload[] = [];
   private isProcessingQueue = false;
   private lastApiCallTime = 0;
 
@@ -57,8 +57,8 @@ export class OpenWrightReporter implements Reporter {
     console.log(`🌎 Reporting to project ID: ${this.config.projectId}, instance URL: ${this.config.baseUrl}`);
 
     this.testIdToCaseIdMap = {};
-    this.testIdToExecutionIdMap = {};
-    this.pendingExecutionUpserts = {};
+    this.testExecutionTracking.clear();
+    this.pendingExecutionUpserts = [];
 
     const rootSuite = this.mapSuiteToApi(suite, null);
     const commitInfo = getCommitInfo();
@@ -84,7 +84,7 @@ export class OpenWrightReporter implements Reporter {
   }
 
   async onTestBegin(test: TestCase, result: TestResult): Promise<void> {
-    this.debugLog(`▶️ OpenWright Reporter: Test Begin - ${test.titlePath().join(' > ')}`);
+    this.debugLog(`▶️ OpenWright Reporter: Test Begin - ${test.titlePath().join(' > ')} (Retry ${result.retry})`);
     const caseId = this.testIdToCaseIdMap[test.id];
 
     if (!caseId) {
@@ -93,53 +93,49 @@ export class OpenWrightReporter implements Reporter {
     }
 
     const executionId = generateUuidV4();
-    this.testIdToExecutionIdMap[test.id] = executionId;
+    const trackingKey = `${test.id}-${result.retry}`;
 
-    this.debugLog(`➕ OpenWright Reporter: Queuing initial state for execution ${executionId} (case ${caseId})`);
+    this.testExecutionTracking.set(trackingKey, { executionId });
+
+    this.debugLog(`➕ OpenWright Reporter: Queuing initial state for execution ${executionId} (case ${caseId}, retry ${result.retry})`);
 
     const initialUpsertPayload: UpsertCaseExecutionPayload = {
       id: executionId,
+      runCaseId: caseId,
       startDate: result.startTime.toISOString(),
       retry: result.retry
     };
 
-    this.pendingExecutionUpserts[executionId] = initialUpsertPayload;
+    this.pendingExecutionUpserts.push(initialUpsertPayload);
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
     const statusEmoji = result.status === 'passed' ? '✅' : result.status === 'failed' ? '❌' : result.status === 'timedOut' ? '⏱️' : result.status === 'skipped' ? '⏭️' : '❓';
-    this.debugLog(`${statusEmoji} OpenWright Reporter: Test End - ${test.titlePath().join(' > ')} - Status: ${result.status}`);
+    this.debugLog(`${statusEmoji} OpenWright Reporter: Test End - ${test.titlePath().join(' > ')} (Retry ${result.retry}) - Status: ${result.status}`);
 
     const caseId = this.testIdToCaseIdMap[test.id];
-    const executionId = this.testIdToExecutionIdMap[test.id];
+    const trackingKey = `${test.id}-${result.retry}`;
+    const trackingInfo = this.testExecutionTracking.get(trackingKey);
 
-    if (!caseId || !executionId) {
-      console.warn(`⚠️ OpenWright Reporter: No caseId (${caseId ?? 'undefined'}) or executionId (${executionId ?? 'undefined'}) found for test ${test.id}. Skipping result processing.`);
+    if (!caseId || !trackingInfo) {
+      console.warn(`⚠️ OpenWright Reporter: No caseId (${caseId ?? 'undefined'}) or execution tracking info found for test ${test.id} retry ${result.retry}. Skipping result processing.`);
       return;
     }
 
-    this.debugLog(`🔄 OpenWright Reporter: Queuing final state for execution ${executionId}`);
+    const executionId = trackingInfo.executionId;
+    this.debugLog(`🔄 OpenWright Reporter: Queuing final state for execution ${executionId} (retry ${result.retry})`);
 
     const endUpsertPayload: UpsertCaseExecutionPayload = {
       id: executionId,
+      runCaseId: caseId,
       duration: result.duration,
       status: this.mapPlaywrightStatusToApi(result.status),
       errors: result.errors?.map(this.formatPlaywrightErrorToApi),
       stdout: result.stdout?.map(chunk => typeof chunk === 'string' ? chunk : chunk.toString('utf-8')),
-      stderr: result.stderr?.map(chunk => typeof chunk === 'string' ? chunk : chunk.toString('utf-8')),
+      stderr: result.stderr?.map(chunk => typeof chunk === 'string' ? chunk : chunk.toString('utf-8'))
     };
 
-    let executionUpsertPayload: UpsertCaseExecutionPayload = this.pendingExecutionUpserts[executionId];
-    if (executionUpsertPayload) {
-      executionUpsertPayload = {
-        ...executionUpsertPayload,
-        ...endUpsertPayload
-      };
-    } else {
-      executionUpsertPayload = endUpsertPayload;
-    }
-
-    this.pendingExecutionUpserts[executionId] = executionUpsertPayload;
+    this.pendingExecutionUpserts.push(endUpsertPayload);
   }
 
   async onEnd(result: FullResult): Promise<void> {
@@ -182,8 +178,7 @@ export class OpenWrightReporter implements Reporter {
       throw new Error("⚠️ OpenWright Reporter: Run ID not set. Cannot process update queue.");
     }
 
-    const pendingKeys = Object.keys(this.pendingExecutionUpserts);
-    if (this.isProcessingQueue || pendingKeys.length === 0) {
+    if (this.isProcessingQueue || this.pendingExecutionUpserts.length === 0) {
       return;
     }
 
@@ -193,23 +188,29 @@ export class OpenWrightReporter implements Reporter {
     }
 
     this.isProcessingQueue = true;
-    const itemsToSend: UpsertCaseExecutionPayload[] = [];
-    const keysToSend = [...pendingKeys];
 
-    for (const key of keysToSend) {
-      itemsToSend.push(this.pendingExecutionUpserts[key]);
-      delete this.pendingExecutionUpserts[key];
+    const itemsToProcess = [...this.pendingExecutionUpserts];
+    this.pendingExecutionUpserts = [];
+
+    const mergedPayloadsMap = new Map<string, UpsertCaseExecutionPayload>();
+
+    for (const payload of itemsToProcess) {
+      const existing = mergedPayloadsMap.get(payload.id);
+      mergedPayloadsMap.set(payload.id, { ...existing, ...payload });
     }
 
-    if (itemsToSend.length > 0) {
-      const bulkPayload: UpsertCaseExecutionsPayload = itemsToSend;
-      console.log(`📤 OpenWright Reporter: Sending bulk upsert for ${bulkPayload.length} execution(s)...`);
+    const mergedItemsToSend: UpsertCaseExecutionPayload[] = Array.from(mergedPayloadsMap.values());
+
+    if (mergedItemsToSend.length > 0) {
+      const bulkPayload: UpsertCaseExecutionsPayload = mergedItemsToSend;
+      console.log(`📤 OpenWright Reporter: Sending merged bulk upsert for ${bulkPayload.length} execution(s)...`);
       try {
         this.lastApiCallTime = Date.now();
         await this.apiService.updateRunCaseExecutions(this.runId, bulkPayload);
-        this.debugLog(`✅ OpenWright Reporter: Bulk upsert sent successfully for ${bulkPayload.length} execution(s).`);
+        this.debugLog(`✅ OpenWright Reporter: Merged bulk upsert sent successfully for ${bulkPayload.length} execution(s).`);
       } catch (error) {
-        this.debugLog(`❌ OpenWright Reporter: Failed to send bulk upsert.`, error);
+        this.debugLog(`❌ OpenWright Reporter: Failed to send merged bulk upsert. Re-queueing ${itemsToProcess.length} original items.`, error);
+        this.pendingExecutionUpserts.unshift(...itemsToProcess);
       } finally {
         this.isProcessingQueue = false;
       }
@@ -219,10 +220,10 @@ export class OpenWrightReporter implements Reporter {
   }
 
   private async waitForQueueToDrain(): Promise<void> {
-    this.debugLog(`⏱️ OpenWright Reporter: Waiting for execution upsert queue to drain (${Object.keys(this.pendingExecutionUpserts).length} items remaining)...`);
+    this.debugLog(`⏱️ OpenWright Reporter: Waiting for execution upsert queue to drain (${this.pendingExecutionUpserts.length} items remaining)...`);
 
-    while (Object.keys(this.pendingExecutionUpserts).length > 0 || this.isProcessingQueue) {
-      if (Object.keys(this.pendingExecutionUpserts).length > 0 && !this.isProcessingQueue) {
+    while (this.pendingExecutionUpserts.length > 0 || this.isProcessingQueue) {
+      if (this.pendingExecutionUpserts.length > 0 && !this.isProcessingQueue) {
         await this.processUpdateQueue(true);
       }
       await new Promise(resolve => setTimeout(resolve, 100));

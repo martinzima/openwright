@@ -1,11 +1,12 @@
-using OpenWright.Api.Core;
 using OpenWright.Api.Runs.ValueObjects;
+using OpenWright.Common.Core;
 
 namespace OpenWright.Api.Reporting.Payloads;
 
 public class UpsertCaseExecutionPayload
 {
     public required Guid Id { get; init; }
+    public required Guid RunCaseId { get; init; }
     public Optional<DateTimeOffset> StartDate { get; init; }
     public Optional<long> Duration { get; init; }
     public Optional<int> Retry { get; init; }

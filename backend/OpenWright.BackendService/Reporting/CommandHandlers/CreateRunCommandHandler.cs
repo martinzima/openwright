@@ -135,7 +135,7 @@ public class CreateRunCommandHandler(
 
         foreach (var runCaseInfo in runEntities.Cases.Values)
         {
-            var runCase = run.AddCase(runCaseInfo.CaseEntity);
+            var runCase = run.AddCase(runCaseInfo.CasePayload.Id, runCaseInfo.CaseEntity);
 
             SpecFile? specFile = null;
             FileLocation? fileLocation = null;

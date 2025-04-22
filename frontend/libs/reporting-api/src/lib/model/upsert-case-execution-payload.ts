@@ -3,6 +3,7 @@ import { TestStatus } from './test-status';
 
 export interface UpsertCaseExecutionPayload {
   id: string;
+  runCaseId: string;
   startDate?: string;
   duration?: number;
   retry?: number;
@@ -12,4 +13,4 @@ export interface UpsertCaseExecutionPayload {
   stderr?: string[];
 }
 
-export type UpsertCaseExecutionsPayload = UpsertCaseExecutionPayload[]; 
+export type UpsertCaseExecutionsPayload = UpsertCaseExecutionPayload[];

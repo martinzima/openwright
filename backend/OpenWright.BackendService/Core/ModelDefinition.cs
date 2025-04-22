@@ -59,6 +59,9 @@ public class ModelDefinition : IEFCoreModelDefinition
                 })
                 .Navigation(x => x.Actor)
                 .AutoInclude();
+
+                entity.Navigation(x => x.Cases)
+                    .AutoInclude();
             });
         
         modelBuilder
@@ -95,6 +98,9 @@ public class ModelDefinition : IEFCoreModelDefinition
                 })
                 .Navigation(x => x.FileLocation)
                 .AutoInclude();
+                
+                entity.Navigation(x => x.Executions)
+                    .AutoInclude();
             });
         
         modelBuilder
@@ -102,10 +108,16 @@ public class ModelDefinition : IEFCoreModelDefinition
             {
                 entity.OwnsMany(x => x.Errors, e =>
                 {
-                    e.ToJson("ow_cex_execution_errors");
+                    e.ToJson("ow_cex_errors");
                 })
                 .Navigation(x => x.Errors)
                 .AutoInclude();
+
+                entity.Property(x => x.Stdout)
+                    .HasColumnType("text[]");
+                
+                entity.Property(x => x.Stderr)
+                    .HasColumnType("text[]");
             });
     }
 }

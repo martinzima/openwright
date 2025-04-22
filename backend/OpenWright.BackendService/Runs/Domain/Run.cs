@@ -68,9 +68,9 @@ public class Run : OrganizationOwnedAggregateRoot
         }
     }
     
-    public RunCase AddCase(Case @case)
+    public RunCase AddCase(Guid id, Case @case)
     {
-        var runCase = new RunCase(Guid.NewGuid(), this, @case);
+        var runCase = new RunCase(id, this, @case);
         cases.Add(runCase);
         return runCase;
     }

@@ -16,7 +16,7 @@ public class ReportingController : CommandApiController
     }
 
     [HttpPatch("runs/{runId}/executions/bulk")]
-    public async Task UpdateRunCaseExecutions(Guid runId, [FromBody] UpsertCaseExecutionPayload payload)
+    public async Task UpdateRunCaseExecutions(Guid runId, [FromBody] UpsertCaseExecutionPayload[] payload)
     {
         await CommandGateway.SendAsync(new UpsertCaseExecutionsCommand()
         {

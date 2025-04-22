@@ -6,4 +6,8 @@
       <Folder Include="Projects\Dto\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\OpenWright.Common\OpenWright.Common.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace OpenWright.Api.Core;
+﻿namespace OpenWright.Common.Core;
 
 public struct Optional<T> : IOptional
 {

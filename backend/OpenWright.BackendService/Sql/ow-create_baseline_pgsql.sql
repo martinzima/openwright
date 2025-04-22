@@ -102,7 +102,10 @@ CREATE TABLE ow_case_execution (
     ow_cex_start_date timestamptz NOT NULL,
     ow_cex_duration interval,
     ow_cex_retry int,
-    ow_cex_status ow_test_status
+    ow_cex_status ow_test_status,
+    ow_cex_stdout text[] NOT NULL,
+    ow_cex_stderr text[] NOT NULL,
+    ow_cex_errors jsonb NOT NULL
 );
 
 CREATE UNIQUE INDEX ow_case_execution_run_case_retry_idx ON ow_case_execution (ow_cex_run_case_id, ow_cex_retry);

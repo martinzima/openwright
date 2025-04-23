@@ -1,4 +1,4 @@
-namespace OpenWright.BackendService.Users.Domain;
+namespace OpenWright.Api.Auth.Domain;
 
 public enum UserRole
 {

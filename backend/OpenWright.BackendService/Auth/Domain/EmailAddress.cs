@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using Revo.Core.ValueObjects;
 using Revo.Domain.Core;
 
-namespace OpenWright.BackendService.Users.Domain;
+namespace OpenWright.BackendService.Auth.Domain;
 
 public class EmailAddress : ValueObject<EmailAddress>
 {

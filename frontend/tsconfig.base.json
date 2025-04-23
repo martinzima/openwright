@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@openwright/app-shell-auth": ["libs/app-shell/auth/src/index.ts"],
       "@openwright/data-access": ["libs/data-access/src/index.ts"],
       "@openwright/feature-auth": ["libs/feature-auth/src/index.ts"],
       "@openwright/playwright-reporter": [

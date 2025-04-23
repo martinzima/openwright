@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { fadeInAnimation } from '@openwright/ui-common';
@@ -20,5 +20,9 @@ import { fadeInAnimation } from '@openwright/ui-common';
   }
 })
 export class LoginPageComponent {
+  private readonly router = inject(Router);
 
+  loginWithGoogle() {
+    location.href = '/api/auth/login/google';
+  }
 }

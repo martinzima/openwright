@@ -1,7 +1,8 @@
 using Npgsql;
 using Npgsql.NameTranslation;
+using OpenWright.Api.Auth.Domain;
 using OpenWright.Api.Runs.ValueObjects;
-using OpenWright.BackendService.Users.Domain;
+using OpenWright.BackendService.Auth.Domain;
 using OpenWright.Platform.PostgreSql;
 
 namespace OpenWright.BackendService.Core;

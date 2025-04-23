@@ -1,5 +1,6 @@
 <Project>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
     <PackageVersion Include="Dangl.Xunit.Extensions.Ordering" Version="2.1.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0">
@@ -67,6 +68,7 @@
     <PackageVersion Include="Revo.DataAccess" Version="1.37.0" />
     <PackageVersion Include="Revo.Domain " Version="1.37.0" />
     <PackageVersion Include="Revo.EFCore" Version="1.37.0" />
+    <PackageVersion Include="Revo.Extensions.AutoMapper" Version="1.37.0" />
     <PackageVersion Include="Revo.Infrastructure" Version="1.37.0" />
     <PackageVersion Include="Revo.Testing" Version="1.37.0" />
     <PackageVersion Include="Sentry.AspNetCore" Version="5.5.1" />

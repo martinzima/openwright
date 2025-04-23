@@ -1,10 +1,11 @@
+using OpenWright.Api.Auth.Domain;
 using OpenWright.BackendService.Organizations.Domain;
 using OpenWright.Platform.Utils;
 using Revo.DataAccess.Entities;
 using Revo.Domain.Core;
 using Revo.Domain.Entities.Basic;
 
-namespace OpenWright.BackendService.Users.Domain;
+namespace OpenWright.BackendService.Auth.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "usr")]
 public class User : BasicAggregateRoot

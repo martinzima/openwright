@@ -7,6 +7,7 @@
         <PackageReference Include="Npgsql" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
         <PackageReference Include="Revo.AspNetCore" />
+        <PackageReference Include="Revo.Extensions.AutoMapper" />
         <PackageReference Include="Revo.EFCore" />
         <PackageReference Include="Revo.Infrastructure" />
         <PackageReference Include="Sentry" />

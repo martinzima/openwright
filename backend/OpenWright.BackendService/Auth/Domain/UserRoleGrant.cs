@@ -1,8 +1,9 @@
+using OpenWright.Api.Auth.Domain;
 using OpenWright.BackendService.Organizations.Domain;
 using Revo.DataAccess.Entities;
 using Revo.Domain.Entities.Basic;
 
-namespace OpenWright.BackendService.Users.Domain;
+namespace OpenWright.BackendService.Auth.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "urg")]
 public class UserRoleGrant : BasicEntity

@@ -56,6 +56,17 @@
           "Revo.Infrastructure": "1.37.0"
         }
       },
+      "Revo.Extensions.AutoMapper": {
+        "type": "Direct",
+        "requested": "[1.37.0, )",
+        "resolved": "1.37.0",
+        "contentHash": "x6e1elmDTgpRAylrqanii/UgoBhb0VSjABIEu7ypR++uV2zBfMnfp8irHVKi/WT7AzJAQBWDELuWNSpbtCU2CA==",
+        "dependencies": {
+          "AutoMapper": "14.0.0",
+          "AutoMapper.Extensions.ExpressionMapping": "8.0.0",
+          "Revo.Core": "1.37.0"
+        }
+      },
       "Revo.Infrastructure": {
         "type": "Direct",
         "requested": "[1.37.0, )",
@@ -162,6 +173,22 @@
         "contentHash": "SnmRknWsSMgyo9wDXeZZCqSp48kkQYy44taSM6vcpxfiRICzSf09oLKEmVr0RCwQnfd8mJQ2WNN6nvhqf0RowQ==",
         "dependencies": {
           "Serilog": "4.1.0"
+        }
+      },
+      "AutoMapper": {
+        "type": "Transitive",
+        "resolved": "14.0.0",
+        "contentHash": "OC+1neAPM4oCCqQj3g2GJ2shziNNhOkxmNB9cVS8jtx4JbgmRzLcUOxB9Tsz6cVPHugdkHgCaCrTjjSI0Z5sCQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Options": "8.0.0"
+        }
+      },
+      "AutoMapper.Extensions.ExpressionMapping": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "fR55QEOt8GiaVQPuEpyWJAzZxFSInCIYg6E1EoqQByWnjzQnQ5zHwQvMMF3E+AdtvAzbG7Intm08/8pK8eUTvQ==",
+        "dependencies": {
+          "AutoMapper": "[14.0.0, 15.0.0)"
         }
       },
       "Castle.Core": {

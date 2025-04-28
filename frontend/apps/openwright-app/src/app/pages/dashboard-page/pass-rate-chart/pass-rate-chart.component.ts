@@ -1,6 +1,11 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { PassRateBySuite } from '@openwright/data-access';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
+import { PassRateBySuite } from '@openwright/web-api';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -17,32 +22,38 @@ import { DashboardStore } from '../dashboard-store.service';
       </ng-template>
       <ng-template pTemplate="content" styleClass="flex flex-col">
         @if (store.isLoadingStats()) {
-          <p-skeleton height="200px" styleClass="flex-grow"></p-skeleton>
+        <p-skeleton height="200px" styleClass="flex-grow"></p-skeleton>
         } @else if (chartData() && chartData()?.labels?.length) {
-          <div class="relative flex-grow h-full">
-            <p-chart type="bar" [data]="chartData()" [options]="chartOptions()"
-              height="200" />
-          </div>
+        <div class="relative flex-grow h-full">
+          <p-chart
+            type="bar"
+            [data]="chartData()"
+            [options]="chartOptions()"
+            height="200"
+          />
+        </div>
         } @else {
-          <div class="text-center text-muted-color py-4 flex-grow flex items-center justify-center">
-            No suite data available for this period.
-          </div>
+        <div
+          class="text-center text-muted-color py-4 flex-grow flex items-center justify-center"
+        >
+          No suite data available for this period.
+        </div>
         }
       </ng-template>
     </p-card>
   `,
   styles: [
     `
-    :host {
+      :host {
         display: block;
-    }
+      }
 
-    p-chart {
-      height: 100%;
-    }
-  `,
+      p-chart {
+        height: 100%;
+      }
+    `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PassRateChartComponent {
   private document = inject(DOCUMENT);
@@ -55,7 +66,9 @@ export class PassRateChartComponent {
       return undefined;
     }
 
-    const sortedData = [...suiteData].sort((a, b) => a.suiteName.localeCompare(b.suiteName));
+    const sortedData = [...suiteData].sort((a, b) =>
+      a.suiteName.localeCompare(b.suiteName)
+    );
 
     let blueColor = '#42A5F5';
     let greenColor = '#66BB6A';
@@ -71,13 +84,17 @@ export class PassRateChartComponent {
 
       if (documentStyle) {
         blueColor = documentStyle.getPropertyValue('--p-blue-500') || blueColor;
-        greenColor = documentStyle.getPropertyValue('--p-green-500') || greenColor;
-        orangeColor = documentStyle.getPropertyValue('--p-orange-500') || orangeColor;
+        greenColor =
+          documentStyle.getPropertyValue('--p-green-500') || greenColor;
+        orangeColor =
+          documentStyle.getPropertyValue('--p-orange-500') || orangeColor;
         tealColor = documentStyle.getPropertyValue('--p-teal-500') || tealColor;
-        purpleColor = documentStyle.getPropertyValue('--p-purple-500') || purpleColor;
+        purpleColor =
+          documentStyle.getPropertyValue('--p-purple-500') || purpleColor;
         pinkColor = documentStyle.getPropertyValue('--p-pink-500') || pinkColor;
         grayColor = documentStyle.getPropertyValue('--p-gray-500') || grayColor;
-        indigoColor = documentStyle.getPropertyValue('--p-indigo-500') || indigoColor;
+        indigoColor =
+          documentStyle.getPropertyValue('--p-indigo-500') || indigoColor;
       }
     }
 
@@ -89,22 +106,24 @@ export class PassRateChartComponent {
       purpleColor,
       pinkColor,
       grayColor,
-      indigoColor
+      indigoColor,
     ];
 
-    const backgroundColors = sortedData.map((_, index) => chartColors[index % chartColors.length]);
+    const backgroundColors = sortedData.map(
+      (_, index) => chartColors[index % chartColors.length]
+    );
 
     return {
-      labels: sortedData.map(s => s.suiteName),
+      labels: sortedData.map((s) => s.suiteName),
       datasets: [
         {
           label: 'Pass Rate',
-          data: sortedData.map(s => s.passRate),
+          data: sortedData.map((s) => s.passRate),
           backgroundColor: backgroundColors,
           borderColor: backgroundColors,
-          borderWidth: 1
-        }
-      ]
+          borderWidth: 1,
+        },
+      ],
     };
   });
 
@@ -117,9 +136,12 @@ export class PassRateChartComponent {
     try {
       const documentStyle = getComputedStyle(document.documentElement);
       textColor = documentStyle.getPropertyValue('--text-color') || textColor;
-      textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary') || textColorSecondary;
-      surfaceBorder = documentStyle.getPropertyValue('--surface-border') || surfaceBorder;
-    } catch (e) { }
+      textColorSecondary =
+        documentStyle.getPropertyValue('--text-color-secondary') ||
+        textColorSecondary;
+      surfaceBorder =
+        documentStyle.getPropertyValue('--surface-border') || surfaceBorder;
+    } catch (e) {}
 
     return {
       maintainAspectRatio: false,
@@ -130,44 +152,50 @@ export class PassRateChartComponent {
           callbacks: {
             label: (context: any) => {
               let label = context.dataset.label || '';
-              if (label) { label += ': '; }
+              if (label) {
+                label += ': ';
+              }
 
               if (context.parsed.y !== null) {
                 label += (context.parsed.y * 100).toFixed(1) + '%';
               }
 
-              const originalData = store.testStats()?.passRateBySuite.find((s: PassRateBySuite) => s.suiteName === context.label);
+              const originalData = store
+                .testStats()
+                ?.passRateBySuite.find(
+                  (s: PassRateBySuite) => s.suiteName === context.label
+                );
               if (originalData) {
                 label += ` (${originalData.totalRuns} runs)`;
               }
               return label;
-            }
-          }
-        }
+            },
+          },
+        },
       },
       scales: {
         x: {
           ticks: {
-            color: textColorSecondary
+            color: textColorSecondary,
           },
           grid: {
             display: false,
-            drawBorder: false
-          }
+            drawBorder: false,
+          },
         },
         y: {
           max: 1,
           beginAtZero: true,
           ticks: {
             color: textColorSecondary,
-            format: { style: 'percent' }
+            format: { style: 'percent' },
           },
           grid: {
             color: surfaceBorder,
-            drawBorder: false
-          }
-        }
-      }
+            drawBorder: false,
+          },
+        },
+      },
     };
   }
 }

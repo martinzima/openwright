@@ -6,6 +6,8 @@ import { logoIcon } from '@openwright/svg/logo';
 import { OpenwrightPrimengPreset } from '@openwright/ui-common';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { apiUrlReplaceHttpInterceptor } from '@openwright/shared-utils';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +20,10 @@ export const appConfig: ApplicationConfig = {
         preset: OpenwrightPrimengPreset
       }
     }),
-    provideSvgIcons([logoIcon])
+    provideSvgIcons([logoIcon]),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([apiUrlReplaceHttpInterceptor])
+    )
   ],
 };

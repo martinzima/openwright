@@ -1,0 +1,18 @@
+<div class="signup-container flex items-center justify-center p-4">
+  <p-card styleClass="w-full max-w-lg shadow-xl p-6" class="sign-up-card">
+    <h1 class="sign-up-title">Sign up</h1>
+    <p class="sign-up-subtitle text-muted-color">Authenticate using Google or Microsoft to create an OpenWright account.</p>
+
+    <div class="flex flex-col gap-3">
+      <p-button label="Sign up with Microsoft" icon="pi pi-microsoft" styleClass="w-full p-button-outlined p-button-lg text-lg" />
+      <p-button label="Sign up with Google" icon="pi pi-google" styleClass="w-full p-button-outlined p-button-lg text-lg"
+        (click)="signUpWithGoogle()" />
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="text-center text-sm text-muted-color mt-4">
+        Already have an account? <a [routerLink]="'/login'" class="text-primary-500 hover:text-primary-700 font-medium">Login</a>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

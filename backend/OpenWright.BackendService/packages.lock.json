@@ -606,7 +606,8 @@
       "openwright.api": {
         "type": "Project",
         "dependencies": {
-          "OpenWright.Common": "[1.0.0, )"
+          "OpenWright.Common": "[1.0.0, )",
+          "Revo.Core": "[1.37.0, )"
         }
       },
       "openwright.common": {

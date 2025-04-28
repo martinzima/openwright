@@ -1,0 +1,29 @@
+{
+  "name": "web-api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/web-api/src",
+  "prefix": "ow",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/web-api/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/web-api/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/web-api/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using OpenWright.Api.Auth.Dto;
 using OpenWright.BackendService.Auth.Reads.Model;
 using OpenWright.BackendService.Auth.Reads.Queries;
+using OpenWright.Platform.Security;
 using Revo.Core.Commands;
 using Revo.Core.Security;
 using Revo.DataAccess.Entities;
@@ -27,7 +28,7 @@ public class MeQueryHandler(IUserContext userContext,
             {
                 User = mapper.Map<UserDto>(user),
                 EmailAddress = user.EmailAddress,
-                AuthScheme = CookieAuthenticationDefaults.AuthenticationScheme,
+                AuthScheme = AuthenticationConsts.AuthenticationScheme,
                 RoleGrants = mapper.Map<UserRoleGrantDto[]>(user.RoleGrants)
             };
         }

@@ -10,6 +10,7 @@
     <PackageVersion Include="EntityFrameworkCore.Projectables" Version="3.0.4" />
     <PackageVersion Include="Google.Apis.Auth" Version="1.68.0" />
     <PackageVersion Include="Hangfire.PostgreSql" Version="1.19.13" />
+    <PackageVersion Include="Revo.Core" Version="1.37.0" />
     <PackageVersion Include="Sentry" Version="5.5.1" />
     <PackageVersion Include="JsonSubTypes" Version="2.0.1" />
     <PackageVersion Include="Lib.AspNetCore.Mvc.Ndjson.NewtonsoftJson" Version="4.0.0" />

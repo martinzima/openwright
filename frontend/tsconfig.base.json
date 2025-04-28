@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "paths": {
       "@openwright/app-shell-auth": ["libs/app-shell/auth/src/index.ts"],
-      "@openwright/data-access": ["libs/data-access/src/index.ts"],
       "@openwright/feature-auth": ["libs/feature-auth/src/index.ts"],
       "@openwright/playwright-reporter": [
         "libs/playwright-reporter/src/index.ts"
@@ -25,7 +24,8 @@
       "@openwright/reporting-api": ["libs/reporting-api/src/index.ts"],
       "@openwright/shared-utils": ["libs/shared-utils/src/index.ts"],
       "@openwright/svg/*": ["apps/openwright-app/svg/*"],
-      "@openwright/ui-common": ["libs/ui-common/src/index.ts"]
+      "@openwright/ui-common": ["libs/ui-common/src/index.ts"],
+      "@openwright/web-api": ["libs/web-api/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

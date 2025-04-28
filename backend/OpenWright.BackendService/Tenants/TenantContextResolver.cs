@@ -17,23 +17,10 @@ public class TenantContextResolver(
             return null;
         }
 
-        HttpContext httpContext = httpContextAccessor.HttpContext;
+        var httpContext = httpContextAccessor.HttpContext;
 
         var organizationId = GetOrganizationId();
         var tenant = tenantProvider.GetTenant(organizationId);
-
-        if (tenant != null)
-        {
-            /*if (httpContext?.User?.Identity != null && httpContext.User.Identity.IsAuthenticated)
-            {
-                var organizationIdClaims = httpContext.User.Claims.Where(x => x.Type == OpenWrightClaimTypes.OrganizationId)
-                    .ToArray();
-                if (!organizationIdClaims.Any(x => string.IsNullOrEmpty(x.Value) || Guid.Parse(x.Value) == tenant.Id))
-                {
-                    throw new AuthorizationException($"User not authorized to sign into {tenant}");
-                }
-            }*/
-        }
 
         return tenant;
     }
@@ -89,7 +76,7 @@ public class TenantContextResolver(
                 return null;
             }
 
-            if (formFieldOrganizationIds.Count > 1 || !Guid.TryParse(trimmedFormFieldOrganizationId, out Guid formOrganizationId))
+            if (formFieldOrganizationIds.Count > 1 || !Guid.TryParse(trimmedFormFieldOrganizationId, out var formOrganizationId))
             {
                 throw new AuthorizationException(
                     $"Authenticated request specified an invalid {OrganizationHttpFormFieldNames.OrganizationId} form field");
@@ -98,7 +85,7 @@ public class TenantContextResolver(
             return formOrganizationId;
         }
 
-        if (httpContext.Request.Cookies.TryGetValue("__organizationId", out string cookieOrganizationIdString)
+        if (httpContext.Request.Cookies.TryGetValue("__organizationId", out var cookieOrganizationIdString)
             && !string.IsNullOrWhiteSpace(cookieOrganizationIdString))
         {
             if (!Guid.TryParse(cookieOrganizationIdString, out Guid cookieOrganizationId))

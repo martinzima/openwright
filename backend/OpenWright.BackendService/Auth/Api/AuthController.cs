@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
+using OpenWright.Platform.Security;
 
 namespace OpenWright.BackendService.Auth.Api;
 
@@ -39,9 +40,10 @@ public class AuthController : Controller
 
     [HttpPost("logout")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
+    public async Task Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return Redirect("/");
+        await HttpContext.SignOutAsync(AuthenticationConsts.AuthenticationScheme);
+        await HttpContext.SignOutAsync(GoogleDefaults.AuthenticationScheme);
+        //await HttpContext.SignOutAsync(MicrosoftDefaults.AuthenticationScheme);
     }
 }

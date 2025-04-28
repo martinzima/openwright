@@ -1,8 +1,21 @@
-import { animate, query, stagger, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  query,
+  stagger,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TimePeriod } from '@openwright/data-access';
+import { TimePeriod } from '@openwright/web-api';
 import { PageLayoutComponent } from '@openwright/ui-common';
 import { CheckCircle, Hash, Timer, XCircle } from 'lucide-angular';
 import { ButtonModule } from 'primeng/button';
@@ -38,63 +51,70 @@ function formatDuration(totalSeconds: number | undefined): string {
     SkeletonModule,
     SelectModule,
     ButtonModule,
-    TooltipModule
+    TooltipModule,
   ],
   template: `
     <ow-page-layout title="Dashboard">
       <ng-container actions>
-        <p-select 
-          [options]="timePeriodOptions" 
-          [(ngModel)]="selectedTimePeriod" 
+        <p-select
+          [options]="timePeriodOptions"
+          [(ngModel)]="selectedTimePeriod"
           (onChange)="onPeriodChange($event.value)"
-          optionLabel="label" 
+          optionLabel="label"
           optionValue="value"
           [style]="{ minWidth: '150px' }"
-          styleClass="p-inputtext-sm" 
+          styleClass="p-inputtext-sm"
         />
         <p-button
-          icon="pi pi-refresh" 
-          (click)="refresh()" 
-          pTooltip="Refresh Data" 
+          icon="pi pi-refresh"
+          (click)="refresh()"
+          pTooltip="Refresh Data"
           tooltipPosition="bottom"
-          [loading]="isLoading()">
+          [loading]="isLoading()"
+        >
         </p-button>
       </ng-container>
 
       <ng-template>
         <div class="flex flex-col gap-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
-            @widgetsAnimation>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6"
+            @widgetsAnimation
+          >
             <ow-stats-widget
-              class="widget"	
-              title="Total Tests" 
-              [statValue]="testStats()?.total" 
+              class="widget"
+              title="Total Tests"
+              [statValue]="testStats()?.total"
               [icon]="HashIcon"
-              iconColorClass="text-blue-500" 
-              [loading]="store.isLoadingStats()" />
-            <ow-stats-widget 
+              iconColorClass="text-blue-500"
+              [loading]="store.isLoadingStats()"
+            />
+            <ow-stats-widget
               class="widget"
-              title="Passing Tests" 
-              [statValue]="testStats()?.passed" 
-              [icon]="CheckCircleIcon" 
-              iconColorClass="text-green-500" 
-              [loading]="store.isLoadingStats()" />
-            <ow-stats-widget 
+              title="Passing Tests"
+              [statValue]="testStats()?.passed"
+              [icon]="CheckCircleIcon"
+              iconColorClass="text-green-500"
+              [loading]="store.isLoadingStats()"
+            />
+            <ow-stats-widget
               class="widget"
-              title="Failing Tests" 
-              [statValue]="testStats()?.failed" 
-              [icon]="XCircleIcon" 
-              iconColorClass="text-red-500" 
-              [loading]="store.isLoadingStats()" />
-            <ow-stats-widget 
+              title="Failing Tests"
+              [statValue]="testStats()?.failed"
+              [icon]="XCircleIcon"
+              iconColorClass="text-red-500"
+              [loading]="store.isLoadingStats()"
+            />
+            <ow-stats-widget
               class="widget"
-              title="Avg. Duration" 
-              [statValue]="avgDurationFormatted()" 
-              [icon]="TimerIcon" 
-              iconColorClass="text-purple-500" 
-              [loading]="store.isLoadingStats()" />
+              title="Avg. Duration"
+              [statValue]="avgDurationFormatted()"
+              [icon]="TimerIcon"
+              iconColorClass="text-purple-500"
+              [loading]="store.isLoadingStats()"
+            />
           </div>
-          
+
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ow-test-stats-chart class="widget" />
             <ow-pass-rate-chart class="widget" />
@@ -110,17 +130,24 @@ function formatDuration(totalSeconds: number | undefined): string {
   animations: [
     trigger('widgetsAnimation', [
       transition(':enter', [
-        query('.widget', [
-          style({ opacity: 0, transform: 'translateY(20px)' }),
-          stagger(100, [
-            animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-          ])
-        ], { optional: true })
-      ])
-    ])
+        query(
+          '.widget',
+          [
+            style({ opacity: 0, transform: 'translateY(20px)' }),
+            stagger(100, [
+              animate(
+                '400ms ease-out',
+                style({ opacity: 1, transform: 'translateY(0)' })
+              ),
+            ]),
+          ],
+          { optional: true }
+        ),
+      ]),
+    ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [DashboardStore]
+  providers: [DashboardStore],
 })
 export class DashboardPageComponent {
   readonly store = inject(DashboardStore);
@@ -141,7 +168,7 @@ export class DashboardPageComponent {
     { label: 'Last 7 days', value: '7d' as TimePeriod },
     { label: 'Last 30 days', value: '30d' as TimePeriod },
     { label: 'Last 90 days', value: '90d' as TimePeriod },
-    { label: 'All time', value: 'all' as TimePeriod }
+    { label: 'All time', value: 'all' as TimePeriod },
   ];
 
   selectedTimePeriod: TimePeriod = this.selectedPeriod();
@@ -162,7 +189,7 @@ export class DashboardPageComponent {
     if (!stat) return undefined;
     return {
       value: formatDuration(stat.value),
-      changePercent: stat.changePercent
+      changePercent: stat.changePercent,
     };
   });
 }

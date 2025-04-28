@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using MoreLinq;
+using Ninject;
 using OpenWright.Api.Auth.Domain;
 using OpenWright.Api.Runs.ValueObjects;
 using OpenWright.BackendService.Auth.Domain;
@@ -15,13 +16,16 @@ using OpenWright.BackendService.Auth.Services;
 using OpenWright.Common.Json;
 using OpenWright.Platform.AspNetCore;
 using OpenWright.Platform.PostgreSql;
+using OpenWright.Platform.Security;
 using Revo.AspNetCore;
 using Revo.AspNetCore.Configuration;
 using Revo.Core.Configuration;
+using Revo.Core.Core;
 using Revo.EFCore.Configuration;
 using Revo.Extensions.AutoMapper.Configuration;
 using Revo.Infrastructure;
 using Revo.Infrastructure.Events.Async;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace OpenWright.BackendService;
 
@@ -38,9 +42,9 @@ public class Startup : RevoStartup
         services
             .AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = AuthenticationConsts.AuthenticationScheme;
             })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            .AddCookie(AuthenticationConsts.AuthenticationScheme, options =>
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 options.SlidingExpiration = true;
@@ -54,20 +58,27 @@ public class Startup : RevoStartup
 
                 options.ClientId = clientId;
                 options.ClientSecret = clientSecret;
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.SignInScheme = AuthenticationConsts.AuthenticationScheme;
                 options.CallbackPath = "/api/signin-google-callback";
                 
                 options.Events = new OAuthEvents
                 {
                     OnCreatingTicket = async ctx =>
                     {
-                        var signInService = ctx.HttpContext.RequestServices.GetRequiredService<ISignInService>();
-                        await signInService.HandleCreatingOAuthTicketAsync(ctx);
+                        using (TaskContext.Enter())
+                        {
+                            var signInService = ctx.HttpContext.RequestServices
+                                .GetRequiredService<IKernel>()
+                                .Get<ISignInService>();
+                            await signInService.HandleCreatingOAuthTicketAsync(ctx);
+                        }
                     },
                     OnTicketReceived = async ctx =>
                     {
-                        var signInService = ctx.HttpContext.RequestServices.GetRequiredService<ISignInService>();
-                        await signInService.HandleTicketReceivedAsync(ctx);
+                        var signInService = ctx.HttpContext.RequestServices
+                            .GetRequiredService<IKernel>()
+                            .Get<ISignInService>();
+                        //await signInService.HandleTicketReceivedAsync(ctx);
                     }
                 };
                 
@@ -132,7 +143,7 @@ public class Startup : RevoStartup
         return new RevoConfiguration()
             .ConfigureCore(cfg =>
             {
-                //cfg.Security.UseNullSecurityModule = false;
+                cfg.Security.UseNullSecurityModule = false;
             })
             .ConfigureInfrastructure(cfg =>
             {

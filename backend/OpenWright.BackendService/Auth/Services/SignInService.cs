@@ -4,22 +4,21 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using OpenWright.BackendService.Auth.Domain;
-using Revo.Core.Transactions;
+using OpenWright.Platform.Security;
 using Revo.DataAccess.Entities;
 using Revo.Infrastructure.Repositories;
 
 namespace OpenWright.BackendService.Auth.Services;
 
-public class SignInService(IRepository repository,
-    IUnitOfWork unitOfWork) : ISignInService
+public class SignInService(IRepository repository) : ISignInService
 {
     public async Task HandleCreatingOAuthTicketAsync(OAuthCreatingTicketContext context)
     {
-        var email = context.Principal?.FindFirstValue(ClaimTypes.Email);
+        var emailAddress = context.Principal?.FindFirstValue(ClaimTypes.Email);
 
-        if (email == null)
+        if (emailAddress == null)
         {
-            context.Fail("Principal is null");
+            context.Fail("Principal email is null");
             context.Properties.RedirectUri = "/login?error=internal_error";
             return;
         }
@@ -37,7 +36,7 @@ public class SignInService(IRepository repository,
                 return;
         }
         
-        var user = await repository.Where<User>(x => x.EmailAddress.ToLower() == email.ToLower())
+        var user = await repository.Where<User>(x => x.EmailAddress.ToLower() == emailAddress.ToLower())
             .FirstOrDefaultAsync(repository.GetQueryableResolver<User>());
         if (user != null)
         {
@@ -55,20 +54,26 @@ public class SignInService(IRepository repository,
         
     }
 
-    public async Task<ClaimsPrincipal> CreateClaimsPrincipalAsync(User user)
+    private async Task<ClaimsPrincipal> CreateClaimsPrincipalAsync(User user)
     {
-        if (user == null)
-        {
-            throw new ArgumentNullException(nameof(user));
-        }
-        
+        ArgumentNullException.ThrowIfNull(user);
+
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            // TODO permissions
+            new(ClaimTypes.Name, user.EmailAddress),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
+
+        foreach (var roleGrant in user.RoleGrants)
+        {
+            claims.Add(new Claim(OpenWrightClaimTypes.Role, new RoleClaim
+            {
+                Role = roleGrant.Role.ToString(),
+                OrganizationId = roleGrant.OrganizationId
+            }.SerializeClaim()));
+        }
         
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var identity = new ClaimsIdentity(claims, AuthenticationConsts.AuthenticationScheme);
         return new ClaimsPrincipal(identity);
     }
 

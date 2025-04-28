@@ -10,4 +10,8 @@
       <ProjectReference Include="..\OpenWright.Common\OpenWright.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Revo.Core" />
+    </ItemGroup>
+
 </Project>

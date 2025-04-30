@@ -5,4 +5,5 @@ export { FrontLayoutComponent } from './lib/layout/front-layout/front-layout.com
 export { TimeAgoPipe } from './lib/pipes/time-ago.pipe';
 export { OpenWrightPrimengPreset as OpenwrightPrimengPreset } from './lib/theme/openwright-primeng-preset';
 export * from './lib/animations/animations';
-
+export * from './lib/forms/wrappers/form-field.wrapper';
+export * from './lib/forms/formly.config';

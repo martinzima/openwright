@@ -53,7 +53,7 @@ function formatRunDuration(totalSeconds: number | undefined): string {
       <ng-template pTemplate="title">
         <div class="flex justify-between items-center">
           <span class="font-semibold">Recent Test Runs</span>
-          <a routerLink="/runs" class="text-sm hover:underline">View all</a>
+          <a routerLink="/runs" class="text-base hover:underline">View all</a>
         </div>
       </ng-template>
       <ng-template pTemplate="content">
@@ -81,7 +81,7 @@ function formatRunDuration(totalSeconds: number | undefined): string {
               <td>
                 <div class="font-medium mb-1">{{ run.name }}</div>
                 <div
-                  class="flex items-center space-x-3 text-xs text-muted-color"
+                  class="flex items-center space-x-3 text-sm text-muted-color"
                 >
                   @if(run.commitHash) {
                   <a

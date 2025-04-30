@@ -42,6 +42,10 @@ export const appRoutes: Route[] = [
         loadComponent: () => import('@openwright/feature-auth').then(m => m.CreateAccountPageComponent)
       },
       {
+        path: 'create-organization',
+        loadComponent: () => import('@openwright/feature-auth').then(m => m.CreateOrganizationPageComponent)
+      },
+      {
         path: '**',
         loadComponent: () => import('@openwright/feature-auth').then(m => m.NotFoundPageComponent)
       }

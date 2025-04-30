@@ -71,7 +71,7 @@ function formatDuration(totalSeconds: number | undefined): string {
           pTooltip="Refresh Data"
           tooltipPosition="bottom"
           [loading]="isLoading()"
-        >
+          size="small">
         </p-button>
       </ng-container>
 

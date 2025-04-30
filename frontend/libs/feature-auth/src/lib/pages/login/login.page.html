@@ -1,6 +1,6 @@
 <div class="login-container flex items-center justify-center p-6">
   <p-card styleClass="w-full max-w-lg shadow-xl p-6" class="login-card">
-    <h1 class="login-title">Welcome Back</h1>
+    <h2 class="login-title">Welcome Back</h2>
     <p class="login-subtitle text-muted-color">Sign in to continue to OpenWright.</p>
 
     <div class="flex flex-col gap-3">
@@ -9,7 +9,7 @@
         (click)="loginWithGoogle()" />
     </div>
     <ng-template pTemplate="footer">
-      <div class="text-center text-lg text-muted-color mt-6">
+      <div class="text-center text-muted-color mt-6">
         Don't have an account?
         <a [routerLink]="'/sign-up'" class="text-primary-500 hover:text-primary-700 font-medium">Sign up</a>
       </div>

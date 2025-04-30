@@ -1,78 +1,29 @@
-<div class="signup-container flex items-center justify-center p-4">
-  <p-card header="Create your OpenWright Account" styleClass="w-full max-w-md shadow-lg">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
-      <!-- First Name -->
-      <div class="flex flex-col gap-2">
-        <label for="firstName" class="text-color font-medium">First Name</label>
-        <input
-          pInputText
-          id="firstName"
-          formControlName="firstName"
-          required
-          placeholder="Enter your first name"
-          class="w-full"
-          [ngClass]="{ 'ng-invalid ng-dirty': form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched) }"
-          [disabled]="store.loading()"
-        />
-        <!-- Basic Validation Message -->
-        @if(form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched)) {
-          <small class="p-error">
-            @if (form.controls['firstName'].errors?.['required']) {
-              First name is required.
-            }
-            @if (form.controls['firstName'].errors?.['minlength']) {
-              First name must be at least 2 characters long.
-            }
-          </small>
-        }
+<div class="login-container flex items-center justify-center p-6">
+  <p-card styleClass="w-full max-w-md shadow-lg rounded-border" class="sign-up-card">
+    <h2 class="sign-up-title">Create account</h2>
+
+    <p class="sign-up-subtitle text-muted-color">First, we need to create an account for you.</p>
+
+    @if (store.error()) {
+      <p-message severity="error" [text]="store.error() ?? ''" styleClass="mb-4"></p-message>
+    }
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <formly-form [form]="form" [model]="model" [fields]="fields"></formly-form>
+
+      <div class="mt-6">
+        <p-button
+          type="submit"
+          label="Create Account"
+          styleClass="w-full"
+          [loading]="store.loading()"
+          [disabled]="form.invalid"
+        ></p-button>
       </div>
 
-      <!-- Last Name -->
-      <div class="flex flex-col gap-2">
-        <label for="lastName" class="text-color font-medium">Last Name</label>
-        <input
-          pInputText
-          id="lastName"
-          formControlName="lastName"
-          required
-          placeholder="Enter your last name"
-          class="w-full"
-          [ngClass]="{ 'ng-invalid ng-dirty': form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched) }"
-          [disabled]="store.loading()"
-        />
-         <!-- Basic Validation Message -->
-        @if(form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched)) {
-          <small class="p-error">
-            @if (form.controls['lastName'].errors?.['required']) {
-              Last name is required.
-            }
-             @if (form.controls['lastName'].errors?.['minlength']) {
-              Last name must be at least 2 characters long.
-            }
-          </small>
-        }
+      <div class="mt-4 text-center">
+        <span class="text-muted-color">Already have an account? </span>
+        <a routerLink="/auth/logout" class="text-primary font-medium hover:underline">Login</a>
       </div>
-
-      <!-- Submission Error Message -->
-      @if (store.error()) {
-        <p-message severity="error" [text]="store.error() ?? 'An unexpected error occurred.'"></p-message>
-      }
-
-      <!-- Submit Button -->
-      <p-button
-        label="Create Account"
-        icon="pi pi-user-plus"
-        styleClass="w-full"
-        type="submit"
-        [loading]="store.loading()"
-        [disabled]="store.loading() || form.invalid"
-      ></p-button>
     </form>
-
-    <ng-template pTemplate="footer">
-      <div class="text-center text-sm text-muted-color mt-6">
-        Already have an account? <a [routerLink]="'/login'" class="text-primary hover:text-primary-emphasis font-medium">Login</a>
-      </div>
-    </ng-template>
   </p-card>
 </div>

@@ -1,0 +1,30 @@
+<div class="signup-container flex items-center justify-center p-4">
+  <p-card header="Create your OpenWright Account" styleClass="w-full max-w-md shadow-lg">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+      <formly-form
+        [form]="form"
+        [model]="model"
+        [fields]="fields"
+      ></formly-form>
+
+      @if (store.error()) {
+        <p-message severity="error" [text]="store.error() ?? 'An unexpected error occurred.'"></p-message>
+      }
+
+      <p-button
+        label="Create Account"
+        icon="pi pi-user-plus"
+        styleClass="w-full"
+        type="submit"
+        [loading]="store.loading()"
+        [disabled]="store.loading() || form.invalid"
+      ></p-button>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <div class="text-center text-sm text-muted-color mt-6">
+        Already have an account? <a [routerLink]="'/login'" class="text-primary hover:text-primary-emphasis font-medium">Login</a>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

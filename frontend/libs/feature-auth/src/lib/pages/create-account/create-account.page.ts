@@ -1,13 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CreateAccountStore } from './create-account.store';
 import { MessageModule } from 'primeng/message';
 import { CreateMyUserPayload } from '@openwright/web-api';
+import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
+import { AuthService } from '@openwright/app-shell-auth';
+import { explicitEffect } from 'ngxtension/explicit-effect';
+
+interface CreateAccountModel {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
 
 @Component({
   selector: 'ow-create-account-page',
@@ -18,29 +26,84 @@ import { CreateMyUserPayload } from '@openwright/web-api';
     CommonModule,
     CardModule,
     RouterLink,
-    InputTextModule,
     ButtonModule,
     ReactiveFormsModule,
-    MessageModule
+    MessageModule,
+    FormlyModule
+],
+  providers: [
+    CreateAccountStore
   ],
-  providers: [CreateAccountStore],
 })
 export class CreateAccountPageComponent {
-  readonly store = inject(CreateAccountStore);
-  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  readonly form: FormGroup = this.fb.group({
-    firstName: ['', [Validators.required, Validators.minLength(2)]],
-    lastName: ['', [Validators.required, Validators.minLength(2)]],
-  });
+  readonly store = inject(CreateAccountStore);
+
+  form = new FormGroup({});
+  model: CreateAccountModel = {};
+  fields: FormlyFieldConfig[] = [
+    {
+      key: 'email',
+      type: 'input',
+      props: {
+        label: 'Email',
+        required: true,
+        disabled: true
+      }
+    },
+    {
+      key: 'firstName',
+      type: 'input',
+      props: {
+        label: 'First Name',
+        placeholder: 'Enter your first name',
+        required: true,
+        minLength: 2,
+      }
+    },
+    {
+      key: 'lastName',
+      type: 'input',
+      props: {
+        label: 'Last Name',
+        placeholder: 'Enter your last name',
+        required: true,
+        minLength: 2,
+      }
+    },
+  ];
+
+  constructor() {
+    explicitEffect([this.authService.isAuthenticated], ([isAuthenticated]) => {
+      if (isAuthenticated) {
+        if (this.authService.user()) {
+          const roleGrants = this.authService.roleGrants();
+          if (roleGrants && roleGrants.length > 0) {
+            this.router.navigate(['/', roleGrants[0].organization.urlSlug, 'dashboard']);
+          } else {
+            this.router.navigate(['/create-organization']);
+          }
+        }
+      } else {
+        this.router.navigate(['/login']);
+      }
+    });
+
+    effect(() => {
+      const user = this.authService.user();
+      if (user?.emailAddress) {
+        this.model = { ...this.model, email: user.emailAddress };
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-
-    const payload = this.form.value as CreateMyUserPayload;
-    this.store.submit(payload);
+    this.store.submit(this.form.value as CreateMyUserPayload);
   }
 }

@@ -562,21 +562,6 @@
           "System.Collections.Immutable": "1.7.1"
         }
       },
-      "Revo.Core": {
-        "type": "Transitive",
-        "resolved": "1.37.0",
-        "contentHash": "5nl0+473Vd5DL5PICGZrvYbMDqnOuXBLOH2X6RYQOBAjXB75JQUKOSHpAs1lwi46RJ9rDbm8tdbcBqponOK2Ww==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "9.0.4",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.4",
-          "Microsoft.Extensions.Logging": "9.0.4",
-          "Newtonsoft.Json": "13.0.3",
-          "Ninject": "3.3.6",
-          "Ninject.Extensions.ContextPreservation": "3.3.1",
-          "Ninject.Extensions.Factory": "3.3.3",
-          "System.Collections.Immutable": "9.0.4"
-        }
-      },
       "Revo.Hangfire": {
         "type": "Transitive",
         "resolved": "1.37.0",
@@ -828,6 +813,22 @@
         "requested": "[13.0.3, )",
         "resolved": "13.0.3",
         "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
+      },
+      "Revo.Core": {
+        "type": "CentralTransitive",
+        "requested": "[1.37.0, )",
+        "resolved": "1.37.0",
+        "contentHash": "5nl0+473Vd5DL5PICGZrvYbMDqnOuXBLOH2X6RYQOBAjXB75JQUKOSHpAs1lwi46RJ9rDbm8tdbcBqponOK2Ww==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "9.0.4",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.4",
+          "Microsoft.Extensions.Logging": "9.0.4",
+          "Newtonsoft.Json": "13.0.3",
+          "Ninject": "3.3.6",
+          "Ninject.Extensions.ContextPreservation": "3.3.1",
+          "Ninject.Extensions.Factory": "3.3.3",
+          "System.Collections.Immutable": "9.0.4"
+        }
       },
       "Revo.DataAccess": {
         "type": "CentralTransitive",

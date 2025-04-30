@@ -7,6 +7,7 @@
     "prebuild": "npm run svg",
     "svg": "svg-generator",
     "build": "npx nx build openwright-app",
+    "build-with-stats": "npx nx build openwright-app --stats-json",
     "serve": "npx nx serve openwright-app",
     "test": "npx nx test openwright-app",
     "e2e": "npx nx run openwright-app-e2e:e2e"
@@ -25,6 +26,8 @@
     "@angular/ssr": "~19.2.0",
     "@ngneat/svg-icon": "^7.1.6",
     "@ngrx/signals": "^19.1.0",
+    "@ngx-formly/core": "^7.0.0-alpha.1",
+    "@ngx-formly/primeng": "^7.0.0-alpha.1",
     "@primeng/themes": "^19.0.10",
     "chart.js": "^4.4.8",
     "express": "^4.21.2",

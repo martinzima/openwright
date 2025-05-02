@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using MoreLinq;
 using Ninject;
@@ -48,6 +49,7 @@ public class Startup : RevoStartup
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 options.SlidingExpiration = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
             })
             .AddGoogle(options =>
             {
@@ -86,7 +88,8 @@ public class Startup : RevoStartup
                 options.Scope.Add("profile");
             });
         
-        services.AddMvc()
+        services
+            .AddControllers()
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -115,13 +118,7 @@ public class Startup : RevoStartup
         });
 
         app.UseAuthentication();
-
-        app.UseCorsAlways(builder =>
-            builder
-                .WithOrigins(Configuration.GetSection("CorsOrigins").GetChildren().Select(x => x.Value).ToArray())
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+        app.UseSimpleCsrfProtection();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();

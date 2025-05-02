@@ -1,15 +1,31 @@
 -- OpenWright create SQL baseline schema
 -- version: 1
 
+-- users
+
+CREATE TABLE ow_user (
+    ow_usr_user_id uuid PRIMARY KEY,
+    ow_usr_version int NOT NULL,
+    ow_usr_email_address text NOT NULL,
+    ow_usr_first_name text,
+    ow_usr_last_name text
+);
+
+-- organizations
+
 CREATE TABLE ow_organization (
     ow_org_organization_id uuid PRIMARY KEY,
     ow_org_version int NOT NULL,
     ow_org_name text NOT NULL,
     ow_org_url_slug text NOT NULL,
-    ow_org_is_active boolean NOT NULL
+    ow_org_is_active boolean NOT NULL,
+    ow_org_created_by_user_id uuid NOT NULL REFERENCES ow_user DEFERRABLE INITIALLY DEFERRED,
+    ow_org_create_date timestamptz
 );
 
 CREATE UNIQUE INDEX ow_organization_url_slug_idx ON ow_organization (ow_org_url_slug);
+
+-- projects
 
 CREATE TABLE ow_project (
     ow_pro_project_id uuid PRIMARY KEY,
@@ -18,6 +34,8 @@ CREATE TABLE ow_project (
     ow_pro_name text NOT NULL,
     ow_pro_description text
 );
+
+-- suites
 
 CREATE TABLE ow_spec_file (
     ow_spf_spec_file_id uuid PRIMARY KEY,
@@ -57,6 +75,8 @@ CREATE TABLE ow_case (
 );
 
 CREATE UNIQUE INDEX ow_case_title_suite_idx ON ow_case (ow_cas_title, ow_cas_suite_id);
+
+-- runs
 
 CREATE TABLE ow_run (
     ow_run_run_id uuid PRIMARY KEY,
@@ -110,13 +130,7 @@ CREATE TABLE ow_case_execution (
 
 CREATE UNIQUE INDEX ow_case_execution_run_case_retry_idx ON ow_case_execution (ow_cex_run_case_id, ow_cex_retry);
 
-CREATE TABLE ow_user (
-    ow_usr_user_id uuid PRIMARY KEY,
-    ow_usr_version int NOT NULL,
-    ow_usr_email_address text NOT NULL,
-    ow_usr_first_name text,
-    ow_usr_last_name text
-);
+-- user roles
 
 CREATE TYPE ow_user_role AS ENUM (
     'Administrator',

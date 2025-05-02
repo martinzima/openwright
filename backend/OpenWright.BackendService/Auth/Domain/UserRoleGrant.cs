@@ -8,7 +8,7 @@ namespace OpenWright.BackendService.Auth.Domain;
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "urg")]
 public class UserRoleGrant : BasicEntity
 {
-    public UserRoleGrant(User user, Organization organization, UserRole role)
+    public UserRoleGrant(Guid id, User user, Organization organization, UserRole role) : base(id)
     {
         User = user ?? throw new ArgumentNullException(nameof(user));
         OrganizationId = organization?.Id ?? throw new ArgumentNullException(nameof(organization));

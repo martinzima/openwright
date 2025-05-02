@@ -1,13 +1,15 @@
-using OpenWright.BackendService.Organizations.Domain;
 using OpenWright.Platform.Utils;
 using Revo.Core.Tenancy;
 using Revo.DataAccess.Entities;
 using Revo.Domain.Core;
+using Revo.Domain.Entities.Attributes;
+using Revo.Domain.Tenancy;
 
 namespace OpenWright.BackendService.Projects.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "pro")]
-public class Project : OrganizationOwnedAggregateRoot
+[DomainClassId("54EC01B8-2320-4599-BD89-D3421EBC1C3C")]
+public class Project : TenantBasicAggregateRoot
 {
     public Project(Guid id, ITenant tenant, string name) : base(id, tenant)
     {

@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Sql\ow-view_repeatable_pgsql.sql" />
       <None Remove="Sql\ow-create_baseline_pgsql.sql" />
       <EmbeddedResource Include="Sql\ow-create_baseline_pgsql.sql" />
       <EmbeddedResource Remove="logs\**" />

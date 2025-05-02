@@ -50,9 +50,6 @@ interface TestStatValue {
     }
   `,
   ],
-  animations: [
-
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatsWidgetComponent {

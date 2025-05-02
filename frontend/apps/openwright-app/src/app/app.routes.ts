@@ -21,7 +21,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: '**',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.NotFoundPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/not-found').then(m => m.NotFoundPageComponent)
       }
     ]
   },
@@ -31,23 +31,23 @@ export const appRoutes: Route[] = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.LoginPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/login').then(m => m.LoginPageComponent)
       },
       {
         path: 'sign-up',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.SignupPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/sign-up').then(m => m.SignupPageComponent)
       },
       {
         path: 'create-account',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.CreateAccountPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/create-account').then(m => m.CreateAccountPageComponent)
       },
       {
         path: 'create-organization',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.CreateOrganizationPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/create-organization').then(m => m.CreateOrganizationPageComponent)
       },
       {
         path: '**',
-        loadComponent: () => import('@openwright/feature-auth').then(m => m.NotFoundPageComponent)
+        loadComponent: () => import('@openwright/feature-auth/not-found').then(m => m.NotFoundPageComponent)
       }
     ],
   }

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CreateAccountStore } from './create-account.store';
 import { MessageModule } from 'primeng/message';
@@ -10,6 +10,8 @@ import { CreateMyUserPayload } from '@openwright/web-api';
 import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 import { AuthService } from '@openwright/app-shell-auth';
 import { explicitEffect } from 'ngxtension/explicit-effect';
+import { ArrowRight, LucideAngularModule } from 'lucide-angular';
+import { RequestErrorPipe } from '@openwright/ui-common';
 
 interface CreateAccountModel {
   email?: string;
@@ -25,11 +27,12 @@ interface CreateAccountModel {
   imports: [
     CommonModule,
     CardModule,
-    RouterLink,
     ButtonModule,
     ReactiveFormsModule,
     MessageModule,
-    FormlyModule
+    FormlyModule,
+    LucideAngularModule,
+    RequestErrorPipe
 ],
   providers: [
     CreateAccountStore
@@ -41,6 +44,8 @@ export class CreateAccountPageComponent {
 
   readonly store = inject(CreateAccountStore);
 
+  readonly ArrowRightIcon = ArrowRight;
+
   form = new FormGroup({});
   model: CreateAccountModel = {};
   fields: FormlyFieldConfig[] = [
@@ -51,7 +56,7 @@ export class CreateAccountPageComponent {
         label: 'Email',
         required: true,
         disabled: true
-      }
+      },
     },
     {
       key: 'firstName',
@@ -92,9 +97,9 @@ export class CreateAccountPageComponent {
     });
 
     effect(() => {
-      const user = this.authService.user();
-      if (user?.emailAddress) {
-        this.model = { ...this.model, email: user.emailAddress };
+      const me = this.authService.me();
+      if (me?.emailAddress) {
+        this.model = { ...this.model, email: me.emailAddress };
       }
     });
   }
@@ -105,5 +110,9 @@ export class CreateAccountPageComponent {
       return;
     }
     this.store.submit(this.form.value as CreateMyUserPayload);
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

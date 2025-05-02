@@ -39,11 +39,8 @@ public class AuthController : Controller
     }
 
     [HttpPost("logout")]
-    [ValidateAntiForgeryToken]
     public async Task Logout()
     {
         await HttpContext.SignOutAsync(AuthenticationConsts.AuthenticationScheme);
-        await HttpContext.SignOutAsync(GoogleDefaults.AuthenticationScheme);
-        //await HttpContext.SignOutAsync(MicrosoftDefaults.AuthenticationScheme);
     }
 }

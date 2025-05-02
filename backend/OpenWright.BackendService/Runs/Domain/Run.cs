@@ -1,13 +1,15 @@
 using OpenWright.Api.Runs.ValueObjects;
-using OpenWright.BackendService.Organizations.Domain;
 using OpenWright.BackendService.Projects.Domain;
 using OpenWright.Platform.Utils;
 using Revo.DataAccess.Entities;
+using Revo.Domain.Entities.Attributes;
+using Revo.Domain.Tenancy;
 
 namespace OpenWright.BackendService.Runs.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "run")]
-public class Run : OrganizationOwnedAggregateRoot
+[DomainClassId("51830411-E36C-4065-96AA-9C328F9089FC")]
+public class Run : TenantBasicAggregateRoot
 {
     private readonly List<RunCase> cases = new();
 

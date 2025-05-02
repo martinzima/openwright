@@ -6,4 +6,4 @@ export * from './lib/storage/local-data-storage.service';
 export * from './lib/utils/deep-equals';
 export * from './lib/utils/router-utils';
 export * from './lib/utils/uuid';
-
+export * from './lib/api/anti-csrf-header-http-interceptor';

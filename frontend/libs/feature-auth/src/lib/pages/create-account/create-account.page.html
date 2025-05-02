@@ -1,28 +1,28 @@
-<div class="login-container flex items-center justify-center p-6">
-  <p-card styleClass="w-full max-w-md shadow-lg rounded-border" class="sign-up-card">
+<div class="flex items-center justify-center p-6">
+  <p-card styleClass="w-full shadow-xl p-6" class="sign-up-card">
     <h2 class="sign-up-title">Create account</h2>
 
     <p class="sign-up-subtitle text-muted-color">First, we need to create an account for you.</p>
 
     @if (store.error()) {
-      <p-message severity="error" [text]="store.error() ?? ''" styleClass="mb-4"></p-message>
+      <p-message severity="error" [text]="(store.error() | requestError) ?? 'Unknown error'" styleClass="mb-4" />
     }
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <formly-form [form]="form" [model]="model" [fields]="fields"></formly-form>
 
-      <div class="mt-6">
+      <div class="mt-6 text-center">
         <p-button
           type="submit"
-          label="Create Account"
-          styleClass="w-full"
-          [loading]="store.loading()"
-          [disabled]="form.invalid"
-        ></p-button>
+          [loading]="store.isSubmitting()"
+          [disabled]="form.invalid">
+          Create Account
+          <lucide-icon [img]="ArrowRightIcon" [size]="16" />
+        </p-button>
       </div>
 
       <div class="mt-4 text-center">
-        <span class="text-muted-color">Already have an account? </span>
-        <a routerLink="/auth/logout" class="text-primary font-medium hover:underline">Login</a>
+        <span class="text-muted-color">Already have an account?</span>
+        <p-button label="Login" [link]="true" (click)="logout()" />
       </div>
     </form>
   </p-card>

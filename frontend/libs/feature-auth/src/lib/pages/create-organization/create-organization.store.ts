@@ -1,40 +1,51 @@
-import { inject, Injectable } from '@angular/core';
-import { signal, computed } from '@angular/core';
-import { MeApiService } from '@openwright/web-api';
-import { CreateMyUserPayload } from '@openwright/web-api';
-import { Router } from '@angular/router';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { OrganizationsApiService } from '@openwright/web-api';
 import { lastValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
+import { AuthService } from '@openwright/app-shell-auth';
+import { generateUuidV4 } from '@openwright/shared-utils';
 
-interface SubmissionState {
-  loading: boolean;
-  error: string | null;
+export interface CreateOrganizationModel {
+  name: string;
+  urlSlug: string;
+}
+
+export interface CreateOrganizationState {
+  isSubmitting: boolean;
+  error: unknown | null;
 }
 
 @Injectable()
 export class CreateOrganizationStore {
-  private readonly meApiService = inject(MeApiService);
+  private readonly organizationsApiService = inject(OrganizationsApiService);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  private readonly state = signal<SubmissionState>({
-    loading: false,
+  private readonly state = signal<CreateOrganizationState>({
+    isSubmitting: false,
     error: null,
   });
 
-  readonly loading = computed(() => this.state().loading);
+  readonly isSubmitting = computed(() => this.state().isSubmitting);
   readonly error = computed(() => this.state().error);
 
-  async submit(payload: CreateMyUserPayload): Promise<void> {
-    if (this.state().loading) {
+  async submit(model: CreateOrganizationModel): Promise<void> {
+    if (this.state().isSubmitting) {
       return;
     }
-    this.state.set({ loading: true, error: null });
+    this.state.set({ isSubmitting: true, error: null });
 
     try {
-      await lastValueFrom(this.meApiService.createMyUser(payload));
-      this.state.set({ loading: false, error: null });
-      this.router.navigate(['/create-organization']);
-    } catch (err: any) {
-      this.state.set({ loading: false, error: err.message ?? 'Failed to create account.' });
+      await lastValueFrom(this.organizationsApiService.createOrganization({
+        ...model,
+        id: generateUuidV4()
+      }));
+      await this.authService.refreshMe();
+
+      this.state.set({ isSubmitting: false, error: null });
+      this.router.navigate(['/', model.urlSlug, 'dashboard']);
+    } catch (error: unknown) {
+      this.state.set({ isSubmitting: false, error });
     }
   }
 }

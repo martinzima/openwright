@@ -1,14 +1,4 @@
 import { FormlyExtension, FormlyFieldConfig, ConfigOption } from '@ngx-formly/core';
-import { FormFieldWrapperComponent } from './wrappers/form-field.wrapper';
-
-export const formlyWrappers = {
-  wrappers: [
-    {
-      name: 'form-field-custom',
-      component: FormFieldWrapperComponent,
-    },
-  ],
-};
 
 class ReplaceFormFieldWrapperExtension implements FormlyExtension {
   postPopulate(field: FormlyFieldConfig): void {

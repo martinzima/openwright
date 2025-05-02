@@ -17,6 +17,11 @@
     "paths": {
       "@openwright/app-shell-auth": ["libs/app-shell/auth/src/index.ts"],
       "@openwright/feature-auth": ["libs/feature-auth/src/index.ts"],
+      "@openwright/feature-auth/login": ["libs/feature-auth/src/lib/pages/login/index.ts"],
+      "@openwright/feature-auth/sign-up": ["libs/feature-auth/src/lib/pages/sign-up/index.ts"],
+      "@openwright/feature-auth/create-account": ["libs/feature-auth/src/lib/pages/create-account/index.ts"],
+      "@openwright/feature-auth/create-organization": ["libs/feature-auth/src/lib/pages/create-organization/index.ts"],
+      "@openwright/feature-auth/not-found": ["libs/feature-auth/src/lib/pages/not-found/index.ts"],
       "@openwright/playwright-reporter": [
         "libs/playwright-reporter/src/index.ts"
       ],

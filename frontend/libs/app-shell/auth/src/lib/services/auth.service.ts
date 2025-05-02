@@ -3,6 +3,7 @@ import { inject } from "@angular/core";
 import { signal } from "@angular/core";
 import { AUTH_CACHE_DATA_SCHEMA_VERSION, AuthCacheService } from "./auth-cache.service";
 import { Me, MeApiService } from "@openwright/web-api";
+import { AuthApiService } from "@openwright/web-api";
 import { firstValueFrom } from "rxjs";
 import { deepEquals } from "@openwright/shared-utils";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -16,6 +17,7 @@ export class AuthState {
 export class AuthService {
   private readonly authCacheService = inject(AuthCacheService);
   private readonly meApiService = inject(MeApiService);
+  private readonly authApiService = inject(AuthApiService);
 
   private readonly state = signal<AuthState>(new AuthState());
 
@@ -27,6 +29,24 @@ export class AuthService {
 
   constructor () {
     this.init();
+  }
+
+  async logout() {
+    await firstValueFrom(this.authApiService.logout());
+    this.writeAuthState(null);
+  }
+
+  async refreshMe() {
+    try {
+      const newMe = await firstValueFrom(this.meApiService.getMe());
+      this.writeAuthState(newMe);
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 403) {
+        this.writeAuthState(null);
+      } else {
+        throw error;
+      }
+    }
   }
 
   private readFromStorage() {
@@ -76,19 +96,6 @@ export class AuthService {
         ...s,
         isLoading: false
       }));
-    }
-  }
-
-  private async refreshMe() {
-    try {
-      const newMe = await firstValueFrom(this.meApiService.getMe());
-      this.writeAuthState(newMe);
-    } catch (error) {
-      if (error instanceof HttpErrorResponse && error.status === 403) {
-        this.writeAuthState(null);
-      } else {
-        throw error;
-      }
     }
   }
 }

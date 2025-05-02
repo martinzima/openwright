@@ -13,7 +13,7 @@ alwaysApply: true
 3. We are using Nx monorepo. Run the app accordingly. The app is named openwright-app in the Nx monorepo. To run "nx", use "npx nx".
 3. Use PrimeNG components for the UI preferrably. You can also use Tailwind 3 a its common patterns and blocks. We are using a PrimeNG integration for Tailwind.
 When using Tailwind utility classes for colors, always prefer semantic color tokens from PrimeNG if possible instead of specific colors!
-Aim for modern and sleek design, Apple-like, with animations, shadows, etc.
+Aim for modern and sleek design, Apple-like, with animations, shadows, etc. We like the look of shadcn/ui.
 4. The app should be using standalone components and Angular signals.
 5. For the state management, every page should have a separate .store.ts file with store implemented as a signal-based service. Generally, the state should be represented as one state signal, optionally
 exposing further computed signals. For fetching data and other async operations, use the new resource (@angular/core) API from Angular 18+/19+ for fetching async data. Take care of debouncing user inputs and aborting requests. Load data in parallel if possible.

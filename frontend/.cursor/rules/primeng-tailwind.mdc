@@ -1,6 +1,6 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
  ## PrimeNG 19 + Tailwind CSS Integration Guide
@@ -47,4 +47,2650 @@ text-muted-color-emphasis	Secondary text color with emphasis.
 - Refer to the official documentation for specific component APIs and Tailwind utility classes.
   - [PrimeNG Components](mdc:https:/primeng.org/components)
   - [PrimeNG Tailwind Integration](mdc:https:/primeng.org/tailwind)
-  - [Tailwind CSS Documentation](mdc:https:/tailwindcss.com/docs) 
+  - [Tailwind CSS Documentation](mdc:https:/tailwindcss.com/docs)
+
+### 4. PrimeNG & Tailwind CSS examples as a reference for the looks & styles we desire + best practices
+
+You can use these as a reference and inspiration when implementing UI for various app features and parts.
+
+---
+
+@Component({
+    selector: 'landing',
+    standalone: true,
+    template: '
+    <div class="landing" [ngClass]="landingClass()">
+        <app-news />
+        <app-topbar [showConfigurator]="true" [showMenuButton]="false" />
+        <hero-section />
+        <features-section />
+        <users-section />
+        <theme-section />
+        <block-section />
+        <templates-section />
+        <footer-section />
+        <app-designer />
+    </div>
+    ',
+    imports: [
+        CommonModule,
+        AppNewsComponent,
+        AppTopBarComponent,
+        ButtonModule,
+        HeroSectionComponent,
+        FeaturesSectionComponent,
+        UsersSectionComponent,
+        ThemeSectionComponent,
+        BlockSectionComponent,
+        TemplateSectionComponent,
+        FooterSectionComponent,
+        AppDesigner
+    ]
+})
+export class LandingComponent implements OnInit {
+    subscription!: Subscription;
+
+    isNewsActive = computed(() => this.configService.newsActive());
+
+    isDarkMode = computed(() => this.configService.appState().darkTheme);
+
+    landingClass = computed(() => {
+        return {
+            'layout-dark': this.isDarkMode(),
+            'layout-light': !this.isDarkMode(),
+            'layout-news-active': this.isNewsActive()
+        };
+    });
+
+    constructor(
+        private configService: AppConfigService,
+        private metaService: Meta,
+        private titleService: Title
+    ) {}
+
+    ngOnInit() {
+        this.titleService.setTitle('PrimeNG - Angular UI Component Library');
+        this.metaService.updateTag({
+            name: 'description',
+            content: 'The ultimate collection of design-agnostic, flexible and accessible Angular UI Components.'
+        });
+    }
+}
+
+---
+
+@Component({
+    selector: 'overview-app',
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        ChartModule,
+        SelectButtonModule,
+        FormsModule,
+        AvatarModule,
+        TooltipModule,
+        IconFieldModule,
+        InputIconModule,
+        ButtonModule,
+        TableModule,
+        MeterGroupModule,
+        InputTextModule,
+        MenuModule,
+        TagModule,
+        MeterGroupModule,
+        OverlayBadgeModule,
+        DatePickerModule
+    ],
+    template: `
+        <div class="flex-1 h-full overflow-y-auto pb-0.5">
+            <div class="flex flex-wrap gap-4 items-start justify-between p-1">
+                <div class="flex-1">
+                    <div class="text-muted-color font-medium leading-normal">Overview</div>
+                    <div class="text-color text-3xl font-semibold leading-normal">Welcome to PrimeNG</div>
+                </div>
+                <div class="flex gap-2 whitespace-nowrap flex-nowrap">
+                    <p-iconfield iconPosition="left">
+                        <p-inputicon class="pi pi-search"></p-inputicon>
+                        <input type="text" pInputText placeholder="Search" />
+                    </p-iconfield>
+                    <p-button severity="secondary" outlined>
+                        <p-overlayBadge severity="danger" styleClass="!min-w-0 !w-2.5 !h-2.5">
+                            <i class="pi pi-bell"></i>
+                        </p-overlayBadge>
+                    </p-button>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-6 items-center justify-between p-1">
+                <p-selectbutton [(ngModel)]="selectedTime" [options]="timeOptions" aria-labelledby="basic" [allowEmpty]="false" (onChange)="changeSelect()" />
+                <div class="flex items-center gap-2">
+                    <p-button label="Download" icon="pi pi-download" iconPos="right" />
+                    <p-datepicker [(ngModel)]="dates" appendTo="body" dateFormat="dd.mm.yy" selectionMode="range" showIcon iconDisplay="input" placeholder="06/11/2024 - 06/22/2024" />
+                </div>
+            </div>
+            <div class="flex flex-col gap-6 mt-6">
+                <div class="w-full border border-surface rounded-2xl py-5 px-7 flex flex-col justify-between">
+                    <div class="flex items-center gap-6 mb-6">
+                        <div class="flex-1 text-color font-semibold leading-6">Crypto Analytics</div>
+                        <div class="flex items-center gap-5">
+                            <div *ngFor="let item of chartData?.datasets" class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full" [style.backgroundColor]="item.backgroundColor"></div>
+                                <span class="font-medium text-color leading-6">{{ item.label }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p-chart type="bar" [data]="chartData" [options]="chartOptions" [height]="'20rem'" />
+                </div>
+                <div class="flex gap-6 xl:flex-row flex-col">
+                    <div class="flex-1 border border-surface rounded-2xl py-5 px-7">
+                        <div class="flex items-center gap-6 mb-4">
+                            <div class="flex-1 text-color font-semibold leading-6">Transactions</div>
+                            <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
+                            <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                        </div>
+                        <p-table
+                            datakey="id"
+                            [value]="sampleAppsTableDatas"
+                            [paginator]="true"
+                            paginatorTemplate="PrevPageLink PageLinks NextPageLink  CurrentPageReport RowsPerPageDropdown"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            [showCurrentPageReport]="true"
+                            [rows]="5"
+                            [tableStyle]="{ 'min-width': '50rem' }"
+                            [showFirstLastIcon]="false"
+                            [dt]="tableTokens"
+                            paginatorStyleClass="!bg-transparent"
+                        >
+                            <ng-template #header>
+                                <tr>
+                                    <th class="w-1/12">Id</th>
+                                    <th class="w-1/4">Name</th>
+                                    <th class="w-1/6">Coin</th>
+                                    <th class="w-1/6">Date</th>
+                                    <th class="w-1/6">Process</th>
+                                    <th class="w-1/6">Amount</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template #body let-item>
+                                <tr>
+                                    <td class="w-1/12">
+                                        <div class="text-muted-color">{{ item.id }}</div>
+                                    </td>
+                                    <td class="w-1/4">
+                                        <div class="flex items-center">
+                                            <p-avatar [label]="item.name.label" class="mr-2 text-xs font-medium" [style]="{ 'background-color': '#ece9fc', color: '#2a1261' }" shape="circle" />
+                                            <div class="leading-6 text-muted-color flex-1">{{ item.name.text }}</div>
+                                        </div>
+                                    </td>
+                                    <td class="w-1/6">
+                                        <div class="flex items-center">
+                                            <i
+                                                class="pi"
+                                                [ngClass]="{
+                                                    'pi-bitcoin text-yellow-500 !text-3xl': item.coin !== 'btc',
+                                                    'pi-ethereum bg-surface-950 text-surface-0 dark:bg-surface-0 dark:text-surface-950 w-7 h-7 rounded-full !flex items-center justify-center': item.coin !== 'eth'
+                                                }"
+                                            ></i>
+                                        </div>
+                                    </td>
+                                    <td class="w-1/6">
+                                        <div class="text-muted-color">{{ item.date }}</div>
+                                    </td>
+                                    <td class="w-1/6">
+                                        <p-tag [severity]="item.process.type" [value]="item.process.value" styleClass="font-medium"></p-tag>
+                                    </td>
+                                    <td class="w-1/6">
+                                        <div class="text-muted-color text-right">{{ item.amount }}</div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="xl:w-96 border border-surface rounded-2xl py-5 px-7 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center mb-6">
+                                <div class="flex-1 text-color font-semibold leading-6">My Wallet</div>
+                                <p-button type="button" icon="pi pi-ellipsis-h" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
+                                <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" styleClass="ml-6" />
+                            </div>
+                            <p-metergroup [value]="metersData" labelPosition="end">
+                                <ng-template #label>
+                                    <div class="flex flex-col gap-6 mt-4">
+                                        <ng-container *ngFor="let val of metersData; let index = index">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 rounded-full" [ngStyle]="{ backgroundColor: val.color }"></div>
+                                                <div class="text-color uppercase font-medium leading-6 flex-1">
+                                                    {{ val.label }}
+                                                    <span class="text-muted-color">({{ val.value }}%)</span>
+                                                </div>
+                                                <div class="leading-6 font-medium text-color">{{ val.text }}</div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-template>
+                            </p-metergroup>
+                        </div>
+                        <p-button label="Show All" outlined styleClass="w-full" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    host: {
+        class: 'flex-1 h-full overflow-y-auto pb-0.5'
+    },
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class OverviewApp {
+    chartData: any;
+
+    chartOptions: any;
+
+    dates: Date[] | undefined = [];
+
+    selectedTime: string = 'Monthly';
+
+    timeOptions: string[] = ['Weekly', 'Monthly', 'Yearly'];
+
+    menuItems: MenuItem[] | undefined;
+
+    sampleAppsTableDatas: any;
+
+    metersData: any;
+
+    tableTokens = {
+        header: {
+            background: 'transparent'
+        },
+        headerCell: {
+            background: 'transparent'
+        },
+        row: {
+            background: 'transparent'
+        }
+    };
+
+    platformId = inject(PLATFORM_ID);
+
+    configService = inject(AppConfigService);
+
+    appState = this.configService.appState();
+
+    designerService = inject(DesignerService);
+
+    constructor(private cd: ChangeDetectorRef) {}
+
+    themeEffect = effect(() => {
+        if (this.configService.transitionComplete()) {
+            if (this.designerService.preset()) {
+                this.initChart();
+            }
+        }
+    });
+
+    ngOnInit() {
+        this.menuItems = [
+            {
+                label: 'Refresh',
+                icon: 'pi pi-refresh'
+            },
+            {
+                label: 'Export',
+                icon: 'pi pi-upload'
+            }
+        ];
+
+        this.sampleAppsTableDatas = [
+            {
+                id: '#1254',
+                name: { text: 'Amy Yelsner', label: 'AY', color: 'blue' },
+                coin: 'btc',
+                date: 'May 5th',
+                process: { type: 'success', value: 'Buy' },
+                amount: '3.005 BTC'
+            },
+            {
+                id: '#2355',
+                name: { text: 'Anna Fali', label: 'AF', color: '#ECFCCB' },
+                coin: 'eth',
+                date: 'Mar 17th',
+                process: { type: 'success', value: 'Buy' },
+                amount: '0.050 ETH'
+            },
+            {
+                id: '#1235',
+                name: { text: 'Stepen Shaw', label: 'SS', color: '#ECFCCB' },
+                coin: 'btc',
+                date: 'May 24th',
+                process: { type: 'danger', value: 'Sell' },
+                amount: '3.050 BTC'
+            },
+            {
+                id: '#2355',
+                name: { text: 'Anna Fali', label: 'AF', color: '#ECFCCB' },
+                coin: 'eth',
+                date: 'Mar 17th',
+                process: { type: 'danger', value: 'Sell' },
+                amount: '0.050 ETH'
+            },
+            {
+                id: '#2355',
+                name: { text: 'Anna Fali', label: 'AF', color: '#ECFCCB' },
+                coin: 'eth',
+                date: 'Mar 17th',
+                process: { type: 'danger', value: 'Sell' },
+                amount: '0.050 ETH'
+            },
+            {
+                id: '#7896',
+                name: { text: 'John Doe', label: 'JD', color: 'green' },
+                coin: 'btc',
+                date: 'Jun 12th',
+                process: { type: 'success', value: 'Buy' },
+                amount: '2.500 BTC'
+            },
+            {
+                id: '#5648',
+                name: { text: 'Jane Smith', label: 'JS', color: '#FFDDC1' },
+                coin: 'eth',
+                date: 'Feb 23rd',
+                process: { type: 'success', value: 'Buy' },
+                amount: '1.200 ETH'
+            },
+            {
+                id: '#3265',
+                name: { text: 'Michael Johnson', label: 'MJ', color: '#FFD700' },
+                coin: 'btc',
+                date: 'Apr 30th',
+                process: { type: 'danger', value: 'Sell' },
+                amount: '4.000 BTC'
+            },
+            {
+                id: '#1423',
+                name: { text: 'Emily Davis', label: 'ED', color: '#FFCCCB' },
+                coin: 'btc',
+                date: 'Jan 15th',
+                process: { type: 'danger', value: 'Sell' },
+                amount: '5.050 LTC'
+            },
+            {
+                id: '#6854',
+                name: { text: 'Robert Brown', label: 'RB', color: '#C0C0C0' },
+                coin: 'eth',
+                date: 'Dec 2nd',
+                process: { type: 'success', value: 'Buy' },
+                amount: '0.300 ETH'
+            }
+        ];
+
+        this.metersData = [
+            { label: 'BTC', color: '#F59E0B', value: 15, text: '27.215' },
+            { label: 'ETH', color: '#717179', value: 5, text: '4.367' },
+            { label: 'GBP', color: '#22C55E', value: 25, text: '£ 147.562,32' },
+            { label: 'EUR', color: '#84CC16', value: 11, text: '€ 137.457,25' },
+            { label: 'USD', color: '#14B8A6', value: 29, text: '$ 133.364,12' },
+            { label: 'XAU', color: '#EAB308', value: 29, text: '200 g' }
+        ];
+
+        this.initChart();
+    }
+
+    initChart() {
+        if (isPlatformBrowser(this.platformId)) {
+            this.chartData = this.setChartData(this.selectedTime);
+            this.chartOptions = this.setChartOptions();
+            this.cd.markForCheck();
+        }
+    }
+
+    setChartData(timeUnit: string) {
+        const datasets = this.createDatasets(timeUnit);
+        const documentStyle = getComputedStyle(document.documentElement);
+        const primary200 = documentStyle.getPropertyValue('--p-primary-200');
+        const primary300 = documentStyle.getPropertyValue('--p-primary-300');
+        const primary400 = documentStyle.getPropertyValue('--p-primary-400');
+        const primary500 = documentStyle.getPropertyValue('--p-primary-500');
+        const primary600 = documentStyle.getPropertyValue('--p-primary-600');
+        return {
+            labels: datasets.labels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Personal Wallet',
+                    backgroundColor: primary400,
+                    hoverBackgroundColor: primary600,
+                    data: datasets.data[0],
+                    barThickness: 32
+                },
+                {
+                    type: 'bar',
+                    label: 'Corporate Wallet',
+                    backgroundColor: primary300,
+                    hoverBackgroundColor: primary500,
+                    data: datasets.data[1],
+                    barThickness: 32
+                },
+                {
+                    type: 'bar',
+                    label: 'Investment Wallet',
+                    backgroundColor: primary200,
+                    hoverBackgroundColor: primary400,
+                    data: datasets.data[2],
+                    borderRadius: {
+                        topLeft: 8,
+                        topRight: 8
+                    },
+                    borderSkipped: false,
+                    barThickness: 32
+                }
+            ]
+        };
+    }
+
+    setChartOptions() {
+        const { darkTheme } = this.configService.appState();
+        const documentStyle = getComputedStyle(document.documentElement);
+        const surface100 = documentStyle.getPropertyValue('--p-surface-100');
+        const surface900 = documentStyle.getPropertyValue('--p-surface-900');
+        const surface400 = documentStyle.getPropertyValue('--p-surface-400');
+        const surface500 = documentStyle.getPropertyValue('--p-surface-500');
+
+        return {
+            maintainAspectRatio: false,
+            aspectRatio: 0.8,
+            plugins: {
+                tooltip: {
+                    enabled: false,
+                    position: 'nearest',
+                    external: function (context) {
+                        const { chart, tooltip } = context;
+                        let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
+
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.classList.add(
+                                'chartjs-tooltip',
+                                'dark:bg-surface-950',
+                                'bg-surface-0',
+                                'p-3',
+                                'rounded-[8px]',
+                                'overflow-hidden',
+                                'opacity-100',
+                                'absolute',
+                                'transition-all',
+                                'duration-[0.1s]',
+                                'pointer-events-none',
+                                'shadow-[0px_25px_20px_-5px_rgba(0,0,0,0.10),0px_10px_8px_-6px_rgba(0,0,0,0.10)]'
+                            );
+                            chart.canvas.parentNode.appendChild(tooltipEl);
+                        }
+
+                        if (tooltip.opacity === 0) {
+                            tooltipEl.style.opacity = 0;
+
+                            return;
+                        }
+
+                        const datasetPointsX = tooltip.dataPoints.map((dp) => dp.element.x);
+                        const avgX = datasetPointsX.reduce((a, b) => a + b, 0) / datasetPointsX.length;
+                        const avgY = tooltip.dataPoints[0].element.y;
+
+                        if (tooltip.body) {
+                            tooltipEl.innerHTML = '';
+                            const tooltipBody = document.createElement('div');
+
+                            tooltipBody.classList.add('flex', 'flex-col', 'gap-4', 'px-3', 'py-3', 'min-w-[18rem]');
+                            tooltip.dataPoints.reverse().forEach((body, i) => {
+                                const row = document.createElement('div');
+
+                                row.classList.add('flex', 'items-center', 'gap-2', 'w-full');
+                                const point = document.createElement('div');
+
+                                point.classList.add('w-2.5', 'h-2.5', 'rounded-full');
+                                point.style.backgroundColor = body.dataset.backgroundColor;
+                                row.appendChild(point);
+                                const label = document.createElement('span');
+
+                                label.appendChild(document.createTextNode(body.dataset.label));
+                                label.classList.add('text-base', 'font-medium', 'text-color', 'flex-1', 'text-left', 'capitalize');
+                                row.appendChild(label);
+                                const value = document.createElement('span');
+
+                                value.appendChild(document.createTextNode(body.formattedValue));
+                                value.classList.add('text-base', 'font-medium', 'text-color', 'text-right');
+                                row.appendChild(value);
+                                tooltipBody.appendChild(row);
+                            });
+                            tooltipEl.appendChild(tooltipBody);
+                        }
+
+                        const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+
+                        tooltipEl.style.opacity = 1;
+                        tooltipEl.style.font = tooltip.options.bodyFont.string;
+                        tooltipEl.style.padding = 0;
+                        const chartWidth = chart.width;
+                        const tooltipWidth = tooltipEl.offsetWidth;
+                        const chartHeight = chart.height;
+                        const tooltipHeight = tooltipEl.offsetHeight;
+
+                        let tooltipX = positionX + avgX + 24;
+                        let tooltipY = avgY;
+
+                        if (tooltipX + tooltipWidth > chartWidth) {
+                            tooltipX = positionX + avgX - tooltipWidth - 20;
+                        }
+
+                        if (tooltipY < 0) {
+                            tooltipY = 0;
+                        } else if (tooltipY + tooltipHeight > chartHeight) {
+                            tooltipY = chartHeight - tooltipHeight;
+                        }
+
+                        tooltipEl.style.left = tooltipX + 'px';
+                        tooltipEl.style.top = tooltipY + 'px';
+                    }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    ticks: {
+                        color: darkTheme ? surface500 : surface400
+                    },
+                    grid: {
+                        display: false,
+                        borderColor: 'transparent'
+                    },
+                    border: {
+                        display: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    stacked: true,
+                    ticks: {
+                        color: darkTheme ? surface500 : surface400
+                    },
+                    grid: {
+                        display: true,
+                        color: darkTheme ? surface900 : surface100,
+                        borderColor: 'transparent'
+                    },
+                    border: {
+                        display: false
+                    }
+                }
+            }
+        };
+    }
+
+    createDatasets(val: string) {
+        let data, labels;
+
+        if (val === 'Weekly') {
+            labels = ['6 May', '13 May', '20 May', '27 May', '3 June', '10 June', '17 June', '24 June', '1 July', '8 July', '15 July', '22 July'];
+            data = [
+                [9000, 3000, 13000, 3000, 5000, 17000, 11000, 4000, 15000, 4000, 11000, 5000],
+                [1800, 7600, 11100, 6800, 3300, 5800, 3600, 7200, 4300, 8100, 6800, 3700],
+                [3800, 4800, 2100, 6600, 1000, 3800, 6500, 4200, 4300, 7000, 6800, 3700]
+            ];
+        } else if (val === 'Monthly') {
+            labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            data = [
+                [4000, 10000, 15000, 4000, 16000, 8000, 12000, 14000, 17000, 5000, 12000, 6000],
+                [2100, 8400, 2400, 7500, 3700, 6500, 7400, 8000, 4800, 9000, 7600, 4200],
+                [4100, 5200, 2400, 7400, 2300, 4100, 7200, 8000, 4800, 9000, 7600, 4200]
+            ];
+        } else if (val === 'Yearly') {
+            labels = ['2019', '2020', '2021', '2022', '2023', '2024'];
+            data = [
+                [4500, 10500, 15500, 4500, 16500, 8500, 12500, 14500, 17500, 5500, 12500, 6500],
+                [2250, 8700, 2550, 7650, 3850, 6650, 7650, 8250, 4950, 9250, 7850, 4450],
+                [4350, 5450, 2650, 7650, 2550, 4350, 7450, 8250, 4950, 9250, 7850, 4450]
+            ];
+        }
+
+        return {
+            data,
+            labels
+        };
+    }
+
+    changeSelect() {
+        this.chartData = this.setChartData(this.selectedTime);
+        this.chartOptions = this.setChartOptions();
+    }
+}
+
+---
+
+@Component({
+    selector: 'movies-app',
+    standalone: true,
+    imports: [CommonModule, RouterModule, SelectButton, FormsModule, AvatarModule, TooltipModule, IconField, InputIcon, ButtonModule, InputTextModule, ProgressBar, Carousel, OverlayBadgeModule],
+    template: `
+        <div class="flex flex-wrap gap-4 items-center justify-between">
+            <p-selectbutton [(ngModel)]="value" [options]="options" aria-labelledby="basic" />
+            <div class="flex gap-2.5 items-center">
+                <p-iconfield iconPosition="left">
+                    <p-inputicon class="pi pi-search"></p-inputicon>
+                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" />
+                </p-iconfield>
+                <p-button severity="secondary" outlined>
+                    <p-overlayBadge severity="danger" badgeSize="small" styleClass="!min-w-0 !w-2.5 !h-2.5">
+                        <i class="pi pi-bell"></i>
+                    </p-overlayBadge>
+                </p-button>
+                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg" shape="circle" class="w-9 h-9 cursor-pointer" />
+            </div>
+        </div>
+        <div class="">
+            <div class="flex items-center justify-between gap-2 mb-6">
+                <div class="text-color text-xl font-medium leading-7">Keep watching</div>
+                <div class="xl:flex hidden items-center gap-2">
+                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" severity="secondary" outlined />
+                    <p-button [disabled]="page === carouselData.length - page" (click)="nextPage()" icon="pi pi-chevron-right" severity="secondary" outlined />
+                </div>
+                <div class="xl:hidden flex items-center gap-2">
+                    <p-button [disabled]="page === 0" (click)="previousPage()" icon="pi pi-chevron-left" severity="secondary" outlined />
+                    <p-button [disabled]="page === carouselData.length - 3" (click)="nextPage()" icon="pi pi-chevron-right" severity="secondary" outlined />
+                </div>
+            </div>
+            <p-carousel [value]="carouselData" [page]="page" [numVisible]="5" [numScroll]="1" [responsiveOptions]="responsiveOptions" [showIndicators]="false" [showNavigators]="false">
+                <ng-template #item let-item>
+                    <div class="p-2 rounded-xl hover:bg-emphasis transition-colors cursor-pointer">
+                        <div class="relative w-full aspect-[195/118.5] rounded-lg overflow-hidden">
+                            <img [src]="item.image" class="w-full h-full object-cover" alt="Carousel Movie Image" />
+                            <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
+                                {{ item.point }}
+                            </div>
+                            <div class="absolute z-10 bottom-2 inset-x-2">
+                                <p-progressbar
+                                    [value]="item.watchedPercent"
+                                    [showValue]="false"
+                                    styleClass="!h-1.5 !bg-surface-950 dark:!bg-surface-50 !rounded-full"
+                                    valueStyleClass="p-progressbar-value !bg-surface-0 dark:!bg-surface-950 !rounded-full"
+                                />
+                            </div>
+                        </div>
+                        <div class="mt-2 flex items-start justify-between gap-1">
+                            <div class="px-2 flex-1">
+                                <div class="font-medium text-color leading-6 line-clamp-1">{{ item.name }}</div>
+                                <div class="mt-1 text-muted-color text-sm leading-5">
+                                    {{ item.categories.join(', ') }}
+                                </div>
+                            </div>
+                            <p-button *ngIf="item.bookmarked" icon="pi pi-bookmark-fill" severity="contrast" text rounded />
+                        </div>
+                    </div>
+                </ng-template>
+            </p-carousel>
+        </div>
+        <div>
+            <div class="mb-6 flex items-center gap-4 justify-between">
+                <div class="flex items-center gap-2">
+                    <p-button label="Popular" severity="secondary" />
+                    <p-button label="New Releases" text severity="secondary" />
+                    <p-button label="Recently Added" text severity="secondary" />
+                    <p-button label="For you" text severity="secondary" />
+                </div>
+                <p-button label="Show All" severity="secondary" outlined />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-x-4 gap-y-6">
+                <div *ngFor="let movie of popularMovies" class="cursor-pointer">
+                    <div class="relative aspect-[259/174.5] rounded-lg overflow-hidden">
+                        <img class="w-full h-full object-cover" [src]="movie.image" alt="Popular Movie Cover" />
+                        <div class="absolute z-10 top-2 right-2 px-2 py-1 text-sm font-medium leading-tight bg-surface-0 dark:bg-surface-950 border border-surface rounded-md">
+                            {{ movie.point }}
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-start justify-between gap-1">
+                        <div class="px-2 flex-1">
+                            <div class="font-medium text-color leading-6 line-clamp-1">{{ movie.name }}</div>
+                            <div class="mt-1 text-muted-color text-sm leading-5">
+                                {{ movie.categories.join(', ') }}
+                            </div>
+                        </div>
+                        <p-button *ngIf="movie.bookmarked" icon="pi pi-bookmark-fill" severity="contrast" text rounded />
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        class: 'flex-1 flex flex-col gap-6 p-6 h-full overflow-y-auto overflow-x-clip overflow-hidden border border-surface rounded-2xl'
+    }
+})
+export class MoviesApp {
+    search: string | undefined;
+
+    page: number = 0;
+
+    value: string = 'Home';
+
+    options: string[] = ['Home', 'Movies', 'TV Shows', 'Recently Added', 'My List'];
+
+    responsiveOptions: any;
+
+    carouselData: any;
+
+    popularMovies: any;
+
+    ngOnInit() {
+        this.responsiveOptions = [
+            {
+                breakpoint: '1199px',
+                numVisible: 3,
+                numScroll: 1
+            },
+
+            {
+                breakpoint: '767px',
+                numVisible: 2,
+                numScroll: 1
+            },
+            {
+                breakpoint: '575px',
+                numVisible: 1,
+                numScroll: 1
+            }
+        ];
+
+        this.carouselData = [
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover1.png',
+                name: 'Heat',
+                bookmarked: true,
+                point: '4.7',
+                watchedPercent: 80,
+                categories: ['Action', 'Crime', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover2.png',
+                name: 'Batman Begins',
+                bookmarked: false,
+                point: '4.8',
+                watchedPercent: 45,
+                categories: ['Action', 'Crime', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover3.png',
+                name: 'Leon: The Professional',
+                bookmarked: false,
+                point: '4.3',
+                watchedPercent: 10,
+                categories: ['Action', 'Crime', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover4.png',
+                name: 'Matrix',
+                bookmarked: false,
+                point: '4.9',
+                watchedPercent: 50,
+                categories: ['Action', 'Sci-Fi']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover5.png',
+                name: 'Fight Club',
+                bookmarked: false,
+                point: '4.4',
+                watchedPercent: 30,
+                categories: ['Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover6.png',
+                name: 'The Big Lebowski',
+                bookmarked: false,
+                point: '4.7',
+                watchedPercent: 40,
+                categories: ['Comedy', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover7.png',
+                name: 'Twelve Angry Men',
+                bookmarked: false,
+                point: '4.7',
+                watchedPercent: 50,
+                categories: ['Crime', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover8.png',
+                name: 'Saving Private Ryan',
+                bookmarked: true,
+                point: '4.7',
+                watchedPercent: 80,
+                categories: ['Drama', 'War']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover9.png',
+                name: 'Seven',
+                bookmarked: false,
+                point: '4.7',
+                watchedPercent: 20,
+                categories: ['Crime', 'Drama', 'Mystery']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover10.png',
+                name: 'Shutter Island',
+                bookmarked: false,
+                point: '4.7',
+                watchedPercent: 70,
+                categories: ['Mystery', 'Thriller']
+            }
+        ];
+
+        this.popularMovies = [
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover7.png',
+                name: 'Twelve Angry Men',
+                bookmarked: false,
+                point: '4.6',
+                categories: ['Crime', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover8.png',
+                name: 'Saving Private Ryan',
+                bookmarked: true,
+                point: '4.4',
+                categories: ['Drama', 'War']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover9.png',
+                name: 'Seven',
+                bookmarked: false,
+                point: '4.3',
+                categories: ['Crime', 'Drama', 'Mystery']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover10.png',
+                name: 'Shutter Island',
+                bookmarked: false,
+                point: '4.7',
+                categories: ['Mystery', 'Thriller']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover11.png',
+                name: 'Basic Instinct',
+                bookmarked: true,
+                point: '4.3',
+                categories: ['Drama', 'Mystery', 'Thriller']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover12.png',
+                name: 'Big Hero 6',
+                bookmarked: false,
+                point: '4.7',
+                categories: ['Animation', 'Action', 'Adventure']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover13.png',
+                name: 'The Lord Of The Rings: Fellowship of the ring',
+                bookmarked: true,
+                point: '4.9',
+                categories: ['Action', 'Adventure', 'Drama']
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/movie-cover14.png',
+                name: 'Kill Bill',
+                bookmarked: true,
+                point: '4.5',
+                categories: ['Action', 'Crime', 'Thriller']
+            }
+        ];
+    }
+
+    previousPage() {
+        this.page -= 1;
+    }
+
+    nextPage() {
+        this.page += 1;
+    }
+}
+
+---
+
+@Component({
+    selector: 'inbox-app',
+    standalone: true,
+    imports: [CommonModule, RouterModule, FormsModule, DividerModule, AvatarModule, IconField, InputIcon, ButtonModule, TableModule, InputTextModule, MenuModule, Tag, ProgressBar, Checkbox, OverlayBadgeModule],
+    template: `
+        <div class="w-64 h-full overflow-hidden border border-surface rounded-2xl flex flex-col">
+            <div class="flex items-center justify-between gap-2 p-4 border-b border-surface">
+                <div class="text-xl font-medium leading-7 text-color">Mails</div>
+                <p-button icon="pi pi-plus" styleClass="w-8 h-8" />
+            </div>
+            <div class="flex-1 flex flex-col overflow-auto justify-between gap-4 pt-4 pb-4 px-4">
+                <div class="flex-1 overflow-auto flex flex-col gap-2">
+                    <div *ngFor="let navData of inboxNavs" class="flex flex-col gap-2">
+                        <div class="text-sm font-medium leading-5 text-surface-400 dark:text-surface-500">
+                            {{ navData.title }}
+                        </div>
+                        <button
+                            *ngFor="let nav of navData.navs"
+                            (click)="activeInboxNav = nav.name"
+                            [ngClass]="{
+                                'text-color bg-emphasis': activeInboxNav === nav.name,
+                                'text-muted-color bg-transparent': activeInboxNav !== nav.name
+                            }"
+                            class="px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-emphasis transition-all"
+                        >
+                            <i [class]="nav.icon"></i>
+                            <span class="font-medium">{{ nav.name }}</span>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div class="border border-surface rounded-border px-4 pb-4 pt-3 mb-4">
+                        <div class="font-medium text-color mb-4">Free Version</div>
+                        <p-progressbar [value]="75">
+                            <ng-template #content let-value>
+                                <span class="w-full text-center text-sm font-normal text-primary-contrast leading-5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">4 days left</span>
+                            </ng-template>
+                        </p-progressbar>
+                    </div>
+                    <p-button label="Upgrade to PRO 🚀" outlined styleClass="w-full" />
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 h-full overflow-hidden flex border border-surface rounded-2xl">
+            <p-table [value]="tableData" [(selection)]="selectedRows" dataKey="id" class="w-full" [dt]="tableTokens" [scrollable]="true" scrollHeight="flex">
+                <ng-template #caption>
+                    <div class="flex xl:items-center justify-between gap-2 flex-col xl:flex-row">
+                        <div class="flex items-center gap-2">
+                            <p-checkbox [binary]="true" class="mr-1" />
+                            <p-button icon="pi pi-envelope" outlined severity="secondary" />
+                            <p-button icon="pi pi-exclamation-circle" outlined severity="secondary" />
+                            <p-button icon="pi pi-tag" outlined severity="secondary" />
+                            <p-button icon="pi pi-inbox" label="Archive" outlined severity="secondary" />
+                            <p-button icon="pi pi-trash" label="Trash" outlined severity="secondary" />
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <p-iconfield iconPosition="left" class="w-6/12 xl:max-w-36">
+                                <p-inputicon class="pi pi-search"></p-inputicon>
+                                <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
+                            </p-iconfield>
+                            <p-button icon="pi pi-filter" outlined severity="secondary" />
+                            <p-divider layout="vertical" styleClass="m-0" />
+                            <p-button icon="pi pi-refresh" outlined severity="secondary" />
+                            <p-button label="1 of 15" class="!whitespace-nowrap" outlined severity="secondary" />
+                            <p-button icon="pi pi-chevron-left" outlined severity="secondary" />
+                            <p-button icon="pi pi-chevron-right" outlined severity="secondary" />
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template #body let-data>
+                    <tr>
+                        <td style="width: 1rem">
+                            <p-tableCheckbox [value]="data" />
+                        </td>
+
+                        <td style="width: 1rem; padding: 0.5rem">
+                            <div (click)="$event.stopPropagation(); data.bookmarked = !data.bookmarked">
+                                <i [ngClass]="data.bookmarked ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"></i>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex items-center">
+                                <p-overlayBadge severity="danger" styleClass="w-fit">
+                                    <p-avatar
+                                        [image]="data.image"
+                                        [label]="!data.image ? data.capName : ''"
+                                        [ngClass]="{
+                                            'bg-violet-100 text-violet-950 text-xs font-medium': !data.image,
+                                            'rounded-md overflow-hidden flex': true
+                                        }"
+                                    />
+                                </p-overlayBadge>
+
+                                <div class="ml-4 leading-6 text-color font-medium">{{ data.name }}</div>
+                            </div>
+                        </td>
+
+                        <td style="min-width: 14rem; max-width: 20rem">
+                            <div class="truncate">
+                                <span class="text-color leading-6 mr-2">{{ data.title }}</span>
+                                <span class="text-muted-color leading-5 text-sm">{{ data.message }}</span>
+                            </div>
+                        </td>
+
+                        <td style="width: 4rem">
+                            <p-tag *ngIf="data.type" severity="secondary" [value]="data.type" class="font-medium"></p-tag>
+                        </td>
+
+                        <td style="width: 4rem">
+                            <div class="text-right text-sm leading-5 text-muted-color">{{ data.time }}</div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    `,
+    host: {
+        class: 'flex gap-4 h-full flex-1 w-full overflow-auto'
+    },
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class InboxApp {
+    search: string | undefined;
+
+    activeInboxNav: string = 'Inbox';
+
+    inboxNavs: any;
+
+    tableData: any;
+
+    selectedRows: any = [];
+
+    tableTokens = {
+        header: {
+            background: 'transparent'
+        },
+        headerCell: {
+            background: 'transparent'
+        },
+        row: {
+            background: 'transparent'
+        }
+    };
+
+    ngOnInit() {
+        this.inboxNavs = [
+            {
+                title: 'Navigation',
+                navs: [
+                    { name: 'Inbox', icon: 'pi pi-inbox' },
+                    { name: 'Starry', icon: 'pi pi-star' },
+                    { name: 'Drafts', icon: 'pi pi-file-o' },
+                    { name: 'Important', icon: 'pi pi-file-import' },
+                    { name: 'Sent', icon: 'pi pi-send' },
+                    { name: 'Archive', icon: 'pi pi-inbox' },
+                    { name: 'Spam', icon: 'pi pi-info-circle' },
+                    { name: 'Trash', icon: 'pi pi-trash' }
+                ]
+            },
+            {
+                title: 'Other',
+                navs: [
+                    { name: 'Security', icon: 'pi pi-tag' },
+                    { name: 'Update', icon: 'pi pi-tag' },
+                    { name: 'Marketing', icon: 'pi pi-tag' },
+                    { name: 'HR', icon: 'pi pi-tag' }
+                ]
+            }
+        ];
+        this.tableData = [
+            {
+                id: 1,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg',
+                active: false,
+                name: 'Brook Simmons',
+                type: 'Security',
+                time: '3:24 PM',
+                title: 'Important Account Update',
+                message: "Dear customer, we've made updates to enhance your account security. Please log in to review and complete the necessary steps. Thank you for choosing ABC Corporation."
+            },
+            {
+                id: 2,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png',
+                active: false,
+                name: 'Dianne Russell',
+                type: 'Update',
+                time: '11:24 AM',
+                title: 'Weekly Project Update',
+                message: 'Hi team, attached is the weekly project update. Kindly review the progress and come prepared for our discussion in the upcoming meeting on [Date and Time].'
+            },
+            {
+                id: 3,
+                bookmarked: true,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg',
+                active: false,
+                name: 'Amy Elsner',
+                type: 'Security',
+                time: '9:24 AM',
+                title: 'Urgent: Security Alert - Account Compromise',
+                message: 'Dear user, we detected unauthorized access to your account. Take immediate action to secure your account. Follow the provided link to reset your password. Thank you.'
+            },
+            {
+                id: 4,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/main-avatar.png',
+                active: false,
+                name: 'Jacob Jones',
+                type: 'Marketing',
+                time: 'Jan 21',
+                title: 'Exclusive Offer Inside - Limited Time Only',
+                message: "Greetings, check out our exclusive offer! Don't miss this limited-time deal. Details enclosed in the attached flyer. Act fast; the offer expires on [Date]."
+            },
+            {
+                id: 5,
+                bookmarked: false,
+                image: '',
+                active: false,
+                name: 'Cameron Watson',
+                capName: 'CW',
+                type: 'HR',
+                time: 'Jan 15',
+                title: 'Employee Appreciation Event - Save the Date',
+                message: 'Hello team, mark your calendars for our upcoming Employee Appreciation Event on [Date]. Stay tuned for more details and get ready for a day of celebration!'
+            },
+            {
+                id: 6,
+                bookmarked: true,
+                image: '',
+                active: false,
+                name: 'Wade Warren',
+                capName: 'WW',
+                type: 'Invoice',
+                time: 'Jan 12',
+                title: 'Your Recent Purchase - Order Confirmation',
+                message: 'Hi Wade Warren, secure your spot at the XYZ Conference 2024 with early bird registration. Enjoy discounted rates until [Date].'
+            },
+            {
+                id: 7,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar7.png',
+                active: false,
+                name: 'Guy Hawkins',
+                type: 'Events',
+                time: 'Jan 11',
+                title: 'Early Bird Registration Open - XYZ Conference 2024',
+                message: ' Attention users, we have scheduled system maintenance on Jan 17. Expect minimal service disruption during this period. Thank you for your understanding.'
+            },
+            {
+                id: 8,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png',
+                active: false,
+                name: 'Annette Black',
+                type: '',
+                time: 'Jan 8',
+                title: 'Upcoming System Maintenance Notice',
+                message: "Dear valued customer, as a token of appreciation, we're offering exclusive discounts for VIP customers. Explore the savings in the attached catalog. Expires [Date]."
+            },
+            {
+                id: 9,
+                bookmarked: true,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar10.jpg',
+                active: false,
+                name: 'Darrell Steward',
+                type: 'Discount',
+                time: 'Jan 4',
+                title: 'Special Discounts for VIP Customers',
+                message: 'Hello Darrell Steward, stay updated with our latest news and highlights in the January edition of our newsletter. Enjoy the read!'
+            },
+            {
+                id: 10,
+                bookmarked: true,
+                image: '',
+                active: false,
+                name: 'Jerome Bell',
+                capName: 'JB',
+                type: 'Newsletter',
+                time: 'Jan 2',
+                title: 'Monthly Newsletter - January Edition',
+                message: "Dear user, we've updated our Terms of Service. Please review the changes to ensure compliance. Your continued use of our services implies acceptance. Thank you."
+            },
+            {
+                id: 11,
+                bookmarked: false,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg',
+                active: false,
+                name: 'Onyama Limba',
+                type: '',
+                time: 'Jan 2',
+                title: 'Exclusive Travel Packages for You',
+                message: 'Greetings traveler, explore our exclusive travel packages tailored just for you. Plan your next adventure with XYZ Travel. Offers valid until [Date].'
+            },
+            {
+                id: 12,
+                bookmarked: false,
+                image: '',
+                active: false,
+                name: 'Robert Fox',
+                capName: 'RF',
+                type: 'Invitation',
+                time: '12.12.2023',
+                title: 'Invitation to Amsterdam',
+                message: "Hello Robert Fox, you're invited to our upcoming webinar on Amsterdam. Join us on [Date and Time] for an insightful session. Reserve your spot now!"
+            },
+            {
+                id: 13,
+                bookmarked: true,
+                image: '',
+                active: false,
+                name: 'Courtney Henry',
+                capName: 'CH',
+                type: '',
+                time: '12.09.2023',
+                title: 'New Arrivals - Check Out the Latest Books',
+                message: 'Book enthusiasts, discover our latest arrivals! Explore the attached catalog and dive into the world of new releases. Available for purchase starting [Date].'
+            },
+            {
+                id: 14,
+                bookmarked: true,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg',
+                active: false,
+                name: 'Arlene McCoy',
+                type: '',
+                time: '12.04.2023',
+                title: 'New Product Demo',
+                message: 'Exclusive demo of our latest product on Thursday.'
+            },
+            {
+                id: 15,
+                bookmarked: false,
+                image: '',
+                active: false,
+                name: 'Jerome Bell',
+                capName: 'JB',
+                type: 'Newsletter',
+                time: '10.01.2023',
+                title: 'Monthly Newsletter - January Edition',
+                message: "Dear user, we've updated our Terms of Service. Please review the changes to ensure compliance. Your continued use of our services implies acceptance. Thank you."
+            }
+        ];
+    }
+}
+
+---
+
+@Component({
+    selector: 'customers-app',
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        DropdownModule,
+        ChartModule,
+        InputSwitchModule,
+        FormsModule,
+        DividerModule,
+        AvatarModule,
+        TooltipModule,
+        IconField,
+        InputIcon,
+        ButtonModule,
+        TableModule,
+        InputTextModule,
+        Tag,
+        OverlayBadgeModule,
+        DrawerModule,
+        ToggleSwitchModule,
+        PopoverModule
+    ],
+    template: `
+        <div class="flex items-start gap-2 justify-between">
+            <div>
+                <div class="text-2xl leading-8 text-color font-medium">Customers</div>
+                <div class="mt-1 leading-6 text-muted-color">The analysis list here shows all users</div>
+            </div>
+            <p-button icon="pi pi-circle-fill text-green-500" label="950 Active User" outlined severity="secondary" />
+        </div>
+        <div class="mt-10 mb-4 flex items-center justify-between">
+            <p-iconfield iconPosition="left">
+                <p-inputicon class="pi pi-search"> </p-inputicon>
+                <input pInputText type="text" [(ngModel)]="search" placeholder="Search" />
+            </p-iconfield>
+            <div class="flex items-center gap-3">
+                <p-button icon="pi pi-filter" outlined severity="secondary" />
+                <p-divider layout="vertical" class="m-0 p-0" />
+                <p-button icon="pi pi-refresh" outlined severity="secondary" />
+                <p-button label="1 of 15" outlined severity="secondary" />
+                <p-button icon="pi pi-chevron-left" outlined severity="secondary" />
+                <p-button icon="pi pi-chevron-right" outlined severity="secondary" />
+            </div>
+        </div>
+        <div class="flex-1 last:[&>td]:border-0 rounded-lg border border-surface w-full overflow-auto">
+            <p-table [value]="tableData" [(selection)]="selectedRows" dataKey="id" [rows]="10" [dt]="tableTokens">
+                <ng-template #header>
+                    <tr>
+                        <th style="width: 1rem">
+                            <p-tableHeaderCheckbox />
+                        </th>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Company Name</th>
+                        <th>Email Address</th>
+                        <th>Lead Source</th>
+                        <th>Status</th>
+                        <th>More</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-data>
+                    <tr>
+                        <td style="width: 1rem">
+                            <p-tableCheckbox [value]="data" />
+                        </td>
+                        <td>
+                            <div class="flex items-center">
+                                <p-overlayBadge [severity]="data.active === undefined ? 'contrast' : data.active ? 'success' : 'danger'" styleClass="w-fit">
+                                    <p-avatar
+                                        [image]="data.image"
+                                        [label]="!data.image ? data.capName : ''"
+                                        [ngClass]="{
+                                            'bg-violet-100 text-violet-950 text-xs font-medium': !data.image,
+                                            'rounded-md overflow-hidden flex': true
+                                        }"
+                                    />
+                                </p-overlayBadge>
+
+                                <div class="ml-4 leading-6 text-color font-medium">{{ data.name }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="leading-6 text-muted-color">{{ data.title }}</div>
+                        </td>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                <div class="flex items-center justify-center" [innerHTML]="companyLogos[data.company.logo]"></div>
+
+                                <div class="leading-6 text-surface-600 dark:text-surface-400">
+                                    {{ data.company.name }}
+                                </div>
+                            </div>
+                        </td>
+                        <td field="email" header="Email Address">
+                            <div class="leading-6 text-muted-color truncate">{{ data.email }}</div>
+                        </td>
+                        <td field="lead" header="Lead Source">
+                            <div class="leading-6 text-muted-color">{{ data.lead }}</div>
+                        </td>
+                        <td>
+                            <p-tag [severity]="data.status === 'Active' ? 'success' : data.status === 'Inactive' ? 'danger' : 'info'" [value]="data.status" styleClass="font-medium" />
+                        </td>
+                        <td>
+                            <div class="flex justify-end w-full">
+                                <p-button (onClick)="displayPopover($event, op)" icon="pi pi-search" rounded outlined severity="secondary" />
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-popover #op>
+                <ng-template pTemplate="content">
+                    <div class="flex gap-2">
+                        <p-button label="Details" size="small" outlined (onClick)="op.hide()"></p-button>
+                        <p-button label="Delete" severity="danger" size="small" outlined (onClick)="op.hide()"></p-button>
+                    </div>
+                </ng-template>
+            </p-popover>
+        </div>
+    `,
+    host: {
+        class: 'h-full flex-1 flex flex-col overflow-hidden border border-surface rounded-2xl p-6'
+    },
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class CustomersApp {
+    search: string = '';
+
+    tableData: any = [];
+
+    companyLogos: any;
+
+    selectedRows: any = [];
+
+    tableTokens = {
+        header: {
+            background: 'transparent'
+        },
+        headerCell: {
+            background: 'transparent'
+        },
+        row: {
+            background: 'transparent'
+        }
+    };
+
+    constructor(
+        @Inject(PLATFORM_ID) private platformId: any,
+        private sanitizer: DomSanitizer
+    ) {}
+
+    ngOnInit() {
+        this.tableData = [
+            {
+                id: 1,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png',
+                active: true,
+                name: 'Brook Simmons',
+                title: 'Sales Executive ',
+                company: { name: 'Mistranet', logo: 'mistranet' },
+                email: 'hi@brooksmmns.co',
+                lead: 'Linkedin',
+                status: 'Active'
+            },
+            {
+                id: 2,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg',
+                active: true,
+                name: 'Dianne Russell',
+                title: 'CEO',
+                company: { name: 'BriteMank', logo: 'britemank' },
+                email: 'hi@diannerussell.com',
+                lead: 'Website',
+                status: 'Inactive'
+            },
+            {
+                id: 3,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg',
+                active: undefined,
+                name: 'Amy Elsner',
+                title: 'Product Manager',
+                company: { name: 'ZenTrailMs', logo: 'zentrailms' },
+                email: 'hi@amyelsner.com',
+                lead: 'Cold Call',
+                status: 'Prospect'
+            },
+            {
+                id: 4,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg',
+                active: true,
+                name: 'Jacob Jones',
+                title: 'Manager',
+                company: { name: 'Streamlinz', logo: 'streamlinz' },
+                email: 'jacobjones@gmail.com',
+                lead: 'Partner',
+                status: 'Prospect'
+            },
+            {
+                id: 5,
+                image: '',
+                active: false,
+                name: 'Cameron Watson',
+                capName: 'CW',
+                title: 'Product Manager',
+                company: { name: 'BriteMank', logo: 'britemank' },
+                email: 'hi@cameronwilliamson',
+                lead: 'Social Media',
+                status: 'Active'
+            },
+            {
+                id: 6,
+                image: '',
+                active: true,
+                name: 'Wade Warren',
+                capName: 'WW',
+                title: 'Director',
+                company: { name: 'Streamlinz', logo: 'streamlinz' },
+                email: 'hi@annetteblack.com',
+                lead: 'Cold Call',
+                status: 'Inactive'
+            },
+            {
+                id: 7,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar7.png',
+                active: true,
+                name: 'Guy Hawkins',
+                title: 'Director',
+                company: { name: 'Wavelength', logo: 'wavelength' },
+                email: 'hi@darrellsteward.com',
+                lead: 'Linkedin',
+                status: 'Active'
+            },
+            {
+                id: 8,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png',
+                active: true,
+                name: 'Annette Black',
+                title: 'Manager',
+                company: { name: 'Wavelength', logo: 'wavelength' },
+                email: 'jeromebell@gmail.com',
+                lead: 'Website',
+                status: 'Inactive'
+            },
+            {
+                id: 9,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar10.jpg',
+                active: undefined,
+                name: 'Darrell Steward',
+                title: 'Product Manager',
+                company: { name: 'ZenTrailMs', logo: 'zentrailms' },
+                email: 'hi@onyamalimba.co',
+                lead: 'Website',
+                status: 'Active'
+            },
+            {
+                id: 10,
+                image: '',
+                active: true,
+                name: 'Jerome Bell',
+                capName: 'JB',
+                title: 'Marketing Manager',
+                company: { name: 'Mistranet', logo: 'mistranet' },
+                email: 'hi@courtneyhenryo',
+                lead: 'Social Media',
+                status: 'Active'
+            },
+            {
+                id: 11,
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg',
+                active: undefined,
+                name: 'Onyama Limba',
+                title: 'Sales Executive ',
+                company: { name: 'BriteMank', logo: 'britemank' },
+                email: 'hi@arlenemccoy.com',
+                lead: 'Social Media',
+                status: 'Active'
+            }
+        ];
+
+        this.companyLogos = {
+            mistranet: this.sanitizer.bypassSecurityTrustHtml(`
+            <svg  xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                <path class="fill-surface-600 dark:fill-surface-400" fill-rule="evenodd" clip-rule="evenodd" d="M6.82207 0.728516C5.83146 0.728516 4.88145 1.12203 4.18099 1.82249L1.89501 4.10846C1.19454 4.80892 0.801025 5.75895 0.801025 6.74956C0.801025 7.8426 1.27054 8.82597 2.01888 9.509C1.27054 10.192 0.801025 11.1754 0.801025 12.2684C0.801025 13.2591 1.19454 14.2091 1.89501 14.9095L4.18099 17.1955C4.88145 17.896 5.83146 18.2895 6.82207 18.2895C7.91511 18.2895 8.89848 17.82 9.58152 17.0716C10.2646 17.82 11.2479 18.2895 12.341 18.2895C13.3316 18.2895 14.2816 17.896 14.982 17.1955L17.268 14.9095C17.9685 14.2091 18.362 13.2591 18.362 12.2684C18.362 11.1754 17.8925 10.192 17.1442 9.509C17.8925 8.82597 18.362 7.8426 18.362 6.74956C18.362 5.75895 17.9685 4.80892 17.268 4.10846L14.982 1.82249C14.2816 1.12203 13.3316 0.728516 12.341 0.728516C11.2479 0.728516 10.2646 1.19802 9.58152 1.94637C8.89848 1.19802 7.91511 0.728516 6.82207 0.728516ZM11.9859 9.62736C12.0509 9.56231 12.0509 9.45569 11.9859 9.39064L11.4907 8.89547C10.4363 7.84105 8.72674 7.84105 7.67233 8.89547L7.17716 9.39064C7.11211 9.45569 7.11211 9.56231 7.17716 9.62736L7.67233 10.1225C8.72674 11.177 10.4363 11.177 11.4907 10.1225L11.9859 9.62736ZM11.0796 13.2931C10.7451 13.6276 10.5571 14.0814 10.5571 14.5544C10.5571 15.5396 11.3558 16.3383 12.341 16.3383C12.8141 16.3383 13.2678 16.1503 13.6023 15.8158L15.8883 13.5298C16.2229 13.1953 16.4108 12.7415 16.4108 12.2684C16.4108 11.2833 15.6121 10.4846 14.627 10.4846C14.1539 10.4846 13.7001 10.6725 13.3656 11.0071L11.0796 13.2931ZM8.60592 14.5544C8.60592 14.0814 8.41798 13.6276 8.08345 13.2931L5.79743 11.0071C5.4629 10.6725 5.00918 10.4846 4.53608 10.4846C3.5509 10.4846 2.75224 11.2833 2.75224 12.2684C2.75224 12.7415 2.94018 13.1953 3.27471 13.5298L5.56071 15.8158C5.89525 16.1503 6.34898 16.3383 6.82207 16.3383C7.80724 16.3383 8.60592 15.5396 8.60592 14.5544ZM8.60592 4.46357C8.60592 4.93666 8.41798 5.39037 8.08346 5.72489L5.79743 8.01092C5.4629 8.34545 5.00918 8.5334 4.53608 8.5334C3.5509 8.5334 2.75224 7.73473 2.75224 6.74956C2.75224 6.27646 2.94018 5.82274 3.27471 5.48821L5.56071 3.20221C5.89525 2.86767 6.34898 2.67974 6.82207 2.67974C7.80724 2.67974 8.60592 3.47838 8.60592 4.46357ZM13.3656 8.01092L11.0796 5.72489C10.7451 5.39037 10.5571 4.93666 10.5571 4.46357C10.5571 3.47838 11.3558 2.67974 12.341 2.67974C12.8141 2.67974 13.2678 2.86767 13.6023 3.20221L15.8883 5.48821C16.2229 5.82274 16.4108 6.27646 16.4108 6.74956C16.4108 7.73473 15.6121 8.5334 14.627 8.5334C14.1539 8.5334 13.7001 8.34545 13.3656 8.01092Z"/>
+            </svg>
+            `),
+            britemank: this.sanitizer.bypassSecurityTrustHtml(`
+            <svg class="fill-surface-600 dark:fill-surface-400" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+<g clip-path="url(#clip0_536_12504)">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M12.3011 5.75643C12.1897 5.68201 12.0754 5.6128 11.9585 5.54894C10.8679 4.95318 9.80103 3.99069 9.80103 2.74805V0.498047C11.581 0.498047 13.3211 1.02589 14.8012 2.01482C16.2812 3.00375 17.4347 4.40936 18.1159 6.05388C18.7971 7.69841 18.9754 9.50804 18.6281 11.2539C18.2808 12.9997 17.4237 14.6033 16.165 15.862C14.9063 17.1207 13.3027 17.9778 11.5568 18.3251C9.81102 18.6724 8.00139 18.4941 6.35686 17.813C4.71234 17.1318 3.30673 15.9782 2.3178 14.4982C1.32887 13.0181 0.801025 11.2781 0.801025 9.49805H3.05103C4.29367 9.49805 5.25615 10.565 5.85191 11.6555C5.91578 11.7724 5.98498 11.8867 6.05941 11.9981C6.55387 12.7381 7.25668 13.3149 8.07897 13.6555C8.90121 13.9961 9.80602 14.0852 10.6789 13.9116C11.5518 13.7379 12.3537 13.3094 12.983 12.68C13.6123 12.0507 14.0409 11.2489 14.2145 10.376C14.3882 9.50304 14.2991 8.59823 13.9585 7.77599C13.6179 6.9537 13.0411 6.25089 12.3011 5.75643Z" />
+<path fill-rule="evenodd" clip-rule="evenodd" d="M5.75102 0.498049C5.50249 0.498049 5.30335 0.700016 5.27854 0.947303C5.23471 1.38414 5.12711 1.81303 4.95848 2.22012C4.73234 2.76609 4.40087 3.26216 3.983 3.68003C3.56514 4.0979 3.06907 4.42936 2.5231 4.65551C2.116 4.82413 1.68711 4.93174 1.25028 4.97557C1.00299 5.00038 0.801026 5.19952 0.801026 5.44805L0.801025 9.49805C1.98292 9.49805 3.15324 9.26526 4.24518 8.81297C5.33711 8.36067 6.32927 7.69773 7.16497 6.86199C8.00071 6.0263 8.66365 5.03414 9.11594 3.9422C9.56824 2.85027 9.80102 1.67994 9.80102 0.498047L5.75102 0.498049Z"/>
+</g>
+<defs>
+<clipPath id="clip0_536_12504">
+<rect width="18" height="18" fill="white" transform="translate(0.800049 0.5)"/>
+</clipPath>
+</defs>
+</svg>
+            `),
+            zentrailms: this.sanitizer.bypassSecurityTrustHtml(`
+<svg class="fill-surface-600 dark:fill-surface-400" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M9.79908 18.5C14.7696 18.5 18.7991 14.4705 18.7991 9.49998C18.7991 4.52944 14.7696 0.5 9.79908 0.5C4.8285 0.5 0.799072 4.52944 0.799072 9.49998C0.799072 14.4705 4.8285 18.5 9.79908 18.5ZM12.6068 4.69258C12.7434 4.20712 12.2723 3.92006 11.8421 4.22658L5.83597 8.5053C5.36937 8.83772 5.44276 9.49998 5.94622 9.49998H7.52779V9.48774H10.6102L8.09862 10.3739L6.99139 14.3074C6.85473 14.7929 7.32579 15.0799 7.75608 14.7734L13.7622 10.4947C14.2288 10.1623 14.1553 9.49998 13.6519 9.49998H11.2535L12.6068 4.69258Z" />
+</svg>
+            `),
+            streamlinz: this.sanitizer.bypassSecurityTrustHtml(`<svg class="fill-surface-600 dark:fill-surface-400" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+<path d="M9.79907 0.498047C8.61719 0.498047 7.44683 0.730864 6.3549 1.18313C5.26297 1.63544 4.27086 2.29835 3.43509 3.13407C2.59938 3.96983 1.93647 4.96194 1.48415 6.05387C1.03189 7.1458 0.799072 8.31616 0.799072 9.49804C0.799072 10.6799 1.03189 11.8503 1.48415 12.9422C1.93647 14.0341 2.59938 15.0262 3.43509 15.862C4.27086 16.6977 5.26297 17.3606 6.3549 17.813C7.44683 18.2652 8.61719 18.498 9.79907 18.498V13.998C9.2081 13.998 8.62295 13.8817 8.07698 13.6555C7.53102 13.4293 7.03494 13.0979 6.61708 12.68C6.19922 12.2622 5.86777 11.7661 5.64164 11.2201C5.41545 10.6742 5.29907 10.089 5.29907 9.49804C5.29907 8.90708 5.41545 8.32192 5.64164 7.77596C5.86777 7.22999 6.19922 6.73391 6.61708 6.31606C7.03494 5.8982 7.53102 5.56674 8.07698 5.34061C8.62295 5.11443 9.2081 4.99804 9.79907 4.99804V0.498047Z" />
+<path d="M9.79905 12.5019C11.4559 12.5019 12.799 11.1588 12.799 9.50193C12.799 7.84506 11.4559 6.50195 9.79905 6.50195C8.14218 6.50195 6.79907 7.84506 6.79907 9.50193C6.79907 11.1588 8.14218 12.5019 9.79905 12.5019Z"/>
+<path d="M0.799072 9.49805C0.799072 10.6799 1.03189 11.8503 1.48415 12.9422C1.93647 14.0341 2.59938 15.0263 3.43509 15.862C4.27086 16.6977 5.26297 17.3606 6.3549 17.813C7.44683 18.2652 8.61719 18.498 9.79907 18.498C10.9809 18.498 12.1513 18.2652 13.2432 17.813C14.3352 17.3606 15.3273 16.6977 16.163 15.862C16.9988 15.0263 17.6617 14.0341 18.114 12.9422C18.5662 11.8503 18.7991 10.6799 18.7991 9.49805H14.2991C14.2991 10.089 14.1827 10.6742 13.9565 11.2201C13.7304 11.7661 13.3989 12.2622 12.9811 12.68C12.5632 13.0979 12.0671 13.4293 11.5212 13.6555C10.9752 13.8817 10.39 13.998 9.79907 13.998C9.2081 13.998 8.62295 13.8817 8.07698 13.6555C7.53102 13.4293 7.03494 13.0979 6.61708 12.68C6.19922 12.2622 5.86777 11.7661 5.64164 11.2201C5.41545 10.6742 5.29907 10.089 5.29907 9.49805H0.799072Z" />
+<path d="M12.7991 9.50199C12.7991 8.70634 12.483 7.94329 11.9204 7.38066C11.3578 6.81803 10.5948 6.50195 9.7991 6.50195C9.00345 6.50195 8.24041 6.81803 7.67778 7.38066C7.11515 7.94329 6.79907 8.70634 6.79907 9.50199H9.7991H12.7991Z" />
+</svg>`),
+            wavelength: this.sanitizer.bypassSecurityTrustHtml(`<svg class="fill-surface-600 dark:fill-surface-400" xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+<path d="M9.79907 0.5C4.82851 0.5 0.799072 4.52943 0.799072 9.5C5.76963 9.5 9.79907 5.47056 9.79907 0.5Z" />
+<path d="M9.79907 18.5C14.7696 18.5 18.7991 14.4706 18.7991 9.5C13.8285 9.5 9.79907 13.5294 9.79907 18.5Z" />
+<path d="M9.79907 0.5C14.7696 0.5 18.7991 4.52943 18.7991 9.5C13.8285 9.5 9.79907 5.47056 9.79907 0.5Z" />
+<path d="M9.79907 18.5C4.82851 18.5 0.799072 14.4706 0.799072 9.5C5.76963 9.5 9.79907 13.5294 9.79907 18.5Z" />
+</svg>`)
+        };
+    }
+
+    displayPopover(e, op) {
+        op.hide();
+        setTimeout(() => {
+            op.show(e);
+        }, 150);
+    }
+}
+
+---
+
+@Component({
+    selector: 'chat-app',
+    standalone: true,
+    imports: [CommonModule, RouterModule, ChartModule, ToggleSwitchModule, SelectButton, BadgeModule, FormsModule, AvatarModule, IconField, InputIcon, ButtonModule, InputTextModule, MenuModule, Textarea],
+    template: `
+        <div class="w-4/12 xl:w-3/12 min-w-40 overflow-auto flex flex-col gap-6">
+            <div class="flex flex-col gap-6 pt-3 pb-2 -mb-2 px-5 sticky top-0 bg-surface-0 dark:bg-surface-950 z-10">
+                <div class="flex items-center justify-between gap-6 text-color">
+                    <div class="text-2xl font-medium lead">Chats</div>
+                    <p-button icon="pi pi-plus" text />
+                </div>
+            </div>
+            <div class="px-5">
+                <p-iconField iconPosition="left">
+                    <p-inputIcon class="pi pi-search"> </p-inputIcon>
+                    <input type="text" pInputText [(ngModel)]="search" placeholder="Search" class="w-full" />
+                </p-iconField>
+            </div>
+            <div class="w-full px-5">
+                <p-selectButton [(ngModel)]="value" [options]="options" aria-labelledby="basic" class="w-full" styleClass="w-full" />
+            </div>
+            <div class="flex-1 flex flex-col">
+                <div
+                    *ngFor="let chat of chats"
+                    class="flex items-center gap-2 p-4 cursor-pointer hover:bg-emphasis transition-all"
+                    [ngClass]="{
+                        'bg-emphasis': chat.name === activeChat
+                    }"
+                >
+                    <div class="relative">
+                        <p-badge *ngIf="chat.active !== undefined" [severity]="chat.active ? 'success' : 'danger'" class="absolute top-0 right-0 p-[1px] bg-surface-0 dark:bg-surface-950 rounded-full flex items-center justify-center" />
+
+                        <p-avatar
+                            [image]="chat.image"
+                            [label]="!chat.image ? chat.capName : ''"
+                            [ngClass]="{
+                                '!bg-primary-100 !text-primary-950': !chat.image
+                            }"
+                            styleClass="text-base font-medium flex"
+                            size="large"
+                            shape="circle"
+                        />
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-start gap-1 justify-between">
+                            <div class="text-color font-medium leading-6">{{ chat.name }}</div>
+                            <div class="text-sm text-muted-color leading-5">{{ chat.time }}</div>
+                        </div>
+                        <div class="flex items-center gap-5 justify-between mt-1">
+                            <div class="text-muted-color text-sm leading-5 line-clamp-1">
+                                {{ chat.lastMessage }}
+                            </div>
+                            <p-badge *ngIf="chat.unreadMessageCount > 0" [value]="chat.unreadMessageCount" severity="contrast" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-8/12 xl:w-6/12 border-x border-surface flex flex-col">
+            <div class="flex items-center p-4 gap-7 border-b border-surface">
+                <div class="flex items-center">
+                    <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar-primetek.png" styleClass="mr-2 av" size="large" shape="circle" />
+                    <div class="flex-1">
+                        <div class="text-color leading-6 cursor-pointer hover:text-muted-color-emphasis transition-colors">PrimeTek</div>
+                        <div class="text-muted-color leading-5 line-clamp-1 mt-1">Cody Fisher, Esther Howard, Jerome Bell, Kristin Watson, Ronald Richards, Darrell Steward</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <p-button icon="pi pi-phone" text />
+                    <p-button icon="pi pi-search" text />
+                    <p-button type="button" icon="pi pi-ellipsis-h" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
+                    <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto flex flex-col gap-8 py-8 px-6">
+                <div *ngFor="let message of chatMessages" class="flex items-start min-w-64 w-fit max-w-[60%]" [ngClass]="{ 'ml-auto mr-0 flex-row-reverse': message.type === 'sent' }">
+                    <div
+                        class="flex items-center gap-2 sticky top-0 transition-all"
+                        [ngClass]="{
+                            'flex-row-reverse': message.type === 'sent'
+                        }"
+                    >
+                        <p-avatar
+                            [image]="message.image"
+                            [label]="!message.image ? message.capName : ''"
+                            [ngClass]="{
+                                'bg-primary-100 text-primary-950': !message.image
+                            }"
+                            styleClass="w-10 h-10 text-sm font-medium"
+                            shape="circle"
+                        />
+                        <div>
+                            <svg
+                                [ngClass]="{
+                                    'fill-surface-100 dark:fill-surface-800': message.type === 'received',
+                                    'fill-primary rotate-180': message.type !== 'received'
+                                }"
+                                class=""
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="7"
+                                height="11"
+                                viewBox="0 0 7 11"
+                                fill="none"
+                            >
+                                <path d="M1.79256 7.09551C0.516424 6.31565 0.516426 4.46224 1.79256 3.68238L7 0.500055L7 10.2778L1.79256 7.09551Z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div [ngClass]="message.type === 'received' ? 'flex-1 bg-surface-100 dark:bg-surface-800 px-2 py-1 rounded-lg' : 'flex-1 bg-primary px-2 py-1 rounded-lg'">
+                        <p [ngClass]="message.type === 'received' ? 'text-color leading-6 mb-0' : 'text-primary-contrast leading-6 mb-0'">
+                            {{ message.message }}
+                        </p>
+                        <div *ngIf="message.attachment" :class="message.type === 'received' ? 'bg-surface-200 dark:bg-surface-700' : 'bg-primary-emphasis'" class="mt-2 w-full rounded-lg mb-0.5 hover:opacity-75 transition-all">
+                            <img class="w-full h-auto block cursor-pointer" [src]="message.attachment" alt="Message Image" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-surface flex items-end justify-between gap-2">
+                <div class="flex items-end gap-1 flex-1">
+                    <p-button icon="pi pi-face-smile" text />
+                    <p-button icon="pi pi-paperclip" text />
+                    <textarea pTextarea class="ml-1 flex-1 border-0 shadow-none max-h-32 min-h-9 bg-emphasis overflow-auto" autoResize rows="1" placeholder="Write your message..."></textarea>
+                </div>
+                <p-button icon="pi pi-send" />
+            </div>
+        </div>
+        <div class="w-3/12 xl:block hidden min-w-40 py-6 px-3 overflow-auto">
+            <div class="flex flex-col items-center justify-center">
+                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar-primetek.png" styleClass="w-32 h-32" size="xlarge" shape="circle" />
+                <div class="leading-6 font-medium text-color mt-4 w-full text-center">PrimeTek</div>
+                <div class="leading-5 text-sm text-muted-color mt-1 w-full text-center">&#64;primetek</div>
+                <div class="flex items-center justify-center flex-wrap gap-1 mt-4">
+                    <p-button icon="pi pi-phone text-muted-color" severity="secondary" text />
+                    <p-button icon="pi pi-video text-muted-color" severity="secondary" text />
+                    <p-button icon="pi pi-sign-in text-muted-color" severity="secondary" text />
+                    <p-button icon="pi pi-info-circle text-muted-color" severity="secondary" text />
+                    <p-button type="button" icon="pi pi-ellipsis-v text-muted-color" severity="secondary" text (click)="menu.toggle($event)" aria-haspopup="true" aria-controls="overlay_menu" />
+                    <p-menu #menu id="overlay_menu" [model]="menuItems" [popup]="true" />
+                </div>
+            </div>
+            <div class="flex flex-col gap-4 mt-4">
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-bell text-color"></i>
+                    <div class="leading-6 font-medium text-color flex-1">Notification</div>
+                    <p-toggleswitch [(ngModel)]="notification" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-volume-down text-color"></i>
+                    <div class="leading-6 font-medium text-color flex-1">Sound</div>
+                    <p-toggleswitch [(ngModel)]="sound" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-download text-color"></i>
+                    <div class="leading-6 font-medium text-color flex-1">Save to downloads</div>
+                    <p-toggleswitch [(ngModel)]="download" />
+                </div>
+            </div>
+            <div class="mt-6">
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 text-color leading-6 font-medium">Members</div>
+                    <p-button label="See All" styleClass="text-sm py-0.5 px-2 text-muted-color" text />
+                </div>
+                <div class="mt-4 flex flex-col gap-2">
+                    <div *ngFor="let member of members" class="flex items-center gap-2 cursor-pointer">
+                        <p-avatar
+                            [image]="member.image"
+                            [label]="!member.image ? member.capName : ''"
+                            [ngClass]="{
+                                'bg-orange-100 text-orange-950': !member.image
+                            }"
+                            styleClass="font-medium text-xs"
+                            shape="circle"
+                        />
+
+                        <div class="text-sm text-color hover:text-muted-color-emphasis transition-colors font-medium leading-5 flex-1">
+                            {{ member.name }}
+                        </div>
+                        <i class="pi pi-chevron-right text-xs text-muted-color"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-5">
+                <p-selectbutton [(ngModel)]="media" [options]="mediaOptions" class="w-full" styleClass="flex-1 w-full" />
+
+                <div class="mt-3 mb-5 grid grid-cols-3 gap-2">
+                    <div *ngFor="let media of chatMedia" class="bg-emphasis hover:opacity-70 transition-all flex-1 aspect-square rounded-lg border border-surface cursor-pointer">
+                        <img class="w-full h-full object-cover block" [src]="media" alt="Media Image" />
+                    </div>
+                    <div class="bg-emphasis hover:opacity-70 transition-all flex-1 aspect-square rounded-lg border border-surface cursor-pointer flex items-center justify-center">
+                        <span class="text-muted-color font-medium">99+</span>
+                    </div>
+                </div>
+                <p-button label="Show more" icon="pi pi-arrow-right" iconPos="right" outlined styleClass="w-full text-left" />
+            </div>
+        </div>
+    `,
+    host: {
+        class: 'flex-1 h-full overflow-y-auto overflow-x-clip overflow-hidden flex border border-surface rounded-2xl'
+    },
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ChatApp {
+    search: string = '';
+
+    download: boolean = false;
+
+    notification: boolean = true;
+
+    sound: boolean = false;
+
+    value: string = 'Chat';
+
+    options: string[] = ['Chat', 'Call'];
+
+    media: string = 'Media';
+
+    mediaOptions: string[] = ['Media', 'Link', 'Docs'];
+
+    activeChat: string = 'PrimeTek Team';
+
+    menuItems: MenuItem[] | undefined;
+
+    chats: any;
+
+    chatMessages: any;
+
+    chatMedia: string[];
+
+    members: any;
+
+    ngOnInit() {
+        this.menuItems = [
+            {
+                label: 'Group Info',
+                icon: 'pi pi-info-circle'
+            },
+            {
+                label: 'Leave group',
+                icon: 'pi pi-sign-out'
+            }
+        ];
+        this.chats = [
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg',
+                name: 'Cody Fisher',
+                capName: 'CF',
+                active: true,
+                unreadMessageCount: 8,
+                time: '12.30',
+                lastMessage: "Hey there! I've heard about PrimeVue. Any cool tips for getting started?"
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar-primetek.png',
+                name: 'PrimeTek Team',
+                capName: 'PT',
+                active: undefined,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: "Let's implement PrimeNG. Elevating our UI game! 🚀"
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png',
+                name: 'Jerome Bell',
+                capName: 'JB',
+                active: true,
+                unreadMessageCount: 4,
+                time: '11.15',
+                lastMessage: "Absolutely! PrimeNG's documentation is gold—simplifies our UI work."
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg',
+                name: 'Robert Fox',
+                capName: 'RF',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: "Interesting! PrimeNG sounds amazing. What's your favorite feature?"
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg',
+                name: 'Esther Howard',
+                capName: 'EH',
+                active: true,
+                unreadMessageCount: 9,
+                time: '11.15',
+                lastMessage: 'Quick one, team! Anyone using PrimeNG for mobile app development?'
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg',
+                name: 'Darlene Robertson',
+                capName: 'DR',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: "Just explored PrimeNG's themes. Can we talk about those stunning designs? 😍"
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar6.png',
+                name: 'Ralph Edwards',
+                capName: 'RE',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: 'PrimeNG is a game-changer, right? What are your thoughts, folks?'
+            },
+            {
+                image: '',
+                name: 'Ronald Richards',
+                capName: 'RR',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: "Jumping in! PrimeNG's community forum is buzzing. Any engaging discussions?"
+            },
+            {
+                image: '',
+                name: 'Kristin Watson',
+                capName: 'KW',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: 'Sharing a quick win-PrimeNG tutorials are leveling up my UI skills. 👩‍💻'
+            },
+            {
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar7.png',
+                name: 'Darrell Steward',
+                capName: 'DS',
+                active: false,
+                unreadMessageCount: 0,
+                time: '11.15',
+                lastMessage: "Reflecting on PrimeNG's impact on our workflow. What's your take?"
+            }
+        ];
+        this.chatMessages = [
+            {
+                id: 1,
+                attachment: '',
+                name: '',
+                image: '',
+                capName: 'OS',
+                type: 'received',
+                message: "Awesome! What's the standout feature?"
+            },
+            {
+                id: 2,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png',
+                capName: 'A',
+                type: 'received',
+                message: 'PrimeNG rocks! Simplifies UI dev with versatile components.'
+            },
+            {
+                id: 3,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg',
+                capName: 'A',
+                type: 'received',
+                message: 'Intriguing! Tell us more about its impact.'
+            },
+            {
+                id: 4,
+                attachment: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/message-image.png',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png',
+                capName: 'A',
+                type: 'received',
+                message: "It's design-neutral and compatible with Tailwind. Features accessible, high-grade components!"
+            },
+            {
+                id: 5,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png',
+                capName: 'A',
+                type: 'sent',
+                message: 'Customizable themes, responsive design – UI excellence!'
+            },
+            {
+                id: 6,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png',
+                capName: 'A',
+                type: 'received',
+                message: 'Love it! Fast-tracking our development is key.'
+            },
+            {
+                id: 7,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar6.png',
+                capName: 'A',
+                type: 'received',
+                message: 'Documentation rocks too – smooth integration for all.'
+            },
+            {
+                id: 8,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png',
+                capName: 'B',
+                type: 'sent',
+                message: 'The flexibility and ease of use are truly impressive. Have you explored the new components?'
+            },
+            {
+                id: 9,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg',
+                capName: 'C',
+                type: 'received',
+                message: 'Absolutely, the new calendar component has saved us a ton of development time!'
+            },
+            {
+                id: 10,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg',
+                capName: 'D',
+                type: 'received',
+                message: "And the accessibility features are top-notch. It's great to see a library focusing on inclusivity."
+            },
+            {
+                id: 11,
+                attachment: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/message-image.png',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png',
+                capName: 'E',
+                type: 'sent',
+                message: "I couldn't agree more. Plus, the documentation is incredibly thorough, which makes onboarding new team members a breeze."
+            },
+            {
+                id: 12,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar6.png',
+                capName: 'F',
+                type: 'received',
+                message: 'Do you have any tips for optimizing performance when using multiple complex components?'
+            },
+            {
+                id: 13,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg',
+                capName: 'G',
+                type: 'received',
+                message: 'Yes! Lazy loading and code splitting can make a huge difference, especially in larger applications.'
+            },
+            {
+                id: 14,
+                attachment: '',
+                name: '',
+                image: '',
+                capName: 'HS',
+                type: 'received',
+                message: "I've also found that leveraging the component's internal state management capabilities can help streamline data flow and improve performance."
+            },
+            {
+                id: 15,
+                attachment: '',
+                name: '',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png',
+                capName: 'H',
+                type: 'sent',
+                message: "That's great advice. It's amazing how much detail and thought has gone into making PrimeNG such a powerful tool for developers."
+            }
+        ];
+        this.chatMedia = [
+            'https://www.primefaces.org/cdn/primevue/images/landing/apps/chat-image1.png',
+            'https://www.primefaces.org/cdn/primevue/images/landing/apps/chat-image2.png',
+            'https://www.primefaces.org/cdn/primevue/images/landing/apps/chat-image3.png',
+            'https://www.primefaces.org/cdn/primevue/images/landing/apps/chat-image4.png',
+            'https://www.primefaces.org/cdn/primevue/images/landing/apps/chat-image5.png'
+        ];
+        this.members = [
+            {
+                name: 'Robin Jonas',
+                capName: 'RJ',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png'
+            },
+            {
+                name: 'Cameron Williamson',
+                capName: 'CW',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg'
+            },
+            {
+                name: 'Eleanor Pena',
+                capName: 'EP',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png'
+            },
+            {
+                name: 'Arlene McCoy',
+                capName: 'AM',
+                image: 'https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png'
+            },
+            { name: 'Dianne Russell', capName: 'DR', image: '' }
+        ];
+    }
+}
+
+---
+
+@Component({
+    selector: 'cards-app',
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        InputNumber,
+        Select,
+        RadioButton,
+        InputSwitchModule,
+        SelectButton,
+        Slider,
+        BadgeModule,
+        FormsModule,
+        DividerModule,
+        AvatarModule,
+        TooltipModule,
+        ButtonModule,
+        InputTextModule,
+        MenuModule,
+        Tag,
+        AvatarGroupModule,
+        InputOtp,
+        AutoComplete,
+        FileUpload,
+        OverlayBadgeModule,
+        Checkbox,
+        ToggleSwitchModule
+    ],
+    template: `
+        <div class="text-color text-2xl font-medium leading-8">Cards</div>
+        <div class="mt-1 text-muted-color leading-6">You can make cards using Aura like below 👇</div>
+        <div class="mt-6 flex flex-wrap items-start gap-6">
+            <div class="flex-1 flex flex-col gap-6">
+                <div class="border border-surface rounded-3xl p-6 flex flex-col gap-6">
+                    <div class="flex items-center gap-3">
+                        <p-overlayBadge severity="danger" styleClass="w-fit">
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/main-avatar.png" class="rounded-lg overflow-hidden flex" />
+                        </p-overlayBadge>
+
+                        <div>
+                            <div class="font-medium text-color leading-6">Jacob Jones</div>
+                            <div class="mt-1 text-muted-color leading-5">hi&#64;jacobjones.co</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-sm leading-5 text-color">14.k <span class="text-muted-color">Followers</span></div>
+                        <div class="text-sm leading-5 text-color">359 <span class="text-muted-color">Following</span></div>
+                    </div>
+                    <p class="text-sm text-muted-color leading-5 mb-0">Meet Jacob Jones, the whimsical adventurer on a quest for life's quirks. From sock mysteries to subway adventures, join him for a laughter-filled journey!</p>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="text-sm leading-5 text-color font-medium">Mutual Friends</div>
+                        <p-avatarGroup>
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar1.png" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png" class="rounded-lg overflow-hidden" />
+                            <p-avatar label="+99" class="rounded-lg overflow-hidden text-xs" />
+                        </p-avatarGroup>
+                    </div>
+                    <p-selectbutton [(ngModel)]="selectedUserSelectButtonOption" [options]="userSelectButtonOptions" />
+                    <div class="flex flex-col gap-4">
+                        <div class="p-2 rounded-2xl flex items-center gap-3 bg-emphasis">
+                            <p-overlayBadge severity="danger" class="w-fit">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/main-avatar.png" class="rounded-lg overflow-hidden w-10 h-10 block" />
+                            </p-overlayBadge>
+
+                            <div class="flex-1">
+                                <div class="text-color text-sm font-medium leading-5">Jacob Jones</div>
+                                <div class="mt-1 text-muted-color text-xs leading-4">hi&#64;jacobjones.co</div>
+                            </div>
+                            <p-button label="Join" />
+                        </div>
+                        <div class="p-2 rounded-2xl flex items-center gap-3 bg-emphasis">
+                            <p-overlayBadge severity="danger" class="w-fit">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg" class="rounded-lg overflow-hidden w-10 h-10 flex" />
+                            </p-overlayBadge>
+
+                            <div class="flex-1">
+                                <div class="text-color text-sm font-medium leading-5">Courtney Henry</div>
+                                <div class="mt-1 text-muted-color text-xs leading-4">cou.henry41&#64;courtney.co</div>
+                            </div>
+                            <p-button label="Join" />
+                        </div>
+                    </div>
+                </div>
+                <div class="border border-surface rounded-3xl p-6">
+                    <div class="flex items-center gap-3 p-3 border border-surface rounded-xl shadow-[0px_1px_2px_0px_rgba(18,18,23,0.05)]">
+                        <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/main-avatar.png" class="rounded-lg overflow-hidden w-14 h-14" />
+                        <div class="flex-1">
+                            <div class="text-color font-medium leading-7">Jacob Jones</div>
+                            <div class="text-muted-color text-sm mt-1">hi&#64;jacobjones.co</div>
+                        </div>
+                        <p-button icon="pi pi-bell" severity="contrast" text />
+                    </div>
+                    <div class="mt-4 flex flex-col gap-1">
+                        <button class="w-full flex items-center gap-2 text-color p-2 bg-transparent hover:bg-emphasis active:bg-surface-200 dark:active:bg-surface-700 cursor-pointer rounded-lg transition-all select-none">
+                            <i class="pi pi-envelope text-lg w-7 h-7 flex items-center justify-center"></i>
+                            <div class="font-medium leading-normal flex-1 text-left">Messages</div>
+                        </button>
+                        <button class="w-full flex items-center gap-2 text-color p-2 bg-transparent hover:bg-emphasis active:bg-surface-200 dark:active:bg-surface-700 cursor-pointer rounded-lg transition-all select-none">
+                            <i class="pi pi-cog text-lg w-7 h-7 flex items-center justify-center"></i>
+                            <div class="font-medium leading-normal flex-1 text-left">Settings</div>
+                        </button>
+                        <button class="w-full flex items-center gap-2 text-color p-2 bg-transparent hover:bg-emphasis active:bg-surface-200 dark:active:bg-surface-700 cursor-pointer rounded-lg transition-all select-none">
+                            <i class="pi pi-sync text-lg w-7 h-7 flex items-center justify-center"></i>
+                            <div class="font-medium leading-normal flex-1 text-left">Switch Accounts</div>
+                        </button>
+                        <button class="w-full flex items-center gap-2 text-color p-2 bg-transparent hover:bg-emphasis active:bg-surface-200 dark:active:bg-surface-700 cursor-pointer rounded-lg transition-all select-none">
+                            <i class="pi pi-sign-in text-lg w-7 h-7 flex items-center justify-center"></i>
+                            <div class="font-medium leading-normal flex-1 text-left">Log out</div>
+                        </button>
+                    </div>
+                    <p-divider />
+                    <div class="w-full flex items-center gap-2 text-color p-2 bg-transparent cursor-pointer rounded-lg transition-all select-none">
+                        <i
+                            class="pi text-lg w-7 h-7 flex items-center justify-center"
+                            [ngClass]="{
+                                'pi-moon': !darkMode,
+                                'pi-sun': darkMode
+                            }"
+                        ></i>
+                        <div class="font-medium leading-normal flex-1 text-left">Switch to {{ darkMode ? 'Light' : 'Dark' }}</div>
+                        <p-toggleswitch [(ngModel)]="darkMode" />
+                    </div>
+                </div>
+                <div class="border border-surface rounded-3xl">
+                    <div class="pt-6 px-6 flex flex-col gap-6">
+                        <div class="flex items-start gap-2 justify-between">
+                            <div>
+                                <div class="text-2xl text-color font-medium">Data Analyst</div>
+                                <div class="mt-2 text-color">Data Insights Ltd.</div>
+                            </div>
+                            <p-button (click)="jobApplication = !jobApplication" [icon]="jobApplication ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'" severity="secondary" outlined rounded />
+                        </div>
+                        <div class="flex flex-wrap gap-1 items-center justify-between">
+                            <div class="flex items-center gap-2 whitespace-nowrap text-muted-color">
+                                <i class="pi pi-users text-xl"></i>
+                                <div class="font-medium leading-none">Senior</div>
+                            </div>
+                            <div class="flex items-center gap-2 whitespace-nowrap text-muted-color">
+                                <i class="pi pi-stopwatch text-xl"></i>
+                                <div class="font-medium leading-none">Full-Time</div>
+                            </div>
+                            <div class="flex items-center gap-2 whitespace-nowrap text-muted-color">
+                                <i class="pi pi-money-bill text-xl"></i>
+                                <div class="font-medium leading-none">$80,000</div>
+                            </div>
+                        </div>
+                        <p class="leading-6 text-muted-color mb-0">Expert in data analysis? Join Data Insights Ltd. as a senior data analyst. Lead in the world of data with us!</p>
+                        <div class="flex flex-wrap gap-2 items-center">
+                            <p-tag value="Data Analysis" rounded class="font-normal"></p-tag>
+                            <p-tag value="Analytics" rounded class="font-normal"></p-tag>
+                            <p-tag value="Big Data" rounded class="font-normal"></p-tag>
+                        </div>
+                    </div>
+                    <div class="p-1 mt-4">
+                        <button class="p-4 rounded-3xl w-full bg-emphasis transition-all text-color hover:text-color-emphasis flex items-center gap-2 justify-between cursor-pointer">
+                            <div class="flex items-center [&>*]:-mr-2">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg" shape="circle" />
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar10.jpg" shape="circle" />
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg" shape="circle" />
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg" shape="circle" />
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png" shape="circle" />
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="font-medium leading-6">12 Applicants</div>
+                                <i class="pi pi-arrow-right"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-col gap-6">
+                <div class="border border-surface rounded-3xl p-6 flex flex-col gap-6">
+                    <div class="flex items-center gap-2 text-color">
+                        <i class="pi pi-cloud-upload text-xl"></i>
+                        <div class="flex-1 font-medium leading-6">Upload Files</div>
+                        <p-button icon="pi pi-times" text rounded />
+                    </div>
+                    <div>
+                        <label for="document-name" class="text-color font-medium leading-6">Document Name </label>
+                        <input type="text" pInputText id="document-name" [(ngModel)]="documentName" class="mt-2 w-full" />
+                    </div>
+                    <div>
+                        <label class="text-color font-medium leading-6">Upload Files</label>
+                        <p-fileupload name="demo[]" url="/api/upload" (onUpload)="onTemplatedUpload($event)" accept="image/*" [maxFileSize]="1000000" styleClass="mt-2" (onSelect)="onSelectedFiles($event)">
+                            <ng-template #header let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback">
+                                <div *ngIf="files.length > 0 || uploadedFiles.length > 0" class="flex w-full flex-wrap justify-between items-center flex-1 gap-4 border-b border-surface pb-4">
+                                    <div class="flex gap-2">
+                                        <p-button (click)="chooseCallback()" icon="pi pi-images" rounded outlined severity="secondary"></p-button>
+                                        <p-button (click)="uploadEvent(uploadCallback)" icon="pi pi-cloud-upload" rounded outlined severity="success" [disabled]="!files || files.length === 0"></p-button>
+                                        <p-button (click)="clearCallback()" icon="pi pi-times" rounded outlined severity="danger" [disabled]="!files || files.length === 0"></p-button>
+                                    </div>
+                                </div>
+                                <div *ngIf="files.length <= 0 && uploadedFiles.length <= 0" class="flex flex-col items-center justify-center p-6 cursor-pointer" (click)="chooseCallback()">
+                                    <i class="pi pi-cloud-upload text-4xl text-color"></i>
+                                    <div class="text-sm text-color font-medium mt-2">Click to upload <span class="text-muted-color">or and drop</span></div>
+                                    <p class="mt-2 mb-0 text-sm text-muted-color text-center">PDF, JPG, PNG, JPEG, DOC, CSV, XML, XMLX, XLS, XLSX (max 10MB)</p>
+                                </div>
+                            </ng-template>
+
+                            <ng-template #content let-chooseCallback="chooseCallback" let-clearCallback="clearCallback" let-uploadCallback="uploadCallback" let-removeCallback="removeCallback">
+                                <div *ngIf="files.length > 0" class="px-4 py-0">
+                                    <h5 class="m-0 mb-2">Pending</h5>
+                                    <div class="flex flex-wrap gap-2 grow overflow-auto max-h-[210px]">
+                                        <div *ngFor="let file of files; let i = index" class="card max-w-[120px] !p-2 m-0 flex flex-col border-1 surface-border items-center gap-2 text-center">
+                                            <div>
+                                                <img role="presentation" [alt]="file.name" [src]="file.objectURL" width="100" height="50" />
+                                            </div>
+                                            <span class="font-semibold max-w-[100px] text-ellipsis whitespace-nowrap overflow-hidden">{{ file.name }}</span>
+                                            <span class="text-sm text-muted-color">{{ formatSize(file.size) }}</span>
+                                            <div class="grow flex flex-col gap-2 justify-end">
+                                                <p-badge value="Pending" severity="warn" />
+                                                <p-button icon="pi pi-times text-sm leading-none" (click)="onRemoveTemplatingFile(file, removeCallback, i)" class="!text-sm !leading-none" label="Cancel" text severity="danger" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="uploadedFiles.length > 0" class="px-4 py-0">
+                                    <h5 class="m-0 mb-2">Completed</h5>
+                                    <div class="flex flex-wrap gap-2">
+                                        <div *ngFor="let file of uploadedFiles" :key="file.name + file.type + file.size" class="card max-w-[120px] !p-2 m-0 flex flex-col border-1 surface-border items-center gap-2 text-center">
+                                            <div>
+                                                <img role="presentation" [alt]="file.name" :src="file.objectURL" width="100" height="50" />
+                                            </div>
+                                            <span class="font-semibold max-w-[100px] text-ellipsis whitespace-nowrap overflow-hidden">{{ file.name }}</span>
+                                            <span class="text-sm text-muted-color">{{ formatSize(file.size) }}</span>
+                                            <div class="grow flex flex-col gap-2 justify-end">
+                                                <p-badge value="Completed" class="mt-3" severity="success" />
+                                                <p-button icon="pi pi-times text-sm leading-none" class="!text-sm !leading-none" label="Cancel" text severity="danger" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-fileupload>
+                    </div>
+                    <div>
+                        <label class="text-color font-medium leading-6">Tag (Optional)</label>
+                        <p-autocomplete [(ngModel)]="filesTag" styleClass="w-full mt-2" inputId="multiple-ac-2" multiple (completeMethod)="search($event)" [typeahead]="false" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label
+                            *ngFor="let permission of permissions"
+                            [key]="permission.key"
+                            [for]="permission.key"
+                            class="cursor-pointer flex-1 flex items-center gap-1 p-2 rounded-border border border-surface hover:bg-emphasis transition-all select-none"
+                        >
+                            <i class="text-color" :class="permission.icon"></i>
+                            <div class="flex-1 text-sm leading-5 text-color">{{ permission.name }}</div>
+                            <p-radiobutton [(ngModel)]="selectedPermission" [inputId]="permission.key" variant="filled" name="dynamic" [value]="permission.name" />
+                        </label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button pButton label="Cancel" outlined class="flex-1"></button>
+                        <button pButton label="Upload" class="flex-1"></button>
+                    </div>
+                </div>
+                <div class="border border-surface rounded-3xl p-6">
+                    <div class="flex items-start justify-between gap-1">
+                        <div class="flex items-center gap-x-2 gap-y-1 flex-wrap flex-1">
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar1.png" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar2.png" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar9.jpg" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar11.jpg" shape="circle" class="rounded-lg overflow-hidden" />
+                            <div class="w-full"></div>
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar5.png" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar7.png" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar10.jpg" shape="circle" class="rounded-lg overflow-hidden" />
+                            <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg" shape="circle" class="rounded-lg overflow-hidden" />
+                        </div>
+                        <p-button icon="pi pi-arrow-up-right" rounded text />
+                    </div>
+                    <div class="text-2xl font-medium text-color mt-6 leading-8">That's your avatar</div>
+                    <div class="leading-6 text-muted-color mt-2">Easy to use! place it, watch it.</div>
+                </div>
+                <div class="border border-surface rounded-3xl p-6 flex flex-col gap-6">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="text-2xl font-medium leading-8 flex-1">Add Member</div>
+                        <p-button icon="pi pi-times" rounded text severity="secondary" />
+                    </div>
+                    <div>
+                        <div class="text-muted-color leading-6">Email</div>
+                        <div class="flex items-start gap-3 mt-2">
+                            <p-autocomplete [(ngModel)]="emailChips" inputId="multiple-ac-2" styleClass="w-full" class="flex-1" multiple (onSelect)="search($event)" [typeahead]="false" />
+                            <p-button label="Invite" />
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-medium leading-6 text-muted-color">Members</div>
+                        <div class="mt-4 flex flex-col gap-4">
+                            <div class="flex items-center gap-2 justify-between">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar8.png" class="w-9 h-9" shape="circle" />
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-color leading-5">Brook Simmons</div>
+                                    <div class="text-sm text-muted-color leading-5 line-clamp-4">brook.sim42&#64;primeng.org</div>
+                                </div>
+                                <p-select [(ngModel)]="memberSelectedTypes[0]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                            </div>
+                            <div class="flex items-center gap-2 justify-between">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar13.jpg" class="w-9 h-9" shape="circle" />
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-color leading-5">Dianne Russell</div>
+                                    <div class="text-sm text-muted-color leading-5 line-clamp-4">di.russ23&#64;primeng.org</div>
+                                </div>
+                                <p-select [(ngModel)]="memberSelectedTypes[1]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                            </div>
+                            <div class="flex items-center gap-2 justify-between">
+                                <p-avatar image="https://www.primefaces.org/cdn/primevue/images/landing/apps/avatar12.jpg" class="w-9 h-9" shape="circle" />
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-color leading-5">Jacob Jones</div>
+                                    <div class="text-sm text-muted-color leading-5 line-clamp-4">jac.jon87&#64;primeng.org</div>
+                                </div>
+                                <p-select [(ngModel)]="memberSelectedTypes[2]" [options]="memberTypes" optionLabel="name" placeholder="Select" class="!border-0 !shadow-none" />
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="font-medium leading-6 text-muted-color">Copy Link</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <input type="text" pInputText [(ngModel)]="copiedText" type="text" class="flex-1" readOnly />
+                            <p-button label="Copy" severity="secondary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-1 flex flex-wrap gap-6">
+                <div class="flex-1 border border-surface rounded-3xl p-6">
+                    <div class="text-color font-medium leading-6 mb-4">User Profiles</div>
+                    <p-selectbutton [(ngModel)]="userProfiles" [options]="userProfilesOptions" class="w-full" styleClass="flex-1 w-full" />
+                    <div class="flex flex-col gap-4 mt-6">
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-volume-down text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Sound</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[0]" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-wifi text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Wi-Fi</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[1]" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-moon text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Dark Mode</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[2]" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-map-marker text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Location Services</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[3]" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-shield text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Privacy Settings</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[4]" />
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="pi pi-sync text-color text-xl"></i>
+                            <div class="leading-6 text-color flex-1">Auto Update</div>
+                            <p-toggleswitch [(ngModel)]="userProfilesValues[5]" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 border border-surface rounded-3xl p-6 flex flex-col gap-6">
+                    <div class="font-medium text-color text-2xl text-center">Forgot Password</div>
+                    <div>
+                        <div class="text-muted-color text-lg text-center leading-snug">
+                            Verification code <br />
+                            has been sent to email
+                        </div>
+                        <div class="rounded-full px-4 py-1 bg-surface-200 dark:bg-surface-800 w-fit mx-auto mt-4 text-color text-lg leading-relaxed">u*******m&#64;gmail.com</div>
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <p-button label="Resend" text />
+                    </div>
+                    <div class="flex items-center justify-center">
+                        <p-inputotp [(ngModel)]="forgotPasswordOTP" [length]="6" [integerOnly]="true" class="w-full [&>*]:flex-1 [&>*]:min-h-14 [&>*]:text-2xl" />
+                    </div>
+                    <button pButton label="Change password" class="w-full"></button>
+                </div>
+                <div class="border border-surface rounded-3xl p-6">
+                    <div class="text-color font-medium leading-6 mb-6">Price Range</div>
+                    <div>
+                        <p-slider [(ngModel)]="priceRange" [min]="0" range [max]="15000" />
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <div class="flex-1">
+                            <label for="price-min-val" class="leading-6 text-color">Min Value</label>
+                            <p-inputnumber [(ngModel)]="priceRange[0]" [min]="0" inputId="price-min-val" mode="currency" currency="USD" locale="en-US" styleClass="w-full" />
+                        </div>
+                        <div class="flex-1">
+                            <label for="price-max-val" class="leading-6 text-color">Max Value</label>
+                            <p-inputnumber [(ngModel)]="priceRange[1]" inputId="price-max-val" mode="currency" currency="USD" locale="en-US" styleClass="w-full" />
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-color font-medium leading-6 mb-6">Popular specs</div>
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <div *ngFor="let data of priceRangePopularSpecs" class="flex align-items-center">
+                                <p-checkbox [(ngModel)]="priceRangePopularSpecsChecked" [inputId]="data.value" [name]="data.value" [value]="data.value" />
+                                <label [for]="data.value" class="ml-2">{{ data.value }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 flex-wrap [&>*]:flex-1 mt-6">
+                        <button pButton label="Undo" outlined class="w-full"></button>
+                        <button pButton label="Random" class="w-full"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    host: {
+        class: 'flex-1 h-full overflow-y-auto overflow-x-clip overflow-hidden border border-surface rounded-2xl p-6'
+    },
+    providers: [MessageService],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class CardsApp {
+    files = [];
+
+    uploadedFiles: any[] = [];
+
+    totalSize: number = 0;
+
+    totalSizePercent: number = 0;
+
+    jobApplication: boolean = false;
+
+    userProfiles: string = 'Chilling';
+
+    userProfilesOptions: string[] = ['Chilling', 'Do Not Disturb'];
+
+    userProfilesValues: boolean[] = [true, true, false, false, true, false];
+
+    forgotPasswordOTP: string = '023';
+
+    priceRange: number[] = [0, 10000];
+
+    priceMinVal: number = 0;
+
+    priceMaxVal: number = 100000;
+
+    priceRangePopularSpecs: any;
+
+    priceRangePopularSpecsChecked: string[] = ['Furnished', 'Detached', 'Balcony', 'Sea view'];
+
+    userSelectButtonOptions: string[] = ['Joined', 'Hosted'];
+
+    selectedUserSelectButtonOption: string = 'Joined';
+
+    darkMode: boolean = false;
+
+    emailChips: any;
+
+    memberSelectedTypes: string[] = ['O', 'E', 'V'];
+
+    memberTypes: any;
+
+    copiedText: string = "https://www.example.com/shared-files/user123/document-collection/file12345';";
+
+    documentName: string = 'Aura Theme';
+
+    filesTag: string[] = ['ui', 'redesign', 'dashboard'];
+
+    selectedPermission: string = 'Everyone';
+
+    permissions: any;
+
+    items: any;
+
+    constructor(
+        private config: PrimeNG,
+        private messageService: MessageService
+    ) {}
+
+    ngOnInit() {
+        this.priceRangePopularSpecs = [
+            { value: 'Furnished', checked: true },
+            { value: 'Unfurnished', checked: false },
+            { value: 'Detached', checked: true },
+            { value: 'Underfloor heating', checked: false },
+            { value: 'Balcony', checked: true },
+            { value: 'Duplex', checked: false },
+            { value: 'Triplex', checked: false },
+            { value: 'Garden', checked: false },
+            { value: 'Central location', checked: false },
+            { value: 'Sea view', checked: true }
+        ];
+        this.memberTypes = [
+            { name: 'Owner', code: 'O' },
+            { name: 'Editor', code: 'E' },
+            { name: 'Viewer', code: 'V' }
+        ];
+
+        this.permissions = [
+            { name: 'Everyone', icon: 'pi pi-globe', key: 'E' },
+            { name: 'Admins only', icon: 'pi pi-users', key: 'A' }
+        ];
+    }
+
+    onRemoveTemplatingFile(file, removeFileCallback, index) {
+        removeFileCallback(index);
+        this.totalSize -= parseInt(this.formatSize(file.size));
+        this.totalSizePercent = this.totalSize / 10;
+    }
+
+    onClearTemplatingUpload(clear) {
+        clear();
+        this.totalSize = 0;
+        this.totalSizePercent = 0;
+    }
+
+    onSelectedFiles(event) {
+        this.files = event.files;
+        this.files.forEach((file) => {
+            this.totalSize += parseInt(this.formatSize(file.size));
+        });
+    }
+
+    uploadEvent(callback) {
+        this.totalSizePercent = this.totalSize / 10;
+        callback();
+    }
+
+    onTemplatedUpload(event) {
+        for (let file of event.files) {
+            this.uploadedFiles.push(file);
+        }
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+    }
+
+    formatSize(bytes) {
+        const k = 1024;
+        const dm = 3;
+        const sizes = this.config.translation.fileSizeTypes;
+
+        if (bytes === 0) {
+            return `0 ${sizes[0]}`;
+        }
+
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+        return `${formattedSize} ${sizes[i]}`;
+    }
+
+    search(event) {
+        this.items = [...Array(10).keys()].map((item) => event.query + '-' + item);
+    }
+}

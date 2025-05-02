@@ -37,7 +37,7 @@ export class ApiClientService {
     });
   }
 
-  sendJson<T, TPayload>(path: string, method: HttpRequestMethod, body: TPayload, options?: HttpClientOptions): Observable<HttpResponse<T>> {
+  sendJson<T, TPayload>(path: string, method: HttpRequestMethod, body?: TPayload, options?: HttpClientOptions): Observable<HttpResponse<T>> {
     const url = this.getUrl(path);
 
     return this.httpClient.request<T>(method, url, {
@@ -69,10 +69,10 @@ export class ApiClientService {
       .pipe(map(response => response.body));
   }
 
-  post<T extends void, TPayload>(url: string, body: TPayload): Observable<void>;
-  post<T extends object, TPayload>(url: string, body: TPayload): Observable<T>;
+  post<T extends void, TPayload>(url: string, body?: TPayload): Observable<void>;
+  post<T extends object, TPayload>(url: string, body?: TPayload): Observable<T>;
 
-  post<T, TPayload>(url: string, body: TPayload): Observable<T | null> {
+  post<T, TPayload>(url: string, body?: TPayload): Observable<T | null> {
     return this.sendJson<T, TPayload>(url, HttpRequestMethod.Post, body)
       .pipe(map(response => response.body));
   }

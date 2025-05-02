@@ -15,7 +15,12 @@ public class OrganizationRegistrationEventListener(
 {
     public async Task HandleAsync(IEventMessage<OrganizationRegisteredEvent> message, string sequenceName)
     {
-        var organization = await repository.GetAsync<Organization>(message.Event.AggregateId);
+        var organization = await repository.FindAsync<Organization>(message.Event.AggregateId);
+        if (organization == null)
+        {
+            return;
+        }
+        
         /*await commandGateway.SendAsync(new InitializeOrganizationDataCommand(),
             CommandExecutionOptions.Default.WithOrganizationContext(new CommandOrganizationContextOverride(organization)));*/
     }

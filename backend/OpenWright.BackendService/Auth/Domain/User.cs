@@ -1,14 +1,17 @@
 using OpenWright.Api.Auth.Domain;
 using OpenWright.BackendService.Organizations.Domain;
 using OpenWright.Platform.Utils;
+using Revo.Core.Security;
 using Revo.DataAccess.Entities;
 using Revo.Domain.Core;
+using Revo.Domain.Entities.Attributes;
 using Revo.Domain.Entities.Basic;
 
 namespace OpenWright.BackendService.Auth.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "usr")]
-public class User : BasicAggregateRoot
+[DomainClassId("9C81BABC-02B4-4AD1-8ABB-F6E142BD8B55")]
+public class User : BasicAggregateRoot, IUser
 {
     private List<UserRoleGrant> roleGrants = new();
     
@@ -25,6 +28,8 @@ public class User : BasicAggregateRoot
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
     public IReadOnlyCollection<UserRoleGrant> RoleGrants => roleGrants;
+
+    public string UserName => EmailAddress;
     
     public void UpdateEmailAddress(EmailAddress emailAddress)
     {
@@ -40,7 +45,7 @@ public class User : BasicAggregateRoot
         LastName = lastName?.NullIfWhitespaceTrimmed();
     }
     
-    public void AddOrUpdateRoleGrant(Organization organization, UserRole role)
+    public void AddOrUpdateRoleGrant(Guid id, Organization organization, UserRole role)
     {
         if (organization == null)
         {
@@ -53,7 +58,7 @@ public class User : BasicAggregateRoot
             roleGrants.Remove(existingGrant);
         }
         
-        var roleGrant = new UserRoleGrant(this, organization, role);
+        var roleGrant = new UserRoleGrant(id, this, organization, role);
         roleGrants.Add(roleGrant);
     }
     

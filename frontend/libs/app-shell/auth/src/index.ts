@@ -5,3 +5,4 @@ export * from './lib/services/auth-cache.service';
 export * from './lib/services/auth.service';
 export * from './lib/services/organization-context.service';
 export * from './lib/services/organization-router';
+export * from './lib/services/organization-id-header-http-interceptor';

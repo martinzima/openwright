@@ -5,11 +5,11 @@ using Revo.Domain.ReadModel;
 
 namespace OpenWright.BackendService.Auth.Reads.Model;
 
-[ReadModelForEntity(typeof(UserRoleGrantView))]
+[ReadModelForEntity(typeof(UserRoleGrant))]
 public class UserRoleGrantView : EntityView
 {
     public Guid UserId { get; set; }
-    public User User { get; set; }
+    public UserView User { get; set; }
     public Guid OrganizationId { get; set; }
     public OrganizationView Organization { get; set; }
     public UserRole Role { get; set; }

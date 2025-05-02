@@ -1,30 +1,24 @@
-<div class="signup-container flex items-center justify-center p-4">
-  <p-card header="Create your OpenWright Account" styleClass="w-full max-w-md shadow-lg">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
-      <formly-form
-        [form]="form"
-        [model]="model"
-        [fields]="fields"
-      ></formly-form>
+<div class="flex items-center justify-center p-6">
+    <p-card styleClass="w-full shadow-xl p-6" class="sign-up-card">
+      <h2 class="sign-up-title">Create organization</h2>
+
+      <p class="sign-up-subtitle text-muted-color">Let's create a new organization.</p>
 
       @if (store.error()) {
-        <p-message severity="error" [text]="store.error() ?? 'An unexpected error occurred.'"></p-message>
+        <p-message severity="error" [text]="(store.error() | requestError) ?? 'Unknown error'" styleClass="mb-4" />
       }
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <formly-form [form]="form" [model]="model" [fields]="fields"></formly-form>
 
-      <p-button
-        label="Create Account"
-        icon="pi pi-user-plus"
-        styleClass="w-full"
-        type="submit"
-        [loading]="store.loading()"
-        [disabled]="store.loading() || form.invalid"
-      ></p-button>
-    </form>
-
-    <ng-template pTemplate="footer">
-      <div class="text-center text-sm text-muted-color mt-6">
-        Already have an account? <a [routerLink]="'/login'" class="text-primary hover:text-primary-emphasis font-medium">Login</a>
-      </div>
-    </ng-template>
-  </p-card>
-</div>
+        <div class="mt-6 text-center">
+          <p-button
+            type="submit"
+            [loading]="store.isSubmitting()"
+            [disabled]="form.invalid">
+            Create Organization
+            <lucide-icon [img]="ArrowRightIcon" [size]="16" />
+          </p-button>
+        </div>
+      </form>
+    </p-card>
+  </div>

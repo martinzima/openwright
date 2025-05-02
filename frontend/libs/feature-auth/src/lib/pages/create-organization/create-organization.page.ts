@@ -2,13 +2,18 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MessageModule } from 'primeng/message';
-import { CreateMyUserPayload } from '@openwright/web-api';
+import { OrganizationsApiService } from '@openwright/web-api';
 import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
-import { FormlyPrimeNGModule } from '@ngx-formly/primeng';
-import { CreateOrganizationStore } from './create-organization.store';
+import { CreateOrganizationModel, CreateOrganizationStore } from './create-organization.store';
+import { RequestErrorPipe } from '@openwright/ui-common';
+import { AuthService } from '@openwright/app-shell-auth';
+import { explicitEffect } from 'ngxtension/explicit-effect';
+import { ArrowRight, LucideAngularModule } from 'lucide-angular';
+import { map, Observable, of, take } from 'rxjs';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'ow-create-organization-page',
@@ -18,48 +23,105 @@ import { CreateOrganizationStore } from './create-organization.store';
   imports: [
     CommonModule,
     CardModule,
-    RouterLink,
     ButtonModule,
     ReactiveFormsModule,
     MessageModule,
     FormlyModule,
-    FormlyPrimeNGModule
+    RequestErrorPipe,
+    LucideAngularModule,
+    InputTextModule
   ],
   providers: [CreateOrganizationStore],
 })
 export class CreateOrganizationPageComponent {
   readonly store = inject(CreateOrganizationStore);
 
+  private readonly authService = inject(AuthService);
+  private readonly organizationsApiService = inject(OrganizationsApiService);
+  private readonly router = inject(Router);
+
+  readonly ArrowRightIcon = ArrowRight;
+
   form = new FormGroup({});
-  model = {};
+  model: Partial<CreateOrganizationModel> = {};
   fields: FormlyFieldConfig[] = [
     {
-      key: 'firstName',
+      key: 'name',
       type: 'input',
       props: {
-        label: 'First name',
-        placeholder: 'Enter your first name',
+        label: 'Name',
+        placeholder: 'Enter your organization name',
         required: true,
         minLength: 2,
+        maxLength: 100,
+      },
+      expressions: {
+         'model.urlSlug': (field) => this.generateSlug(field.model.name)
       }
     },
     {
-      key: 'lastName',
+      key: 'urlSlug',
       type: 'input',
       props: {
-        label: 'Last name',
-        placeholder: 'Enter your last name',
+        label: 'URL Slug',
+        placeholder: 'Unique URL slug for your organization',
         required: true,
-        minLength: 2,
-      }
+        minLength: 4,
+        maxLength: 25,
+        pattern: /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
+      },
+      asyncValidators: {
+        slugTaken: {
+          expression: (control: AbstractControl): Observable<ValidationErrors | null> => {
+            if (!control.value || control.invalid) {
+              return of(null);
+            }
+            return this.organizationsApiService.checkIsOrganizationUrlSlugAvailable(control.value).pipe(
+              map((isAvailable) => (isAvailable ? null : { slugTaken: true })),
+              take(1)
+            );
+          },
+          message: 'This URL slug is already taken.',
+        },
+      },
+      validation: {
+        messages: {
+          pattern: 'Invalid URL slug. Only lowercase a-z, 0-9 and dash are allowed.',
+        },
+      },
     },
   ];
+
+  constructor() {
+    explicitEffect([this.authService.isAuthenticated], ([isAuthenticated]) => {
+      if (isAuthenticated) {
+        if (!this.authService.user()) {
+          this.router.navigate(['/create-account']);
+        }
+      } else {
+        this.router.navigate(['/login']);
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    this.store.submit(this.form.value as CreateMyUserPayload);
+    this.store.submit(this.form.value as CreateOrganizationModel);
+  }
+
+  private generateSlug(name: string): string {
+    if (!name) {
+      return '';
+    }
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with dashes
+      .replace(/[^a-z0-9-]/g, '') // Remove invalid characters
+      .replace(/-{2,}/g, '-') // Replace multiple dashes with single dash
+      .replace(/^-+|-+$/g, ''); // Trim leading/trailing dashes
   }
 }

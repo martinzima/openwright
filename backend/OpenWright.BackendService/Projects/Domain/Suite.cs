@@ -1,11 +1,14 @@
 using OpenWright.BackendService.Organizations.Domain;
 using OpenWright.Platform.Utils;
 using Revo.DataAccess.Entities;
+using Revo.Domain.Entities.Attributes;
+using Revo.Domain.Tenancy;
 
 namespace OpenWright.BackendService.Projects.Domain;
 
 [TablePrefix(NamespacePrefix = "ow", ColumnPrefix = "sui")]
-public class Suite : OrganizationOwnedAggregateRoot
+[DomainClassId("BC7F739B-2F78-48D2-BCD7-C3C0BD12E69C")]
+public class Suite : TenantBasicAggregateRoot
 {
     private readonly List<Case> cases = new();
 

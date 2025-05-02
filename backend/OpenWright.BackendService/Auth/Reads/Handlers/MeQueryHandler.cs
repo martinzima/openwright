@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 using OpenWright.Api.Auth.Dto;
 using OpenWright.BackendService.Auth.Reads.Model;
 using OpenWright.BackendService.Auth.Reads.Queries;
@@ -22,7 +23,8 @@ public class MeQueryHandler(IUserContext userContext,
         if (userContext.IsAuthenticated)
         {
             var user = await readRepository.FindAll<UserView>()
-                .Include(readRepository, x => x.RoleGrants)
+                .Include(x => x.RoleGrants)
+                .ThenInclude(x => x.Organization)
                 .GetByIdAsync(readRepository, userContext.UserId!.Value, cancellationToken);
             return new MeDto()
             {
@@ -38,7 +40,7 @@ public class MeQueryHandler(IUserContext userContext,
             switch (httpContextAccessor.HttpContext.User.Identity.AuthenticationType)
             {
                 case GoogleDefaults.AuthenticationScheme:
-                    return new MeDto()
+                    return new MeDto
                     {
                         AuthScheme = GoogleDefaults.AuthenticationScheme,
                         EmailAddress = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email)

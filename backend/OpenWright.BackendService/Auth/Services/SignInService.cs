@@ -1,16 +1,20 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using OpenWright.Api.Auth.Dto.Payloads;
+using OpenWright.BackendService.Auth.Commands;
 using OpenWright.BackendService.Auth.Domain;
 using OpenWright.Platform.Security;
+using Revo.Core.Commands;
 using Revo.DataAccess.Entities;
 using Revo.Infrastructure.Repositories;
 
 namespace OpenWright.BackendService.Auth.Services;
 
-public class SignInService(IRepository repository) : ISignInService
+public class SignInService(IRepository repository,
+    ICommandGateway commandGateway,
+    IHttpContextAccessor httpContextAccessor) : ISignInService
 {
     public async Task HandleCreatingOAuthTicketAsync(OAuthCreatingTicketContext context)
     {
@@ -49,9 +53,16 @@ public class SignInService(IRepository repository) : ISignInService
         throw new NotImplementedException();
     }
 
-    public async Task SignUpAsync(string email)
+    public async Task SignUpAsync(CreateMyUserPayload payload)
     {
-        
+        var user = await commandGateway.SendAsync(new CreateMyUserCommand { Payload = payload });
+
+        if (httpContextAccessor.HttpContext != null)
+        {
+            await httpContextAccessor.HttpContext.SignOutAsync();
+            await httpContextAccessor.HttpContext.SignInAsync(
+                await CreateClaimsPrincipalAsync(user));
+        }
     }
 
     private async Task<ClaimsPrincipal> CreateClaimsPrincipalAsync(User user)

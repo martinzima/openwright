@@ -152,7 +152,9 @@ public class Startup : RevoStartup
                 };
 
                 cfg.DatabaseMigrations.ApplyMigrationsUponStartup = applyMigrationsUponStartup;
+                
                 cfg.Tenancy.UseNullTenantContextResolver = false;
+                cfg.Tenancy.UseDefaultTenantProvider = false;
             })
             .UseAspNetCore()
             .AddAutoMapperExtension()

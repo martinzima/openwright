@@ -7,7 +7,7 @@ import { AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors } fro
 import { MessageModule } from 'primeng/message';
 import { OrganizationsApiService } from '@openwright/web-api';
 import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
-import { CreateOrganizationModel, CreateOrganizationStore } from './create-organization.store';
+import { CreateOrganizationStore } from './create-organization.store';
 import { RequestErrorPipe } from '@openwright/ui-common';
 import { AuthService } from '@openwright/app-shell-auth';
 import { explicitEffect } from 'ngxtension/explicit-effect';
@@ -42,9 +42,9 @@ export class CreateOrganizationPageComponent {
 
   readonly ArrowRightIcon = ArrowRight;
 
-  form = new FormGroup({});
-  model: Partial<CreateOrganizationModel> = {};
-  fields: FormlyFieldConfig[] = [
+  readonly form = new FormGroup({});
+
+  readonly fields: FormlyFieldConfig[] = [
     {
       key: 'name',
       type: 'input',
@@ -52,7 +52,7 @@ export class CreateOrganizationPageComponent {
         label: 'Name',
         placeholder: 'Enter your organization name',
         required: true,
-        minLength: 2,
+        minLength: 4,
         maxLength: 100,
       },
       expressions: {
@@ -93,8 +93,8 @@ export class CreateOrganizationPageComponent {
   ];
 
   constructor() {
-    explicitEffect([this.authService.isAuthenticated], ([isAuthenticated]) => {
-      if (isAuthenticated) {
+    explicitEffect([this.authService.me], ([me]) => {
+      if (this.authService.isAuthenticated()) {
         if (!this.authService.user()) {
           this.router.navigate(['/create-account']);
         }
@@ -109,7 +109,7 @@ export class CreateOrganizationPageComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.store.submit(this.form.value as CreateOrganizationModel);
+    this.store.submit();
   }
 
   private generateSlug(name: string): string {

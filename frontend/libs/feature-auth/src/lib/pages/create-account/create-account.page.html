@@ -8,13 +8,14 @@
       <p-message severity="error" [text]="(store.error() | requestError) ?? 'Unknown error'" styleClass="mb-4" />
     }
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <formly-form [form]="form" [model]="model" [fields]="fields"></formly-form>
+      <formly-form [form]="form" [model]="store.model()" [fields]="fields"
+        (modelChange)="store.updateModel($event)">
+      </formly-form>
 
       <div class="mt-6 text-center">
         <p-button
           type="submit"
-          [loading]="store.isSubmitting()"
-          [disabled]="form.invalid">
+          [loading]="store.isSubmitting()">
           Create Account
           <lucide-icon [img]="ArrowRightIcon" [size]="16" />
         </p-button>

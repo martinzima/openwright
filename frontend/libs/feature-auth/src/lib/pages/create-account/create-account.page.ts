@@ -6,18 +6,11 @@ import { Router } from '@angular/router';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CreateAccountStore } from './create-account.store';
 import { MessageModule } from 'primeng/message';
-import { CreateMyUserPayload } from '@openwright/web-api';
 import { FormlyFieldConfig, FormlyModule } from '@ngx-formly/core';
 import { AuthService } from '@openwright/app-shell-auth';
 import { explicitEffect } from 'ngxtension/explicit-effect';
 import { ArrowRight, LucideAngularModule } from 'lucide-angular';
 import { RequestErrorPipe } from '@openwright/ui-common';
-
-interface CreateAccountModel {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-}
 
 @Component({
   selector: 'ow-create-account-page',
@@ -46,9 +39,9 @@ export class CreateAccountPageComponent {
 
   readonly ArrowRightIcon = ArrowRight;
 
-  form = new FormGroup({});
-  model: CreateAccountModel = {};
-  fields: FormlyFieldConfig[] = [
+  readonly form = new FormGroup({});
+
+  readonly fields: FormlyFieldConfig[] = [
     {
       key: 'email',
       type: 'input',
@@ -81,8 +74,8 @@ export class CreateAccountPageComponent {
   ];
 
   constructor() {
-    explicitEffect([this.authService.isAuthenticated], ([isAuthenticated]) => {
-      if (isAuthenticated) {
+    explicitEffect([this.authService.me], ([me]) => {
+      if (this.authService.isAuthenticated()) {
         if (this.authService.user()) {
           const roleGrants = this.authService.roleGrants();
           if (roleGrants && roleGrants.length > 0) {
@@ -98,8 +91,12 @@ export class CreateAccountPageComponent {
 
     effect(() => {
       const me = this.authService.me();
-      if (me?.emailAddress) {
-        this.model = { ...this.model, email: me.emailAddress };
+      if (me?.tempAuthentication) {
+        this.store.updateModel({
+          email: me.tempAuthentication?.emailAddress || '',
+            firstName: me.tempAuthentication?.firstName || '',
+            lastName: me.tempAuthentication?.lastName || ''
+        });
       }
     });
   }
@@ -109,7 +106,7 @@ export class CreateAccountPageComponent {
       this.form.markAllAsTouched();
       return;
     }
-    this.store.submit(this.form.value as CreateMyUserPayload);
+    this.store.submit();
   }
 
   logout() {

@@ -10,6 +10,7 @@ export * from './lib/models/time-period.model';
 export * from './lib/users/api/auth-api.service';
 export * from './lib/users/api/me-api.service';
 export * from './lib/users/model/me';
+export * from './lib/users/model/temp-authentication';
 export * from './lib/users/model/payloads/create-my-user-payload';
 export * from './lib/users/model/user';
 export * from './lib/users/model/user-role';

@@ -11,9 +11,9 @@ namespace OpenWright.BackendService.Auth.Handlers;
 public class UserCommandHandler(IRepository repository,
     IUserContext userContext,
     IHttpContextAccessor httpContextAccessor) :
-    ICommandHandler<CreateMyUserCommand>
+    ICommandHandler<CreateMyUserCommand, User>
 {
-    public Task HandleAsync(CreateMyUserCommand command, CancellationToken cancellationToken)
+    public Task<User> HandleAsync(CreateMyUserCommand command, CancellationToken cancellationToken)
     {
         if (userContext.IsAuthenticated)
         {
@@ -42,6 +42,8 @@ public class UserCommandHandler(IRepository repository,
         var user = new User(Guid.NewGuid(), new EmailAddress(emailAddress));
         repository.Add(user);
         
-        return Task.CompletedTask;
+        user.UpdateName(command.Payload.FirstName, command.Payload.LastName);
+        
+        return Task.FromResult(user);
     }
 }

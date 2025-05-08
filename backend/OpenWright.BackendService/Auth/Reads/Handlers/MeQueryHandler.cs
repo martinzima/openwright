@@ -29,7 +29,6 @@ public class MeQueryHandler(IUserContext userContext,
             return new MeDto()
             {
                 User = mapper.Map<UserDto>(user),
-                EmailAddress = user.EmailAddress,
                 AuthScheme = AuthenticationConsts.AuthenticationScheme,
                 RoleGrants = mapper.Map<UserRoleGrantDto[]>(user.RoleGrants)
             };
@@ -37,14 +36,21 @@ public class MeQueryHandler(IUserContext userContext,
 
         if (httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true)
         {
+            var httpContextUser = httpContextAccessor.HttpContext.User;
+            
             switch (httpContextAccessor.HttpContext.User.Identity.AuthenticationType)
             {
                 case GoogleDefaults.AuthenticationScheme:
                     return new MeDto
                     {
                         AuthScheme = GoogleDefaults.AuthenticationScheme,
-                        EmailAddress = httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email)
-                                       ?? throw new InvalidOperationException("Invalid Google user authenticated")
+                        TempAuthentication = new TempAuthenticationDto()
+                        {
+                            EmailAddress = httpContextUser.FindFirstValue(ClaimTypes.Email)
+                                           ?? throw new InvalidOperationException("Invalid Google user authenticated"),
+                            FirstName = httpContextUser.FindFirstValue(ClaimTypes.GivenName),
+                            LastName = httpContextUser.FindFirstValue(ClaimTypes.Surname)
+                        }
                     };
             }
         }

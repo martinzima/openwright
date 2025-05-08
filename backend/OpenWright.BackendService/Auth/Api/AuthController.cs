@@ -41,6 +41,6 @@ public class AuthController : Controller
     [HttpPost("logout")]
     public async Task Logout()
     {
-        await HttpContext.SignOutAsync(AuthenticationConsts.AuthenticationScheme);
+        await HttpContext.SignOutAsync();
     }
 }

@@ -1,9 +1,11 @@
 <div class="flex flex-col min-h-screen">
   <ow-header />
-  <main class="flex-grow bg-gray-100 dark:bg-surface-900">
+  <main class="flex-grow bg-gray-100 dark:bg-surface-900 flex flex-col">
     @switch (state()) {
       @case (MainLayoutState.Loading) {
-        <p-progress-spinner ariaLabel="loading" />
+        <div class="flex justify-center items-center flex-grow">
+          <p-progress-spinner ariaLabel="loading" />
+        </div>
       }
       @case (MainLayoutState.Loaded) {
         <router-outlet></router-outlet>

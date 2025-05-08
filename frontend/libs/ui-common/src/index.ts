@@ -10,3 +10,5 @@ export * from './lib/forms/wrappers/index';
 export * from './lib/forms/translate-extension';
 export * from './lib/forms/replace-form-field-wraper-extension';
 export * from './lib/pipes/request-error.pipe';
+export * from './lib/forms/form-store';
+export * from './lib/forms/common-form.component';

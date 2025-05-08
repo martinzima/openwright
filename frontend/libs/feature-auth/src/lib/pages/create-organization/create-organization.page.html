@@ -1,25 +1,20 @@
 <div class="flex items-center justify-center p-6">
-    <p-card styleClass="w-full shadow-xl p-6" class="sign-up-card">
-      <h2 class="sign-up-title">Create organization</h2>
+  <p-card styleClass="w-full shadow-xl p-6" class="sign-up-card">
+    <h2 class="sign-up-title">Create organization</h2>
 
-      <p class="sign-up-subtitle text-muted-color">Let's create a new organization.</p>
+    <p class="sign-up-subtitle text-muted-color">
+      Let's create a new organization.
+    </p>
 
-      @if (store.error()) {
-        <p-message severity="error" [text]="(store.error() | requestError) ?? 'Unknown error'" styleClass="mb-4" />
-      }
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <formly-form [form]="form" [model]="store.model()" [fields]="fields"
-          (modelChange)="store.updateModel($event)">
-        </formly-form>
-
+    <ow-common-form [store]="store">
+      <ng-container footer>
         <div class="mt-6 text-center">
-          <p-button
-            type="submit"
-            [loading]="store.isSubmitting()">
+          <p-button type="submit" [loading]="store.isSubmitting()">
             Create Organization
             <lucide-icon [img]="ArrowRightIcon" [size]="16" />
           </p-button>
         </div>
-      </form>
-    </p-card>
-  </div>
+      </ng-container>
+    </ow-common-form>
+  </p-card>
+</div>

@@ -1,61 +1,101 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { OrganizationsApiService } from '@openwright/web-api';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, map, Observable, of, take } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '@openwright/app-shell-auth';
 import { generateUuidV4 } from '@openwright/shared-utils';
+import { FormStoreBase } from '@openwright/ui-common';
+import { FormlyFieldConfig } from '@ngx-formly/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AuthService } from '@openwright/app-shell-auth';
 
 export interface CreateOrganizationModel {
   name: string;
   urlSlug: string;
 }
 
-export interface CreateOrganizationState {
-  isSubmitting: boolean;
-  error: unknown | null;
-  model: CreateOrganizationModel;
-}
-
 @Injectable()
-export class CreateOrganizationStore {
+export class CreateOrganizationStore extends FormStoreBase<CreateOrganizationModel> {
+  private readonly authService = inject(AuthService);
   private readonly organizationsApiService = inject(OrganizationsApiService);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
 
-  private readonly state = signal<CreateOrganizationState>({
-    isSubmitting: false,
-    error: null,
-    model: {
-      name: '',
-      urlSlug: ''
-    }
-  });
+  readonly fields: FormlyFieldConfig[] = [
+    {
+      key: 'name',
+      type: 'input',
+      props: {
+        label: 'Name',
+        placeholder: 'Enter your organization name',
+        required: true,
+        minLength: 4,
+        maxLength: 100,
+      },
+      expressions: {
+         'model.urlSlug': (field) => this.generateSlug(field.model.name)
+      }
+    },
+    {
+      key: 'urlSlug',
+      type: 'input',
+      props: {
+        label: 'URL Slug',
+        placeholder: 'Unique URL slug for your organization',
+        required: true,
+        minLength: 4,
+        maxLength: 25,
+        pattern: /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
+      },
+      asyncValidators: {
+        slugTaken: {
+          expression: (control: AbstractControl): Observable<ValidationErrors | null> => {
+            if (!control.value || control.invalid) {
+              return of(null);
+            }
+            return this.organizationsApiService.checkIsOrganizationUrlSlugAvailable(control.value).pipe(
+              map((isAvailable) => (isAvailable ? null : { slugTaken: true })),
+              take(1)
+            );
+          },
+          message: 'This URL slug is already taken.',
+        },
+      },
+      validation: {
+        messages: {
+          pattern: 'Invalid URL slug. Only lowercase a-z, 0-9 and dash are allowed.',
+        },
+      },
+    },
+  ];
 
-  readonly isSubmitting = computed(() => this.state().isSubmitting);
-  readonly error = computed(() => this.state().error);
-  readonly model = computed(() => this.state().model);
-
-  updateModel(model: Partial<CreateOrganizationModel>): void {
-    this.state.update(prev => ({ ...prev, model: { ...prev.model, ...model } }));
+  protected override async doSubmit(model: CreateOrganizationModel): Promise<void> {
+    await lastValueFrom(this.organizationsApiService.createOrganization({
+      ...model,
+      id: generateUuidV4()
+    }));
   }
 
-  async submit(): Promise<void> {
-    if (this.state().isSubmitting) {
-      return;
-    }
-    this.state.update(prev => ({ ...prev, isSubmitting: true, error: null }));
+  protected override createEmptyModel(): CreateOrganizationModel {
+    return {
+      name: '',
+      urlSlug: ''
+    };
+  }
 
-    try {
-      await lastValueFrom(this.organizationsApiService.createOrganization({
-        ...this.model(),
-        id: generateUuidV4()
-      }));
-      await this.authService.refreshMe();
+  protected override async afterSubmitSuccess(model: CreateOrganizationModel) {
+    await this.authService.refreshMe();
+    this.router.navigate(['/', model.urlSlug, 'dashboard']);
+  }
 
-      this.state.update(prev => ({ ...prev, isSubmitting: false, error: null }));
-      this.router.navigate(['/', this.model().urlSlug, 'dashboard']);
-    } catch (error: unknown) {
-      this.state.update(prev => ({ ...prev, isSubmitting: false, error }));
+  private generateSlug(name: string): string {
+    if (!name) {
+      return '';
     }
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with dashes
+      .replace(/[^a-z0-9-]/g, '') // Remove invalid characters
+      .replace(/-{2,}/g, '-') // Replace multiple dashes with single dash
+      .replace(/^-+|-+$/g, ''); // Trim leading/trailing dashes
   }
 }

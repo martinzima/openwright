@@ -27,6 +27,8 @@ export interface FormStore<TModel> {
   model: Signal<TModel>;
   isModelChanged: Signal<boolean>;
   formStatus: Signal<FormControlStatus>;
+  submit: () => Promise<void>;
+  updateModel: (model: TModel) => void;
 }
 
 @Injectable()
@@ -40,23 +42,25 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
 
   readonly isLoading = computed(() => this._state().loading.isLoading);
   readonly isSubmitting = computed(() => this._state().submitting.isLoading);
-  readonly error = computed(() => this._state().loading.error);
+  readonly error = computed(() => this._state().loading.error
+    || this._state().submitting.error
+    || null);
   readonly model = computed(() => this._state().model);
   readonly isModelChanged = computed(() => this._state().isModelChanged);
   readonly formStatus = computed(() => this._state().formStatus);
 
   abstract readonly fields: FormlyFieldConfig[];
 
-  get form(): FormGroup {
-    return this.form;
-  }
-
-  get formlyFields(): FormlyFieldConfig[] {
-    return this.fields;
+  get form(): FormGroup | undefined {
+    return this._form;
   }
 
   get state(): Signal<FormState<TModel, TLoadedModel>> {
     return this._stateReadonly;
+  }
+
+  constructor() {
+    this.reset();
   }
 
   reset(): void {
@@ -65,12 +69,15 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
     this.load();
   }
 
-  async submit(): Promise<void> {
-    if (this.isSubmitting()) {
-      return;
-    }
+  updateModel(model: TModel): void {
+    const newModel = this.onModelChange(this._state(), model);
+    this._state.update(prev => ({ ...prev, model: newModel }));
+  }
 
-    if (!this.beforeValidate()) {
+  async submit(): Promise<void> {
+    if (!this.form
+      || this.isSubmitting()
+      || !this.beforeValidate()) {
       return;
     }
 
@@ -82,7 +89,7 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
     this._state.update(prev => ({ ...prev, submitting: loadReduce(prev.submitting) }));
 
     try {
-      await this.submitModel(this.model());
+      await this.doSubmit(this.model());
       this._state.update(prev => ({ ...prev, submitting: loadCompleteReduce(prev.submitting, true) }));
       this.afterSubmitSuccess(this.model());
     } catch (error) {
@@ -91,7 +98,7 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
     }
   }
 
-  protected async submitModel(model: TModel): Promise<void> {
+  protected async doSubmit(model: TModel): Promise<void> {
     throw new Error('You should implement submitModel method');
   }
 
@@ -108,6 +115,10 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
     };
   }
 
+  protected onModelChange(state: FormState<TModel, TLoadedModel>, newModel: TModel): TModel {
+    return newModel;
+  }
+
   protected createEmptyModel(): TModel {
     return {} as TModel;
   }
@@ -116,7 +127,7 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
     return null as TLoadedModel;
   }
 
-  protected mapModel(loadedModel: TLoadedModel): Partial<TModel> {
+  protected mapLoadedModel(loadedModel: TLoadedModel): Partial<TModel> {
     return {};
   }
 
@@ -157,7 +168,7 @@ export abstract class FormStoreBase<TModel, TLoadedModel = void>
             prev.loading = loadCompleteReduce(prev.loading, model);
             prev.model = {
               ...prev.model,
-              ...this.mapModel(model)
+              ...this.mapLoadedModel(model)
             };
           }),
         (error) =>
